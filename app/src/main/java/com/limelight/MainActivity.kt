@@ -1,5 +1,7 @@
 package com.limelight
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,15 +19,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.limelight.ui.theme.MoonlightandroidTheme
+import androidx.core.net.toUri
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +39,7 @@ class MainActivity : ComponentActivity() {
             MoonlightandroidTheme {
                 Scaffold(
                     topBar = {
-                        TopAppBar(
+                        MediumTopAppBar(
                             colors = topAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 titleContentColor = MaterialTheme.colorScheme.primary,
@@ -45,7 +48,14 @@ class MainActivity : ComponentActivity() {
                                 Text("Moonlight")
                             },
                             actions = {
-                                IconButton(onClick = { /* do something */ }) {
+                                IconButton(onClick = {
+                                    val browserIntent =
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
+                                        )
+                                    startActivity(browserIntent)
+                                }) {
                                     Icon(
                                         imageVector = Icons.Outlined.Info,
                                         contentDescription = "Localized description"
