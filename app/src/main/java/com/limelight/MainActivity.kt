@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat.startActivity
 import com.limelight.ui.theme.MoonlightandroidTheme
 import androidx.core.net.toUri
 
@@ -50,67 +51,70 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MoonlightandroidTheme {
-                var showDialog by remember { mutableStateOf(false) }
+            MainScreen()
+        }
+    }
+}
 
-                Scaffold(
-                    topBar = {
-                        MediumTopAppBar(
-                            colors = topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = {
-                                Text("Moonlight")
-                            },
-                            actions = {
-                                IconButton(onClick = {
-                                    val browserIntent =
-                                        Intent(
-                                            Intent.ACTION_VIEW,
-                                            "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
-                                        )
-                                    startActivity(browserIntent)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Info,
-                                        contentDescription = "Localized description"
-                                    )
-                                }
-                                IconButton(onClick = { /* do something */ }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Settings,
-                                        contentDescription = "Localized description"
-                                    )
-                                }
-                            },
-                        )
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun MainScreen() {
+    MoonlightandroidTheme {
+        var showDialog by remember { mutableStateOf(false) }
+
+        Scaffold(
+            topBar = {
+                MediumTopAppBar(
+                    title = {
+                        Text("Moonlight")
                     },
-                    floatingActionButton = {
-                        ExtendedFloatingActionButton(
-                            onClick = { showDialog = true },
-                            icon = { Icon(Icons.Filled.Add, "Extended floating action button.") },
-                            text = { Text(text = "Add host") },
-                        )
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-                { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-                if (showDialog) {
-                    AddHostDialog(
-                        onDismissRequest = { showDialog = false },
-                        onConfirmation = {
-                            showDialog = false
-                            // Handle host addition here
+                    actions = {
+                        IconButton(onClick = {
+                                    val urlIntent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/")
+                                    )
+
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "Localized description"
+                            )
                         }
-                    )
+                        IconButton(onClick = { /* do something */ }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Localized description"
+                            )
+                        }
+                    },
+                )
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = { showDialog = true },
+                    icon = { Icon(Icons.Filled.Add, "Extended floating action button.") },
+                    text = { Text(text = "Add host") },
+                )
+            },
+//            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        )
+        { innerPadding ->
+            Greeting(
+                name = "Android",
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
+        if (showDialog) {
+            AddHostDialog(
+                onDismissRequest = { showDialog = false },
+                onConfirmation = {
+                    showDialog = false
+                    // Handle host addition here
                 }
-            }
+            )
         }
     }
 }
