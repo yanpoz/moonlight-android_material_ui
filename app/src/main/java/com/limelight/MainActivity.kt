@@ -85,6 +85,13 @@ import androidx.core.content.ContextCompat.startActivity
 import com.limelight.ui.theme.MoonlightandroidTheme
 import androidx.core.net.toUri
 
+data class Host(val name: String, val ip: String, val covers: List<String>)
+val hostList = listOf(
+    Host("PHONKSSD", "192.168.1.1", listOf("cover_1", "cover_2", "cover_3", "cover_4")),
+    Host("XENIA", "192.168.1.2", listOf("cover_5", "cover_6", "cover_7", "cover_8")),
+    Host("HUAWEI", "192.168.1.3", listOf("cover_9", "cover_10", "cover_11", "cover_12"))
+)
+
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,15 +102,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-data class Host(val name: String, val ip: String, val covers: List<String>)
-val hostList = listOf(
-    Host("PHONKSSD", "192.168.1.1", listOf("cover_1", "cover_2", "cover_3", "cover_4")),
-    Host("XENIA", "192.168.1.2", listOf("cover_5", "cover_6", "cover_7", "cover_8")),
-    Host("HUAWEI", "192.168.1.3", listOf("cover_9", "cover_10", "cover_11", "cover_12"))
-)
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -187,10 +185,8 @@ fun MainScreen() {
                         }
                     }
                 }
-
             }
         }
-
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
