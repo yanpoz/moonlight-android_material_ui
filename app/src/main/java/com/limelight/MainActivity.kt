@@ -1,9 +1,11 @@
 package com.limelight
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Resources
 import android.content.res.loader.ResourcesLoader
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
@@ -20,15 +22,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -48,18 +55,25 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
@@ -92,12 +106,15 @@ val hostList = listOf(
 
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun MainScreen() {
     MoonlightandroidTheme {
         var showDialog by remember { mutableStateOf(false) }
+        var sheetState = rememberModalBottomSheetState()
+        var showBottomSheet by remember { mutableStateOf(false) }
         val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
         Scaffold(
@@ -109,8 +126,8 @@ fun MainScreen() {
                         Text("Moonlight")
                     },
                     navigationIcon = {
-                        IconButton(onClick = { showDialog = true }) {
-                            Icon(
+                        IconButton(onClick = { showBottomSheet = true }) {
+                           Icon(
                                 imageVector = Icons.Filled.Add,
                                 contentDescription = "Localized description"
                             )
@@ -173,50 +190,35 @@ fun MainScreen() {
 
             }
         }
-        if (showDialog) {
-            AddHostDialog(
-                onDismissRequest = { showDialog = false },
-                onConfirmation = {
-                    showDialog = false
-                    // Handle host addition here
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                Column(modifier = Modifier.padding(20.dp)){
+                    var inputIp by remember { mutableStateOf("192.168.1.1") }
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    val focusRequester = remember { FocusRequester() }
+
+                    Text(stringResource(id = com.limelight.R.string.title_add_pc))
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp)
+                            .focusRequester(focusRequester),
+                        value = inputIp,
+                        onValueChange = {inputIp = it},
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { /*...*/ }),
+                        label = { Text(stringResource(id = com.limelight.R.string.ip_hint)) }
+                    )
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
+                    }
                 }
-            )
+            }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddHostDialog(onDismissRequest: () -> Unit, onConfirmation: () -> Unit) {
-    var hostIP by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text(stringResource(id = com.limelight.R.string.title_add_pc)) },
-        text = {
-            OutlinedTextField(
-                value = hostIP,
-                onValueChange = { hostIP = it },
-                label = { Text(stringResource(id = com.limelight.R.string.ip_hint)) }
-            )
-                 },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(stringResource(id = com.limelight.R.string.applist_menu_cancel))
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirmation) {
-                Text("Add")
-            }
-        },
-    )
 }
