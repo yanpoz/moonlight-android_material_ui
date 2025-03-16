@@ -21,12 +21,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -114,6 +118,14 @@ fun MainScreen() {
                     },
                     actions = {
                         val context = LocalContext.current
+                        IconButton(onClick = { /* do something */ }) {
+                            BadgedBox(badge = { Badge { Text("0") } }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.stadia_controller_24px),
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                        }
                         IconButton(onClick = {
                            val intent = Intent(Intent.ACTION_VIEW).apply {
                                 data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
