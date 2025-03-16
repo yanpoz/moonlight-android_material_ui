@@ -2,11 +2,9 @@ package com.limelight
 
 import android.content.Intent
 import android.content.res.Resources
-import android.net.Uri
 import android.content.res.loader.ResourcesLoader
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +36,7 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.activity.compose.setContent
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.LargeTopAppBar
@@ -53,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
@@ -113,12 +113,14 @@ fun MainScreen() {
                         }
                     },
                     actions = {
+                        val context = LocalContext.current
                         IconButton(onClick = {
-                                    val urlIntent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/")
-                                    )
-                        }) {
+                           val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
+                            }
+                           context.startActivity(intent)
+                        }
+                        ) {
                             Icon(
                                 imageVector = Icons.Outlined.Info,
                                 contentDescription = "Localized description"
