@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
@@ -38,10 +39,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +54,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 
@@ -86,13 +93,13 @@ val hostList = listOf(
 fun MainScreen() {
     MoonlightandroidTheme {
         var showDialog by remember { mutableStateOf(false) }
+        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopAppBar(
-                    colors = topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    ),
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     title = {
                         Text("Moonlight")
                     },
@@ -124,26 +131,23 @@ fun MainScreen() {
                     text = { Text(text = "Add host") },
                 )
             },
-            modifier = Modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         )
         {
-            Column(modifier = Modifier.padding(it)){
+            Column(modifier = Modifier.padding(it).padding(horizontal = 20.dp)){
                 LazyColumn{
                     items(hostList.size) { host ->
                         Text(text = hostList[host].name, modifier = Modifier.padding(8.dp))
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(4.dp)
+                                .padding(6.dp)
                         ) {
                             LazyRow {
                                 items(hostList[host].covers.size){coverIndex ->
                                     Image(
                                         painter = painterResource(R.drawable.cover_1),
                                         contentDescription = "Game cover",
-                                        modifier = Modifier.size(100.dp)
-                                            .padding(4.dp)
+                                        modifier = Modifier.height(200.dp).padding(15.dp)
                                     )
                                 }
                             }
