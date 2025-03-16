@@ -39,6 +39,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -98,10 +99,18 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                MediumTopAppBar(
+                CenterAlignedTopAppBar(
                     scrollBehavior = scrollBehavior,
                     title = {
                         Text("Moonlight")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { showDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = "Localized description"
+                            )
+                        }
                     },
                     actions = {
                         IconButton(onClick = {
@@ -122,13 +131,6 @@ fun MainScreen() {
                             )
                         }
                     },
-                )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    onClick = { showDialog = true },
-                    icon = { Icon(Icons.Filled.Add, "Extended floating action button.") },
-                    text = { Text(text = "Add host") },
                 )
             },
         )
