@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.ui.theme.MoonlightandroidTheme
@@ -41,8 +42,10 @@ val hostList = listOf(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            MainScreen()
+            val viewModel: MainViewModel = viewModel()
+            MainScreen(viewModel)
         }
     }
 }
@@ -50,8 +53,7 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun MainScreen(viewModel: MainViewModel = viewModel()) {
+fun MainScreen(viewModel: MainViewModel) {
     MoonlightandroidTheme {
         val context = LocalContext.current
         val sheetState = rememberModalBottomSheetState()
@@ -132,4 +134,10 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    MainScreen(MainViewModel())
 }
