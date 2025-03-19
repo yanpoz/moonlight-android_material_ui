@@ -1,26 +1,31 @@
 package com.limelight
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.ContentView
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -28,6 +33,9 @@ import androidx.core.net.toUri
 import com.limelight.ui.theme.MoonlightandroidTheme
 import com.limelight.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvHTTP
+import java.io.StringReader
 
 // Data class for host information
 data class Host(val name: String, val ip: String, val covers: List<String>)
@@ -40,17 +48,29 @@ val hostList = listOf(
 )
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val viewModel: MainViewModel = viewModel()
+            viewModel = viewModel()
+
+            // Bind to the ComputerManagerService
+            viewModel.bindService(this@MainActivity)
+
             MainScreen(viewModel)
         }
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.unbindService(this)
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
@@ -58,6 +78,9 @@ fun MainScreen(viewModel: MainViewModel) {
         val context = LocalContext.current
         val sheetState = rememberModalBottomSheetState()
         val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+        // Observe computers from viewModel
+        val computers = viewModel.computers
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -87,21 +110,23 @@ fun MainScreen(viewModel: MainViewModel) {
             },
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues).padding(horizontal = 20.dp)) {
-                LazyColumn {
-                    items(hostList) { host ->
-                        Text(text = host.name, modifier = Modifier.padding(8.dp))
-                        Card(modifier = Modifier.fillMaxWidth().padding(6.dp)) {
-                            LazyRow {
-                                items(host.covers) { cover ->
-                                    Image(
-                                        painter = painterResource(R.drawable.cover_4),
-                                        contentDescription = "Game cover",
-                                        modifier = Modifier.height(200.dp).padding(15.dp)
-                                    )
-                                }
-                            }
-                        }
+                if (computers.isEmpty()) {
+                    // Show empty state
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.scut_pc_not_found),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
+                } else {
+//                    LazyColumn {
+//                        items(computers) { computer ->
+//                            ComputerItem(computer)
+//                        }
+//                    }
                 }
             }
         }
@@ -112,13 +137,20 @@ fun MainScreen(viewModel: MainViewModel) {
                 sheetState = sheetState
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text(stringResource(id = com.limelight.R.string.title_add_pc))
+                    Text(stringResource(id = R.string.title_add_pc))
                     TextField(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
                         value = viewModel.inputIp,
                         onValueChange = { viewModel.inputIp = it },
-                        label = { Text(stringResource(id = com.limelight.R.string.ip_hint)) }
+                        label = { Text(stringResource(id = R.string.ip_hint)) }
                     )
+
+                    Button(
+                        onClick = { viewModel.addComputer(context, viewModel.inputIp) },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                    ) {
+                        Text(stringResource(id = R.string.title_add_pc))
+                    }
                 }
             }
         }
@@ -129,7 +161,108 @@ fun MainScreen(viewModel: MainViewModel) {
                 sheetState = sheetState
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text(stringResource(id = com.limelight.R.string.ip_hint))
+                    Text(stringResource(id = R.string.category_ui_settings))
+                    // Settings content
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ComputerItem(computer: ComputerDetails) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = computer.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                // Status indicator
+                val statusColor = when (computer.state) {
+                    ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.primary
+                    ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(statusColor, CircleShape)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Show IP address
+            val address = computer.activeAddress?.address ?: computer.localAddress?.address
+            ?: computer.remoteAddress?.address ?: computer.manualAddress?.address ?: "Unknown"
+
+            Text(
+                text = address,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            // If there are apps, show them in a row
+            if (!computer.rawAppList.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                val apps = try {
+                    NvHTTP.getAppListByReader(StringReader(computer.rawAppList))
+                } catch (e: Exception) {
+                    emptyList()
+                }
+
+                if (apps.isNotEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.category_ui_settings),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(apps) { app ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(120.dp)
+                            ) {
+                                // App icon or placeholder
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "app.name",
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = "app.name",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
