@@ -122,11 +122,11 @@ fun MainScreen(viewModel: MainViewModel) {
                         )
                     }
                 } else {
-//                    LazyColumn {
-//                        items(computers) { computer ->
-//                            ComputerItem(computer)
-//                        }
-//                    }
+                    LazyColumn {
+                        items(computers) { computer ->
+                            ComputerItem(computer)
+                        }
+                    }
                 }
             }
         }

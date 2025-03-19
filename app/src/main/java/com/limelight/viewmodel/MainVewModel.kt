@@ -41,8 +41,9 @@ class MainViewModel : ViewModel() {
             viewModelScope.launch(Dispatchers.IO){
                 computerManagerBinder = binder as ComputerManagerService.ComputerManagerBinder
                 computerManagerBinder?.waitForReady()
+                startPolling()
             }
-            startPolling()
+
         }
 
         override fun onServiceDisconnected(componentName: ComponentName?) {
