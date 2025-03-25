@@ -24,12 +24,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
-    // Existing properties
+    // UI properties
     var showBottomSheet by mutableStateOf(false)
     var showSettings by mutableStateOf(false)
     var inputIp by mutableStateOf("")
 
-    // New properties for computer management
+    // Properties for computer management
     private var computerManagerBinder: ComputerManagerService.ComputerManagerBinder? = null
     private var computerManagerListener: ComposeComputerManagerListener? = null
     private val _computers = mutableStateListOf<ComputerDetails>()
@@ -43,9 +43,7 @@ class MainViewModel : ViewModel() {
                 computerManagerBinder?.waitForReady()
                 startPolling()
             }
-
         }
-
         override fun onServiceDisconnected(componentName: ComponentName?) {
             computerManagerBinder = null
         }
