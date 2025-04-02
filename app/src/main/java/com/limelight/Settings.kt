@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.limelight.ui.theme.MoonlightandroidTheme
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -33,35 +34,37 @@ import kotlinx.parcelize.Parcelize
 @Composable
 @Preview
 fun SampleNavigableListDetailPaneScaffoldFull() {
-    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<MyItem>()
-    val scope = rememberCoroutineScope()
+    MoonlightandroidTheme {
+        val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<MyItem>()
+        val scope = rememberCoroutineScope()
 
-    NavigableListDetailPaneScaffold(
-        navigator = scaffoldNavigator,
-        listPane = {
-            AnimatedPane {
-                MyList(
-                    onItemClick = { item ->
-                        // Navigate to the detail pane with the passed item
-                        scope.launch {
-                            scaffoldNavigator.navigateTo(
-                                ListDetailPaneScaffoldRole.Detail,
-                                item
-                            )
-                        }
-                    },
-                )
-            }
-        },
-        detailPane = {
-            AnimatedPane {
-                // Show the detail pane content if selected item is available
-                scaffoldNavigator.currentDestination?.contentKey?.let {
-                    MyDetails(it)
+        NavigableListDetailPaneScaffold(
+            navigator = scaffoldNavigator,
+            listPane = {
+                AnimatedPane {
+                    MyList(
+                        onItemClick = { item ->
+                            // Navigate to the detail pane with the passed item
+                            scope.launch {
+                                scaffoldNavigator.navigateTo(
+                                    ListDetailPaneScaffoldRole.Detail,
+                                    item
+                                )
+                            }
+                        },
+                    )
                 }
-            }
-        },
-    )
+            },
+            detailPane = {
+                AnimatedPane {
+                    // Show the detail pane content if selected item is available
+                    scaffoldNavigator.currentDestination?.contentKey?.let {
+                        MyDetails(it)
+                    }
+                }
+            },
+        )
+    }
 }
 
 

@@ -19,7 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -70,7 +70,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     title = { Text("Moonlight") },
                     navigationIcon = {
                         IconButton(onClick = { viewModel.showBottomSheet = true }) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+                            Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
                         }
                     },
                     actions = {
