@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.limelight.ui.theme.MoonlightandroidTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -18,20 +19,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            mainViewModel = viewModel()
-            val navController = rememberNavController()
+            MoonlightandroidTheme {
+                mainViewModel = viewModel()
+                val navController = rememberNavController()
 
-            mainViewModel.bindService(this@MainActivity)
+                mainViewModel.bindService(this@MainActivity)
 
-            NavHost(navController = navController, startDestination = "main") {
-                composable("main") {
-                    MainScreen(
-                        onSettingsClick = { navController.navigate("settings") },
-                        viewModel = mainViewModel
-                    )
-                }
-                composable("settings") {
-                    SettingsScreen()
+                NavHost(navController = navController, startDestination = "main") {
+                    composable("main") {
+                        MainScreen(
+                            onSettingsClick = { navController.navigate("settings") },
+                            viewModel = mainViewModel
+                        )
+                    }
+                    composable("settings") {
+                        SettingsScreen()
+                    }
                 }
             }
         }
@@ -41,9 +44,4 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         mainViewModel.unbindService(this)
     }
-}
-
-@Composable
-fun SettingsScreen() {
-    SampleNavigableListDetailPaneScaffoldFull()
 }

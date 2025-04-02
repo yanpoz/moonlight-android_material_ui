@@ -54,83 +54,79 @@ import java.io.StringReader
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
-    MoonlightandroidTheme {
-        val context = LocalContext.current
-        val sheetState = rememberModalBottomSheetState()
-        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val computers = viewModel.computers
 
-        // Observe computers from viewModel
-        val computers = viewModel.computers
-
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                CenterAlignedTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    title = { Text("Moonlight") },
-                    navigationIcon = {
-                        IconButton(onClick = { viewModel.showBottomSheet = true }) {
-                            Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
-                            }
-                            context.startActivity(intent)
-                        }) {
-                            Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
-                        }
-                        IconButton(onClick = onSettingsClick ) {
-                            Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
-                        }
-                    },
-                )
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).padding(horizontal = 20.dp)) {
-                if (computers.isEmpty()) {
-                    // Show empty state
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.scut_pc_not_found),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            CenterAlignedTopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = { Text("Moonlight") },
+                navigationIcon = {
+                    IconButton(onClick = { viewModel.showBottomSheet = true }) {
+                        Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
                     }
-                } else {
-                    LazyColumn {
-                        items(computers) { computer ->
-                            ComputerItem(computer)
+                },
+                actions = {
+                    IconButton(onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
                         }
+                        context.startActivity(intent)
+                    }) {
+                        Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
+                    }
+                    IconButton(onClick = onSettingsClick ) {
+                        Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                    }
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).padding(horizontal = 20.dp)) {
+            if (computers.isEmpty()) {
+                // Show empty state
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.scut_pc_not_found),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            } else {
+                LazyColumn {
+                    items(computers) { computer ->
+                        ComputerItem(computer)
                     }
                 }
             }
         }
+    }
 
-        if (viewModel.showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { viewModel.showBottomSheet = false },
-                sheetState = sheetState
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+    if (viewModel.showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(stringResource(id = R.string.title_add_pc))
+                TextField(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                    value = viewModel.inputIp,
+                    onValueChange = { viewModel.inputIp = it },
+                    label = { Text(stringResource(id = R.string.ip_hint)) }
+                )
+
+                Button(
+                    onClick = { viewModel.addComputer(context, viewModel.inputIp) },
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                ) {
                     Text(stringResource(id = R.string.title_add_pc))
-                    TextField(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-                        value = viewModel.inputIp,
-                        onValueChange = { viewModel.inputIp = it },
-                        label = { Text(stringResource(id = R.string.ip_hint)) }
-                    )
-
-                    Button(
-                        onClick = { viewModel.addComputer(context, viewModel.inputIp) },
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                    ) {
-                        Text(stringResource(id = R.string.title_add_pc))
-                    }
                 }
             }
         }
