@@ -26,7 +26,6 @@ import kotlinx.coroutines.withContext
 class MainViewModel : ViewModel() {
     // UI properties
     var showBottomSheet by mutableStateOf(false)
-    var showSettings by mutableStateOf(false)
     var inputIp by mutableStateOf("")
 
     // Properties for computer management
