@@ -33,6 +33,9 @@ import androidx.core.net.toUri
 import com.limelight.ui.theme.MoonlightandroidTheme
 import com.limelight.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvHTTP
 import java.io.StringReader
@@ -55,14 +58,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             viewModel = viewModel()
+            val navController = rememberNavController()
 
             // Bind to the ComputerManagerService
             viewModel.bindService(this@MainActivity)
 
-            MainScreen(viewModel)
+            NavHost(navController = navController, startDestination = "main") {
+                composable("main") {
+                    MainScreen(
+                        onSettingsClick = { navController.navigate("settings") },
+                        viewModel = viewModel
+                    )
+                }
+                composable("settings") {
+                    SettingsScreen()
+                }
+            }
         }
-
-
     }
 
     override fun onDestroy() {
@@ -73,7 +85,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     MoonlightandroidTheme {
         val context = LocalContext.current
         val sheetState = rememberModalBottomSheetState()
@@ -102,7 +114,7 @@ fun MainScreen(viewModel: MainViewModel) {
                         }) {
                             Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
                         }
-                        IconButton(onClick = { viewModel.showSettings = true }) {
+                        IconButton(onClick = onSettingsClick ) {
                             Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
                         }
                     },
@@ -114,7 +126,7 @@ fun MainScreen(viewModel: MainViewModel) {
                     // Show empty state
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = androidx.compose.ui.Alignment.Center
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = stringResource(id = R.string.scut_pc_not_found),
@@ -269,8 +281,13 @@ fun ComputerItem(computer: ComputerDetails) {
     }
 }
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    MainScreen(MainViewModel())
+//}
+
 @Composable
-fun MainScreenPreview() {
-    MainScreen(MainViewModel())
+fun SettingsScreen() {
+    SampleNavigableListDetailPaneScaffoldFull()
 }
