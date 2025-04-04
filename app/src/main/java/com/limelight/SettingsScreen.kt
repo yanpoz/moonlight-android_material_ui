@@ -1,6 +1,7 @@
 package com.limelight
 
 import android.os.Parcelable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -84,7 +86,18 @@ fun SettingsCategoryList(
     categories: List<SettingCategory>,
     onCategoryClick: (SettingCategory) -> Unit
 ) {
-    Card {
+    Column(
+        modifier = Modifier.padding(vertical = 16.dp).background(MaterialTheme.colorScheme.surface)
+    ) {
+        Text(
+            text = "Settings",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
         LazyColumn {
             items(categories.size) { index ->
                 val category = categories[index]
