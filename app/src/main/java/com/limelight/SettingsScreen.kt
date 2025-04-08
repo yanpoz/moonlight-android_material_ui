@@ -107,7 +107,7 @@ fun SettingsCategoryList(
                         Icon(imageVector = category.icon, contentDescription = null)
                     },
                     headlineContent = {
-                        Text(stringResource(category.headline))
+                        Text(stringResource(category.category_title))
                     },
                     trailingContent = {
                         Icon(
@@ -131,25 +131,16 @@ fun SettingsCategoryDetail(category: SettingCategory) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = category.name,
+                text = stringResource(category.category_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
-            if (category.items.isEmpty()) {
-                Text("No settings available in this category")
-            } else {
-                LazyColumn {
-                    items(category.items.size) { index ->
-                        when (val item = category.items[index]) {
-                            is SettingItem.Toggle -> ToggleSettingItem(item)
-                            is SettingItem.Slider -> SliderSettingItem(item)
-                        }
-
-                        if (index < category.items.size - 1) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
+            LazyColumn {
+                items(category.items.size) { index ->
+                    when (val item = category.items[index]) {
+                        is SettingItem.Toggle -> ToggleSettingListItem(item)
+                        is SettingItem.Slider -> SliderSettingItem(item)
                     }
                 }
             }
@@ -157,26 +148,23 @@ fun SettingsCategoryDetail(category: SettingCategory) {
     }
 }
 
+
 @Composable
-fun ToggleSettingItem(item: SettingItem.Toggle) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.name,
-                fontWeight = FontWeight.Medium
+fun ToggleSettingListItem(item: SettingItem.Toggle) {
+    ListItem(
+        headlineContent = {
+            Text(stringResource(item.title))
+        },
+        supportingContent = {
+            Text(stringResource(item.summary))
+        },
+        trailingContent = {
+            Switch(
+                checked = item.isEnabled,
+                onCheckedChange = item.onToggle
             )
         }
-
-        Switch(
-            checked = item.isEnabled,
-            onCheckedChange = item.onToggle
-        )
-    }
+    )
 }
 
 @Composable
@@ -187,7 +175,7 @@ fun SliderSettingItem(item: SettingItem.Slider) {
             .padding(vertical = 8.dp)
     ) {
         Text(
-            text = item.name,
+            text = stringResource(item.title),
             fontWeight = FontWeight.Medium
         )
 
