@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,7 +106,9 @@ fun SettingsCategoryList(
                     leadingContent = {
                         Icon(imageVector = category.icon, contentDescription = null)
                     },
-                    headlineContent = { Text(category.name) },
+                    headlineContent = {
+                        Text(stringResource(category.headline))
+                    },
                     trailingContent = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -164,7 +167,7 @@ fun ToggleSettingItem(item: SettingItem.Toggle) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.title,
+                text = item.name,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -184,7 +187,7 @@ fun SliderSettingItem(item: SettingItem.Slider) {
             .padding(vertical = 8.dp)
     ) {
         Text(
-            text = item.title,
+            text = item.name,
             fontWeight = FontWeight.Medium
         )
 
