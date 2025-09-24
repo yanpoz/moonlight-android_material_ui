@@ -177,59 +177,6 @@ fun ComputerItem(computer: ComputerDetails) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            // If there are apps, show them in a row
-            if (!computer.rawAppList.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                val apps = try {
-                    NvHTTP.getAppListByReader(StringReader(computer.rawAppList))
-                } catch (e: Exception) {
-                    emptyList()
-                }
-
-                if (apps.isNotEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.category_ui_settings),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(apps) { app ->
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.width(120.dp)
-                            ) {
-                                // App icon or placeholder
-                                Box(
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "app.name",
-                                        style = MaterialTheme.typography.headlineMedium
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(4.dp))
-
-                                Text(
-                                    text = "app.name",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
