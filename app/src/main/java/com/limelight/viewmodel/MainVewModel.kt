@@ -12,6 +12,7 @@ class MainViewModel : ViewModel() {
     // UI properties
     var showBottomSheet by mutableStateOf(false)
     var inputIp by mutableStateOf("")
+    var freezeUpdates by mutableStateOf(false) // Added
 
     // Instantiate the ComputerRepository
     private val computerRepository = ComputerRepository()
@@ -28,6 +29,17 @@ class MainViewModel : ViewModel() {
         computerRepository.unbindService(context)
     }
 
+    // New methods to control polling based on UI lifecycle
+    fun onUiResumed() {
+        // Potentially set freezeUpdates = false here if that's the desired logic
+        computerRepository.resumeComputerUpdates()
+    }
+
+    fun onUiPaused() {
+        // Potentially set freezeUpdates = true here if that's the desired logic
+        computerRepository.pauseComputerUpdates()
+    }
+
     // Delegate adding a computer to the repository
     fun addComputer(context: Context, ipAddress: String) {
         computerRepository.addComputer(context, ipAddress)
@@ -36,11 +48,13 @@ class MainViewModel : ViewModel() {
         // showBottomSheet = false
     }
 
+
+
     override fun onCleared() {
         super.onCleared()
         // It's good practice to ensure resources are released.
-        // If your repository held a CoroutineScope that needed cancellation,
+        // computerRepository.unbindService() should be called by the Activity/Fragment's onDestroy
+        // If computerRepository had its own CoroutineScope that needs cancelling,
         // you might add a clear() method to the repository and call it here.
-        // For now, unbindService in MainActivity's onDestroy handles service unbinding.
     }
 }

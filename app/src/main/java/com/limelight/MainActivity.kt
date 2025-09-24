@@ -39,8 +39,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (::mainViewModel.isInitialized) { // Ensure ViewModel is initialized
+            mainViewModel.onUiResumed()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::mainViewModel.isInitialized) { // Ensure ViewModel is initialized
+            mainViewModel.onUiPaused()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        mainViewModel.unbindComputerManagerService(this)
+        if (::mainViewModel.isInitialized) { // Ensure ViewModel is initialized
+            mainViewModel.unbindComputerManagerService(this)
+        }
     }
 }
