@@ -80,39 +80,7 @@ class MainViewModel : ViewModel() {
 
     // Function to add a computer by IP address
     fun addComputer(context: Context, ipAddress: String) {
-        if (ipAddress.isBlank()) return
-
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val details = ComputerDetails()
-                details.manualAddress = ComputerDetails.AddressTuple(ipAddress, NvHTTP.DEFAULT_HTTP_PORT)
-
-                computerManagerBinder?.let { binder ->
-                    try {
-                        if (binder.addComputerBlocking(details)) {
-                            // Addition successful
-                            withContext(Dispatchers.Main) {
-                                showBottomSheet = false
-                                inputIp = ""
-                            }
-                        } else {
-                            // Failed to add computer
-                            withContext(Dispatchers.Main) {
-                                // Show error message
-                                Toast.makeText(context, R.string.addpc_fail, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, R.string.addpc_fail, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
+        // TODO
     }
 
     override fun onCleared() {
