@@ -3,7 +3,6 @@ package com.limelight
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
 import com.limelight.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -23,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 mainViewModel = viewModel()
                 val navController = rememberNavController()
 
-                mainViewModel.bindService(this@MainActivity)
+                mainViewModel.bindComputerManagerService(this@MainActivity)
 
                 NavHost(navController = navController, startDestination = "main") {
                     composable("main") {
@@ -42,6 +41,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainViewModel.unbindService(this)
+        mainViewModel.unbindComputerManagerService(this)
     }
 }
