@@ -17,7 +17,6 @@ import com.limelight.R
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.ComputerManagerService
 import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.nvstream.http.ComputerDetails.AddressTuple
 import com.limelight.nvstream.http.NvHTTP
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +39,11 @@ class MainViewModel : ViewModel() {
             viewModelScope.launch(Dispatchers.IO){
                 computerManagerBinder = binder as ComputerManagerService.ComputerManagerBinder
                 computerManagerBinder?.waitForReady()
-                startPolling()
+                computerManagerListener = ComposeComputerManagerListener { computer ->
+                    updateComputer(computer)
+                }
+                computerManagerBinder?.startPolling(computerManagerListener)
+
             }
         }
         override fun onServiceDisconnected(componentName: ComponentName?) {
@@ -61,13 +64,6 @@ class MainViewModel : ViewModel() {
         } catch (e: IllegalArgumentException) {
             // Service might not have been bound
         }
-    }
-
-    private fun startPolling() {
-        computerManagerListener = ComposeComputerManagerListener { computer ->
-            updateComputer(computer)
-        }
-        computerManagerBinder?.startPolling(computerManagerListener)
     }
 
     private fun updateComputer(computer: ComputerDetails) {
