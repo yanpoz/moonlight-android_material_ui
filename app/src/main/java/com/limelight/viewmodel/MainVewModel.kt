@@ -40,7 +40,15 @@ class MainViewModel : ViewModel() {
                 computerManagerBinder = binder as ComputerManagerService.ComputerManagerBinder
                 computerManagerBinder?.waitForReady()
                 computerManagerListener = ComposeComputerManagerListener { computer ->
-                    updateComputer(computer)
+                    // Update on the main thread
+                    viewModelScope.launch(Dispatchers.Main) {
+                        val existingIndex = _computers.indexOfFirst { it.uuid == computer.uuid }
+                        if (existingIndex >= 0) {
+                            _computers[existingIndex] = computer
+                        } else {
+                            _computers.add(computer)
+                        }
+                    }
                 }
                 computerManagerBinder?.startPolling(computerManagerListener)
 
@@ -63,18 +71,6 @@ class MainViewModel : ViewModel() {
             context.unbindService(serviceConnection)
         } catch (e: IllegalArgumentException) {
             // Service might not have been bound
-        }
-    }
-
-    private fun updateComputer(computer: ComputerDetails) {
-        // Update on the main thread
-        viewModelScope.launch(Dispatchers.Main) {
-            val existingIndex = _computers.indexOfFirst { it.uuid == computer.uuid }
-            if (existingIndex >= 0) {
-                _computers[existingIndex] = computer
-            } else {
-                _computers.add(computer)
-            }
         }
     }
 
