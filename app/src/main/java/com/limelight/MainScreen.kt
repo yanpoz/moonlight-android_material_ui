@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvHTTP
+import com.limelight.nvstream.http.PairingManager // Added import
 import com.limelight.ui.theme.MoonlightandroidTheme
 import com.limelight.viewmodel.MainViewModel
 import java.io.StringReader
@@ -175,6 +176,23 @@ fun ComputerItem(computer: ComputerDetails) {
             Text(
                 text = address,
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp)) // Added spacer
+
+            // Show Pairing State
+            val pairStatusText = when (computer.pairState) {
+                PairingManager.PairState.PAIRED -> "Pair status: Paired"
+                PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
+                PairingManager.PairState.PIN_WRONG -> "Pair status: PIN Incorrect"
+                PairingManager.PairState.FAILED -> "Pair status: Pairing Failed"
+                PairingManager.PairState.ALREADY_IN_PROGRESS -> "Pair status: Pairing in Progress"
+                null -> "Pair status: Unknown" // Handle null case if pairState can be null
+            }
+            Text(
+                text = pairStatusText,
+                style = MaterialTheme.typography.bodySmall, // Smaller text for status
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
