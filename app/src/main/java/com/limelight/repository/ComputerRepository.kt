@@ -26,7 +26,7 @@ class ComputerRepository {
     private val _computers = mutableStateListOf<ComputerDetails>()
     val computers: List<ComputerDetails> = _computers
 
-    private var runningPolling = false // Added
+    private var runningPolling = false
 
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {

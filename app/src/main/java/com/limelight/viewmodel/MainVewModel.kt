@@ -12,7 +12,6 @@ class MainViewModel : ViewModel() {
     // UI properties
     var showBottomSheet by mutableStateOf(false)
     var inputIp by mutableStateOf("")
-    var freezeUpdates by mutableStateOf(false) // Added
 
     // Instantiate the ComputerRepository
     private val computerRepository = ComputerRepository()
