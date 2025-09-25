@@ -28,14 +28,11 @@ class MainViewModel : ViewModel() {
         computerRepository.unbindService(context)
     }
 
-    // New methods to control polling based on UI lifecycle
     fun onUiResumed() {
-        // Potentially set freezeUpdates = false here if that's the desired logic
         computerRepository.resumeComputerUpdates()
     }
 
     fun onUiPaused() {
-        // Potentially set freezeUpdates = true here if that's the desired logic
         computerRepository.pauseComputerUpdates()
     }
 
