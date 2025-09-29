@@ -2,6 +2,7 @@ package com.limelight
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,16 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -33,25 +32,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+// import androidx.compose.runtime.getValue // No longer needed here
+// import androidx.compose.runtime.mutableStateOf // No longer needed here
+// import androidx.compose.runtime.remember // No longer needed here
+// import androidx.compose.runtime.setValue // No longer needed here
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.nvstream.http.NvHTTP
-import com.limelight.nvstream.http.PairingManager // Added import
-import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.nvstream.http.PairingManager
 import com.limelight.viewmodel.MainViewModel
-import java.io.StringReader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +60,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val computers = viewModel.computers
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -103,7 +104,10 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             } else {
                 LazyColumn {
                     items(computers) { computer ->
-                        ComputerItem(computer)
+                        ComputerItem(
+                            computer = computer,
+                            onClick = { viewModel.onComputerClicked(it) } // Use ViewModel function
+                        )
                     }
                 }
             }
@@ -133,16 +137,46 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             }
         }
     }
+
+    if (viewModel.showConnectionDialog && viewModel.computerForConnect != null) {
+        ConnectionDialog(
+            viewModel = viewModel,
+            computer = viewModel.computerForConnect!!,
+            onDismiss = { viewModel.dismissComputerDialog() }
+        )
+    }
 }
 
 
 @Composable
-fun ComputerItem(computer: ComputerDetails) {
+fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { viewModel.dismissComputerDialog() },
+        title = { Text(text = "Connecting to: ${computer.name}") }, // Display computer name
+        text = { // Display error message if present
+            viewModel.connectionErrorMsg?.let {
+                Text(text = stringResource(id = it), color = MaterialTheme.colorScheme.error)
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { viewModel.dismissComputerDialog() }
+            ) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+
+@Composable
+fun ComputerItem(computer: ComputerDetails, onClick: (ComputerDetails) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
             .aspectRatio(16f / 9f)
             .padding(vertical = 8.dp)
+            .clickable { onClick(computer) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
