@@ -28,6 +28,8 @@ class ComputerRepository {
 
     private var runningPolling = false
 
+    val isServiceConnected: Boolean get() = computerManagerBinder != null
+
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
             repositoryScope.launch {

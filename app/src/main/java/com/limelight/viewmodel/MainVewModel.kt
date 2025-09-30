@@ -16,7 +16,7 @@ class MainViewModel : ViewModel() {
 
     var showConnectionDialog by mutableStateOf(false)
     var computerForConnect by mutableStateOf<ComputerDetails?>(null)
-    var connectionErrorMsg by mutableStateOf<Int?>(null) // Changed to Int? for resource ID
+    var connectionMsg by mutableStateOf<Int?>(null) // Changed to Int? for resource ID
 
     // Instantiate the ComputerRepository
     private val computerRepository = ComputerRepository()
@@ -53,17 +53,19 @@ class MainViewModel : ViewModel() {
         computerForConnect = computer // Set computer details first
         showConnectionDialog = true
 
-        connectionErrorMsg = if (computer.state == ComputerDetails.State.OFFLINE || computer.activeAddress == null) {
+        connectionMsg = if (computer.state == ComputerDetails.State.OFFLINE || computer.activeAddress == null) {
             R.string.pair_pc_offline // Assign resource ID
+        } else if (!computerRepository.isServiceConnected) {
+            R.string.error_manager_not_running
         } else {
-            null // Clear previous error messages
+            null // No error message
         }
     }
 
     fun dismissComputerDialog() {
         showConnectionDialog = false
         computerForConnect = null
-        connectionErrorMsg = null // Clear error message on dismiss
+        connectionMsg = null // Clear error message on dismiss
     }
 
     override fun onCleared() {

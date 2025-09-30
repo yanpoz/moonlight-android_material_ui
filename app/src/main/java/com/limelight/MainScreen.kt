@@ -154,8 +154,8 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDism
         onDismissRequest = { viewModel.dismissComputerDialog() },
         title = { Text(text = "Connecting to: ${computer.name}") }, // Display computer name
         text = { // Display error message if present
-            viewModel.connectionErrorMsg?.let {
-                Text(text = stringResource(id = it), color = MaterialTheme.colorScheme.error)
+            viewModel.connectionMsg?.let {
+                Text(text = stringResource(id = it))
             }
         },
         confirmButton = {
