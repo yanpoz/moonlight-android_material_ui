@@ -1,6 +1,7 @@
 package com.limelight.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,13 +16,31 @@ class MainViewModel : ViewModel() {
     var inputIp by mutableStateOf("")
 
     var showConnectionDialog by mutableStateOf(false)
-    var computerForConnect by mutableStateOf<ComputerDetails?>(null)
-    var connectionMsg by mutableStateOf<Int?>(null) // Changed to Int? for resource ID
+    private var selectedComputerUUID by mutableStateOf<String?>(null)
+
+    // computerForConnect is now derived from the computers list and selectedComputerUUID
+    val computerForConnect: ComputerDetails? by derivedStateOf {
+        selectedComputerUUID?.let { uuid ->
+            computers.find { it.uuid == uuid }
+        }
+    }
+
+    // Make connectionMsg a derived state
+    val connectionMsg: Int? by derivedStateOf {
+        val computer = computerForConnect
+        when {
+            computer == null -> null // No computer selected, so no message
+            computer.state == ComputerDetails.State.OFFLINE || computer.activeAddress == null -> R.string.pair_pc_offline
+            !computerRepository.isServiceConnected -> R.string.error_manager_not_running
+            else -> R.string.conn_error_title
+        }
+    }
 
     // Instantiate the ComputerRepository
     private val computerRepository = ComputerRepository()
 
     // Expose the computers list from the repository
+    // This list should be reactively updated by ComputerRepository for this pattern to work effectively
     val computers: List<ComputerDetails> = computerRepository.computers
 
     // Delegate service binding and unbinding to the repository
@@ -50,22 +69,15 @@ class MainViewModel : ViewModel() {
     }
 
     fun onComputerClicked(computer: ComputerDetails) {
-        computerForConnect = computer // Set computer details first
+        selectedComputerUUID = computer.uuid
         showConnectionDialog = true
-
-        connectionMsg = if (computer.state == ComputerDetails.State.OFFLINE || computer.activeAddress == null) {
-            R.string.pair_pc_offline // Assign resource ID
-        } else if (!computerRepository.isServiceConnected) {
-            R.string.error_manager_not_running
-        } else {
-            null // No error message
-        }
+        // connectionMsg will be derived based on the new computerForConnect
     }
 
     fun dismissComputerDialog() {
         showConnectionDialog = false
-        computerForConnect = null
-        connectionMsg = null // Clear error message on dismiss
+        selectedComputerUUID = null // Clear the selected name
+        // computerForConnect will become null, and connectionMsg will update accordingly
     }
 
     override fun onCleared() {
