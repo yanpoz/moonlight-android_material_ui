@@ -68,7 +68,7 @@ class MainViewModel : ViewModel() {
             while (true) {
                 val currentComputer = selectedComputer ?: break
                 if (currentComputer.activeAddress != null &&
-                    currentComputer.state == ComputerDetails.State.OFFLINE &&
+                    currentComputer.state != ComputerDetails.State.OFFLINE &&
                     computerRepository.isServiceConnected
                     ) {
                     pairingMessage = computerRepository.pairComputer(context, currentComputer)
