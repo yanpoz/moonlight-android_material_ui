@@ -6,29 +6,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.limelight.R // Import R class for resources
+import androidx.lifecycle.viewModelScope
+import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.repository.ComputerRepository // Import the repository
+import com.limelight.repository.ComputerRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    // UI properties
+    var pairingMessage by mutableStateOf("")
+    private var connectionJob: Job? = null
     var showBottomSheet by mutableStateOf(false)
     var inputIp by mutableStateOf("")
 
     var showConnectionDialog by mutableStateOf(false)
     private var selectedComputerUUID by mutableStateOf<String?>(null)
-    val computerForConnect: ComputerDetails? by derivedStateOf {
+    val selectedComputer: ComputerDetails? by derivedStateOf {
         selectedComputerUUID?.let { uuid ->
             computers.find { it.uuid == uuid }
-        }
-    }
-    val connectionMsg: Int? by derivedStateOf {
-        when {
-            computerForConnect == null -> null
-            computerForConnect?.state == ComputerDetails.State.OFFLINE -> R.string.pair_pc_offline
-            computerForConnect?.activeAddress == null -> R.string.error_unknown_host
-            !computerRepository.isServiceConnected -> R.string.error_manager_not_running
-            else -> R.string.conn_error_title
         }
     }
     private val computerRepository = ComputerRepository()
@@ -51,7 +47,6 @@ class MainViewModel : ViewModel() {
         computerRepository.pauseComputerUpdates()
     }
 
-    // Delegate adding a computer to the repository
     fun addComputer(context: Context, ipAddress: String) {
         computerRepository.addComputer(context, ipAddress)
         // Optionally, reset input IP and hide bottom sheet after attempting to add
@@ -59,16 +54,36 @@ class MainViewModel : ViewModel() {
         // showBottomSheet = false
     }
 
-    fun onComputerClicked(computer: ComputerDetails) {
+    fun onComputerClicked(computer: ComputerDetails, context: Context) {
         selectedComputerUUID = computer.uuid
         showConnectionDialog = true
-        // connectionMsg will be derived based on the new computerForConnect
+        initiateConnection(computer, context)
+    }
+
+    private fun initiateConnection(computer: ComputerDetails, context: Context) {
+        connectionJob?.cancel()
+
+        connectionJob = viewModelScope.launch {
+            pairingMessage = context.getString(R.string.pairing)
+            while (true) {
+                val currentComputer = selectedComputer ?: break
+                if (currentComputer.activeAddress != null &&
+                    currentComputer.state == ComputerDetails.State.OFFLINE &&
+                    computerRepository.isServiceConnected
+                    ) {
+                    pairingMessage = computerRepository.pairComputer(context, currentComputer)
+                    break
+                }
+                delay(1000L)
+            }
+        }
     }
 
     fun dismissComputerDialog() {
         showConnectionDialog = false
-        selectedComputerUUID = null // Clear the selected name
-        // computerForConnect will become null, and connectionMsg will update accordingly
+        connectionJob?.cancel()
+        selectedComputerUUID = null
+        pairingMessage = ""        
     }
 
     override fun onCleared() {

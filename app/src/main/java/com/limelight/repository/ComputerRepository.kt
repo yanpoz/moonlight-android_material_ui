@@ -105,6 +105,10 @@ class ComputerRepository {
         // This might involve using computerManagerBinder.
     }
 
+    fun pairComputer(context: Context, currentComputer: ComputerDetails): String {
+        return currentComputer.toString()
+    }
+
     // Optional: A method to clean up resources like the CoroutineScope if needed.
     // fun clear() {
     // repositoryScope.cancel()

@@ -102,7 +102,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers) { computer ->
                         ComputerItem(
                             computer = computer,
-                            onClick = { viewModel.onComputerClicked(it) } // Use ViewModel function
+                            onClick = { viewModel.onComputerClicked(it, context) } // Use ViewModel function
                         )
                     }
                 }
@@ -134,10 +134,10 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.showConnectionDialog && viewModel.computerForConnect != null) {
+    if (viewModel.showConnectionDialog && viewModel.selectedComputer != null) {
         ConnectionDialog(
             viewModel = viewModel,
-            computer = viewModel.computerForConnect!!,
+            computer = viewModel.selectedComputer!!,
             onDismiss = { viewModel.dismissComputerDialog() }
         )
     }
@@ -150,11 +150,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDism
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
         title = { Text(text = "Connecting to: ${computer.name}") },
-        text = {
-            viewModel.connectionMsg?.let {
-                Text(text = stringResource(id = it))
-            }
-        },
+        text  = { Text(text = viewModel.pairingMessage) },
         confirmButton = {
             TextButton(
                 onClick = { viewModel.dismissComputerDialog() }
