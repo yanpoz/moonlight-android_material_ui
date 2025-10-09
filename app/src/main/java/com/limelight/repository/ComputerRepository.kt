@@ -36,7 +36,7 @@ class ComputerRepository {
                 computerManagerBinder = binder as? ComputerManagerService.ComputerManagerBinder
                 computerManagerBinder?.waitForReady()
 
-                // Initialize the listener if it hasn't been, or if service reconnected
+                // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
                     computerManagerListener = ComposeComputerManagerListener { computer ->
                         // Update the list on the Main thread as it's observed by Compose

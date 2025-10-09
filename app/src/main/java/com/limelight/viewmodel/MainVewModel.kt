@@ -17,30 +17,21 @@ class MainViewModel : ViewModel() {
 
     var showConnectionDialog by mutableStateOf(false)
     private var selectedComputerUUID by mutableStateOf<String?>(null)
-
-    // computerForConnect is now derived from the computers list and selectedComputerUUID
     val computerForConnect: ComputerDetails? by derivedStateOf {
         selectedComputerUUID?.let { uuid ->
             computers.find { it.uuid == uuid }
         }
     }
-
-    // Make connectionMsg a derived state
     val connectionMsg: Int? by derivedStateOf {
-        val computer = computerForConnect
         when {
-            computer == null -> null // No computer selected, so no message
-            computer.state == ComputerDetails.State.OFFLINE || computer.activeAddress == null -> R.string.pair_pc_offline
+            computerForConnect == null -> null
+            computerForConnect?.state == ComputerDetails.State.OFFLINE -> R.string.pair_pc_offline
+            computerForConnect?.activeAddress == null -> R.string.error_unknown_host
             !computerRepository.isServiceConnected -> R.string.error_manager_not_running
             else -> R.string.conn_error_title
         }
     }
-
-    // Instantiate the ComputerRepository
     private val computerRepository = ComputerRepository()
-
-    // Expose the computers list from the repository
-    // This list should be reactively updated by ComputerRepository for this pattern to work effectively
     val computers: List<ComputerDetails> = computerRepository.computers
 
     // Delegate service binding and unbinding to the repository

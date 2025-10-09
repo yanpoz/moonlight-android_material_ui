@@ -38,10 +38,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-// import androidx.compose.runtime.getValue // No longer needed here
-// import androidx.compose.runtime.mutableStateOf // No longer needed here
-// import androidx.compose.runtime.remember // No longer needed here
-// import androidx.compose.runtime.setValue // No longer needed here
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -150,10 +146,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
 @Composable
 fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDismiss: () -> Unit) {
+//  TODO Add container transformation
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
-        title = { Text(text = "Connecting to: ${computer.name}") }, // Display computer name
-        text = { // Display error message if present
+        title = { Text(text = "Connecting to: ${computer.name}") },
+        text = {
             viewModel.connectionMsg?.let {
                 Text(text = stringResource(id = it))
             }
