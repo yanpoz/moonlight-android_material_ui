@@ -46,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.nvstream.http.PairingManager
 import com.limelight.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,7 +101,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers) { computer ->
                         ComputerItem(
                             computer = computer,
-                            onClick = { viewModel.onComputerClicked(it) }
+                            onClick = { viewModel.onComputerClicked(it) },
+                            viewModel = viewModel
                         )
                     }
                 }
@@ -150,7 +150,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDism
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
         title = { Text(text = "Connecting to: ${computer.name}") },
-//        text  = { Text(text = viewModel.pairingMessage) },
+        text = { Text(text = viewModel.getPairStatusText(computer)) },
         confirmButton = {
             TextButton(
                 onClick = { viewModel.dismissComputerDialog() }
@@ -163,7 +163,11 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDism
 
 
 @Composable
-fun ComputerItem(computer: ComputerDetails, onClick: (ComputerDetails) -> Unit) {
+fun ComputerItem(
+    computer: ComputerDetails, 
+    onClick: (ComputerDetails) -> Unit,
+    viewModel: MainViewModel
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
@@ -210,16 +214,8 @@ fun ComputerItem(computer: ComputerDetails, onClick: (ComputerDetails) -> Unit) 
             
             Spacer(modifier = Modifier.height(4.dp)) // Added spacer
 
-            val pairStatusText = when (computer.pairState) {
-                PairingManager.PairState.PAIRED -> "Pair status: Paired"
-                PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
-                PairingManager.PairState.PIN_WRONG -> "Pair status: PIN Incorrect"
-                PairingManager.PairState.FAILED -> "Pair status: Pairing Failed"
-                PairingManager.PairState.ALREADY_IN_PROGRESS -> "Pair status: Pairing in Progress"
-                null -> "Pair status: Unknown" // Handle null case if pairState can be null
-            }
             Text(
-                text = pairStatusText,
+                text = viewModel.getPairStatusText(computer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

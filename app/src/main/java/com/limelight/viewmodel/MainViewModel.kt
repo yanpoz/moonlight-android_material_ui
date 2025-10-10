@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.ComputerRepository
 
 class MainViewModel : ViewModel() {
@@ -58,10 +59,21 @@ class MainViewModel : ViewModel() {
         computerRepository.cancelConnection()
     }
 
+    fun getPairStatusText(computer: ComputerDetails): String {
+        return when (computer.pairState) {
+            PairingManager.PairState.PAIRED -> "Pair status: Paired"
+            PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
+            PairingManager.PairState.PIN_WRONG -> "Pair status: PIN Incorrect"
+            PairingManager.PairState.FAILED -> "Pair status: Pairing Failed"
+            PairingManager.PairState.ALREADY_IN_PROGRESS -> "Pair status: Pairing in Progress"
+            null -> "Pair status: Unknown"
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        // It's good practice to ensure resources are released.
-        // computerRepository.unbindService() should be called by the Activity/Fragment's onDestroy
+        // It'''s good practice to ensure resources are released.
+        // computerRepository.unbindService() should be called by the Activity/Fragment'''s onDestroy
         // If computerRepository had its own CoroutineScope that needs cancelling,
         // you might add a clear() method to the repository and call it here.
     }
