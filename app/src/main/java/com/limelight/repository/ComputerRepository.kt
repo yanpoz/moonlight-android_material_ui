@@ -7,14 +7,21 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.viewModelScope
+import com.limelight.R
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.ComputerManagerService
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.PairingManager.PairState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.MainScope // For UI updates
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class ComputerRepository {
 
@@ -26,9 +33,9 @@ class ComputerRepository {
     private val _computers = mutableStateListOf<ComputerDetails>()
     val computers: List<ComputerDetails> = _computers
 
-    private var runningPolling = false
+    private var connectionJob: Job? = null
 
-    val isServiceConnected: Boolean get() = computerManagerBinder != null
+    private var runningPolling = false
 
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
@@ -105,8 +112,31 @@ class ComputerRepository {
         // This might involve using computerManagerBinder.
     }
 
-    fun pairComputer(context: Context, currentComputer: ComputerDetails): String {
-        return currentComputer.toString()
+    fun initiateConnection(computer: ComputerDetails) {
+        connectionJob?.cancel()
+        connectionJob = repositoryScope.launch {
+            while (true) {
+                val currentComputer = computers.find { it.uuid == computer.uuid } ?: break
+                if (currentComputer.activeAddress != null &&
+                    currentComputer.state != ComputerDetails.State.OFFLINE &&
+                    computerManagerBinder != null
+                ) {
+                    if (currentComputer.pairState != PairState.PAIRED) {
+                        pairComputer(currentComputer)
+                        break
+                    }
+                }
+                delay(1000L)
+            }
+        }
+    }
+
+    fun cancelConnection() {
+        connectionJob?.cancel()
+    }
+
+    fun pairComputer(computer: ComputerDetails) {
+        return
     }
 
     // Optional: A method to clean up resources like the CoroutineScope if needed.

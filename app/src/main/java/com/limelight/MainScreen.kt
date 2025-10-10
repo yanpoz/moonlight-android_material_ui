@@ -102,7 +102,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers) { computer ->
                         ComputerItem(
                             computer = computer,
-                            onClick = { viewModel.onComputerClicked(it, context) } // Use ViewModel function
+                            onClick = { viewModel.onComputerClicked(it) }
                         )
                     }
                 }
@@ -150,7 +150,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDism
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
         title = { Text(text = "Connecting to: ${computer.name}") },
-        text  = { Text(text = viewModel.pairingMessage) },
+//        text  = { Text(text = viewModel.pairingMessage) },
         confirmButton = {
             TextButton(
                 onClick = { viewModel.dismissComputerDialog() }
@@ -210,7 +210,6 @@ fun ComputerItem(computer: ComputerDetails, onClick: (ComputerDetails) -> Unit) 
             
             Spacer(modifier = Modifier.height(4.dp)) // Added spacer
 
-            // Show Pairing State
             val pairStatusText = when (computer.pairState) {
                 PairingManager.PairState.PAIRED -> "Pair status: Paired"
                 PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
@@ -221,7 +220,7 @@ fun ComputerItem(computer: ComputerDetails, onClick: (ComputerDetails) -> Unit) 
             }
             Text(
                 text = pairStatusText,
-                style = MaterialTheme.typography.bodySmall, // Smaller text for status
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

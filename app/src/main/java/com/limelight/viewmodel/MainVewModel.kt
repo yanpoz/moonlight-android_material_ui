@@ -6,17 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.repository.ComputerRepository
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    var pairingMessage by mutableStateOf("")
-    private var connectionJob: Job? = null
     var showBottomSheet by mutableStateOf(false)
     var inputIp by mutableStateOf("")
 
@@ -30,7 +24,6 @@ class MainViewModel : ViewModel() {
     private val computerRepository = ComputerRepository()
     val computers: List<ComputerDetails> = computerRepository.computers
 
-    // Delegate service binding and unbinding to the repository
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
     }
@@ -54,36 +47,16 @@ class MainViewModel : ViewModel() {
         // showBottomSheet = false
     }
 
-    fun onComputerClicked(computer: ComputerDetails, context: Context) {
-        selectedComputerUUID = computer.uuid
+    fun onComputerClicked(computer: ComputerDetails) {
         showConnectionDialog = true
-        initiateConnection(computer, context)
-    }
-
-    private fun initiateConnection(computer: ComputerDetails, context: Context) {
-        connectionJob?.cancel()
-
-        connectionJob = viewModelScope.launch {
-            pairingMessage = context.getString(R.string.pairing)
-            while (true) {
-                val currentComputer = selectedComputer ?: break
-                if (currentComputer.activeAddress != null &&
-                    currentComputer.state != ComputerDetails.State.OFFLINE &&
-                    computerRepository.isServiceConnected
-                    ) {
-                    pairingMessage = computerRepository.pairComputer(context, currentComputer)
-                    break
-                }
-                delay(1000L)
-            }
-        }
+        selectedComputerUUID = computer.uuid
+        computerRepository.initiateConnection(computer)
     }
 
     fun dismissComputerDialog() {
         showConnectionDialog = false
-        connectionJob?.cancel()
         selectedComputerUUID = null
-        pairingMessage = ""        
+        computerRepository.cancelConnection()
     }
 
     override fun onCleared() {
