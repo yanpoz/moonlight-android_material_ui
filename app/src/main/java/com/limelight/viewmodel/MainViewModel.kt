@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.repository.ComputerRepository
-import kotlinx.coroutines.Job
 
 class MainViewModel : ViewModel() {
     var showBottomSheet by mutableStateOf(false)
