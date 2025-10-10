@@ -138,14 +138,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         ConnectionDialog(
             viewModel = viewModel,
             computer = viewModel.selectedComputer!!,
-            onDismiss = { viewModel.dismissComputerDialog() }
         )
     }
 }
 
 
 @Composable
-fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails, onDismiss: () -> Unit) {
+fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails) {
 //  TODO Add container transformation
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
