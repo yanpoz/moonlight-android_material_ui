@@ -201,7 +201,6 @@ fun ComputerItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Show IP address
             val address = computer.activeAddress?.address ?: computer.localAddress?.address
             ?: computer.remoteAddress?.address ?: computer.manualAddress?.address ?: "Unknown"
 
@@ -211,7 +210,7 @@ fun ComputerItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
-            Spacer(modifier = Modifier.height(4.dp)) // Added spacer
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = viewModel.getPairStatusText(computer),
