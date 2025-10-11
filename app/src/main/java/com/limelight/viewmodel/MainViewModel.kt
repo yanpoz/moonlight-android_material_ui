@@ -41,16 +41,16 @@ class MainViewModel : ViewModel() {
     }
 
     fun addComputer(context: Context, ipAddress: String) {
-        computerRepository.addComputer(context, ipAddress)
+        computerRepository.addComputer(ipAddress)
         // Optionally, reset input IP and hide bottom sheet after attempting to add
         // inputIp = ""
         // showBottomSheet = false
     }
 
-    fun onComputerClicked(computer: ComputerDetails) {
+    fun onComputerClicked(computerUUID: String) {
         showConnectionDialog = true
-        selectedComputerUUID = computer.uuid
-        computerRepository.initiateConnection(computer)
+        selectedComputerUUID = computerUUID
+        computerRepository.initiateConnection(computerUUID)
     }
 
     fun dismissComputerDialog() {
