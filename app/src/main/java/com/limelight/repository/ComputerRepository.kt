@@ -135,6 +135,7 @@ class ComputerRepository {
 
     fun cancelConnection() {
         connectionJob?.cancel()
+        pin = ""
     }
 
     fun pairComputer(computer: ComputerDetails) {
@@ -148,6 +149,8 @@ class ComputerRepository {
                 computer.serverCert,
                 PlatformBinding.getCryptoProvider(context)
             )
+            if (httpConn.pairState == PairState.PAIRED) return
+            pin = PairingManager.generatePinString()
         } catch (e: Exception) {
             // Handle exceptions if necessary. Revert to original state.
         } finally {
