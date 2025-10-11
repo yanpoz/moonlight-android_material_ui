@@ -7,21 +7,21 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.viewModelScope
-import com.limelight.R
+import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.ComputerManagerService
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvHTTP
+import com.limelight.nvstream.http.PairingManager
 import com.limelight.nvstream.http.PairingManager.PairState
+import com.limelight.utils.ServerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class ComputerRepository {
 
@@ -36,6 +36,7 @@ class ComputerRepository {
     private var connectionJob: Job? = null
 
     private var runningPolling = false
+    private var context: Context? = null
 
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
@@ -74,6 +75,7 @@ class ComputerRepository {
     }
 
     fun bindService(context: Context) {
+        this@ComputerRepository.context = context.applicationContext
         val intent = Intent(context, ComputerManagerService::class.java)
         context.bindService(intent, computerManagerServiceConnection, Service.BIND_AUTO_CREATE)
     }
@@ -106,7 +108,7 @@ class ComputerRepository {
         }
     }
 
-    fun addComputer(context: Context, ipAddress: String) {
+    fun addComputer(ipAddress: String) {
         // TODO: Implement the logic to add a computer,
         // similar to how it would have been in the ViewModel.
         // This might involve using computerManagerBinder.
@@ -136,7 +138,21 @@ class ComputerRepository {
     }
 
     fun pairComputer(computer: ComputerDetails) {
-        return
+        try {
+            pauseComputerUpdates()
+
+            val httpConn = NvHTTP(
+                ServerHelper.getCurrentAddressFromComputer(computer),
+                computer.httpsPort,
+                computerManagerBinder?.uniqueId,
+                computer.serverCert,
+                PlatformBinding.getCryptoProvider(context)
+            )
+        } catch (e: Exception) {
+            // Handle exceptions if necessary. Revert to original state.
+        } finally {
+            resumeComputerUpdates()
+        }
     }
 
     // Optional: A method to clean up resources like the CoroutineScope if needed.
