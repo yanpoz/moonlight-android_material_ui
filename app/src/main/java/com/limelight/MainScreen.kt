@@ -101,7 +101,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers) { computer ->
                         ComputerItem(
                             computer = computer,
-                            onClick = { viewModel.onComputerClicked(it) },
+                            onClick = { viewModel.onComputerClicked(it.uuid) },
                             viewModel = viewModel
                         )
                     }

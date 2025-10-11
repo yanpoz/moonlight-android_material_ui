@@ -112,17 +112,17 @@ class ComputerRepository {
         // This might involve using computerManagerBinder.
     }
 
-    fun initiateConnection(computer: ComputerDetails) {
+    fun initiateConnection(computerUUID: String) {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
             while (true) {
-                val currentComputer = computers.find { it.uuid == computer.uuid } ?: break
-                if (currentComputer.activeAddress != null &&
-                    currentComputer.state != ComputerDetails.State.OFFLINE &&
+                val computer = computers.find { it.uuid == computerUUID } ?: break
+                if (computer.activeAddress != null &&
+                    computer.state != ComputerDetails.State.OFFLINE &&
                     computerManagerBinder != null
                 ) {
-                    if (currentComputer.pairState != PairState.PAIRED) {
-                        pairComputer(currentComputer)
+                    if (computer.pairState != PairState.PAIRED) {
+                        pairComputer(computer)
                         break
                     }
                 }
