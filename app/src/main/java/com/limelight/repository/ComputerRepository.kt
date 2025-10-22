@@ -11,6 +11,7 @@ import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.ComputerManagerService
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.NvHTTP
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.nvstream.http.PairingManager.PairState
@@ -23,6 +24,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+data class Computer(
+    val details: ComputerDetails,
+    val apps: List<NvApp> = emptyList(),
+    var pairResult: PairState? = null,
+    var pairPin: String? = null
+)
+
 class ComputerRepository {
 
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -30,8 +38,8 @@ class ComputerRepository {
 
     private var computerManagerBinder: ComputerManagerService.ComputerManagerBinder? = null
     private var computerManagerListener: ComposeComputerManagerListener? = null
-    private val _computers = mutableStateListOf<ComputerDetails>()
-    val computers: List<ComputerDetails> = _computers
+    private val _computers = mutableStateListOf<Computer>()
+    val computers: List<Computer> = _computers
 
     private var connectionJob: Job? = null
 
@@ -46,16 +54,21 @@ class ComputerRepository {
 
                 // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
-                    computerManagerListener = ComposeComputerManagerListener { computer ->
+                    computerManagerListener = ComposeComputerManagerListener { details ->
                         // Update the list on the Main thread as it's observed by Compose
                         uiScope.launch {
-                            val existingIndex = _computers.indexOfFirst { it.uuid == computer.uuid }
+                            val existingIndex = _computers.indexOfFirst {
+                                it.details.uuid == details.uuid }
                             if (existingIndex >= 0) {
-                                if (_computers[existingIndex] != computer) { // Avoid unnecessary updates
-                                    _computers[existingIndex] = computer
+                                // Create a new ComputerState object with the updated computer details
+                                // while preserving other state like apps, pairResult, etc.
+                                val currentComputer = _computers[existingIndex]
+                                if (currentComputer.details != details) { // Avoid unnecessary updates
+                                    _computers[existingIndex] = currentComputer.copy(details = details)
                                 }
                             } else {
-                                _computers.add(computer)
+                                // Add a new computer with a default ComputerState
+                                _computers.add(Computer(details = details))
                             }
                         }
                     }
@@ -118,12 +131,12 @@ class ComputerRepository {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
             while (true) {
-                val computer = computers.find { it.uuid == computerUUID } ?: break
-                if (computer.activeAddress != null &&
-                    computer.state != ComputerDetails.State.OFFLINE &&
+                val computer = computers.find { it.details.uuid == computerUUID } ?: break
+                if (computer.details.activeAddress != null &&
+                    computer.details.state != ComputerDetails.State.OFFLINE &&
                     computerManagerBinder != null
                 ) {
-                    if (computer.pairState != PairState.PAIRED) {
+                    if (computer.details.pairState != PairState.PAIRED) {
                         pairComputer(computer)
                         break
                     }
@@ -137,19 +150,19 @@ class ComputerRepository {
         connectionJob?.cancel()
     }
 
-    fun pairComputer(computer: ComputerDetails) {
+    fun pairComputer(computer: Computer) {
         try {
             pauseComputerUpdates()
 
             val httpConn = NvHTTP(
-                ServerHelper.getCurrentAddressFromComputer(computer),
-                computer.httpsPort,
+                ServerHelper.getCurrentAddressFromComputer(computer.details),
+                computer.details.httpsPort,
                 computerManagerBinder?.uniqueId,
-                computer.serverCert,
+                computer.details.serverCert,
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) return
-            val pin = PairingManager.generatePinString()
+            computer.pairPin = PairingManager.generatePinString()
         } catch (e: Exception) {
             // Handle exceptions if necessary. Revert to original state.
         } finally {

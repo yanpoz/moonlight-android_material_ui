@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.repository.Computer
 import com.limelight.repository.ComputerRepository
 
 class MainViewModel : ViewModel() {
@@ -16,13 +17,13 @@ class MainViewModel : ViewModel() {
 
     var showConnectionDialog by mutableStateOf(false)
     private var selectedComputerUUID by mutableStateOf<String?>(null)
-    val selectedComputer: ComputerDetails? by derivedStateOf {
+    val selectedComputer: Computer? by derivedStateOf {
         selectedComputerUUID?.let { uuid ->
-            computers.find { it.uuid == uuid }
+            computers.find { it.details.uuid == uuid }
         }
     }
     private val computerRepository = ComputerRepository()
-    val computers: List<ComputerDetails> = computerRepository.computers
+    val computers: List<Computer> = computerRepository.computers
 
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
@@ -59,8 +60,8 @@ class MainViewModel : ViewModel() {
         computerRepository.cancelConnection()
     }
 
-    fun getPairStatusText(computer: ComputerDetails): String {
-        return when (computer.pairState) {
+    fun getPairStatusText(computer: Computer): String {
+        return when (computer.details.pairState) {
             PairingManager.PairState.PAIRED -> "Pair status: Paired"
             PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
             PairingManager.PairState.PIN_WRONG -> "Pair status: PIN Incorrect"

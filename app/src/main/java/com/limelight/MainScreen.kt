@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +102,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers) { computer ->
                         ComputerItem(
                             computer = computer,
-                            onClick = { viewModel.onComputerClicked(it.uuid) },
+                            onClick = { viewModel.onComputerClicked(it.details.uuid) },
                             viewModel = viewModel
                         )
                     }
@@ -144,11 +145,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
 
 @Composable
-fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails) {
+fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
 //  TODO Add container transformation
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
-        title = { Text(text = "Connecting to: ${computer.name}") },
+        title = { Text(text = "Connecting to: ${computer.details.name}") },
         text = { Text(text = viewModel.getPairStatusText(computer)) },
         confirmButton = {
             TextButton(
@@ -163,8 +164,8 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: ComputerDetails) {
 
 @Composable
 fun ComputerItem(
-    computer: ComputerDetails, 
-    onClick: (ComputerDetails) -> Unit,
+    computer: Computer,
+    onClick: (Computer) -> Unit,
     viewModel: MainViewModel
 ) {
     Card(
@@ -181,12 +182,12 @@ fun ComputerItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = computer.name,
+                    text = computer.details.name,
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 // Status indicator
-                val statusColor = when (computer.state) {
+                val statusColor = when (computer.details.state) {
                     ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.primary
                     ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
                     else -> MaterialTheme.colorScheme.onSurfaceVariant
@@ -201,8 +202,8 @@ fun ComputerItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val address = computer.activeAddress?.address ?: computer.localAddress?.address
-            ?: computer.remoteAddress?.address ?: computer.manualAddress?.address ?: "Unknown"
+            val address = computer.details.activeAddress.address ?: computer.details.localAddress?.address
+            ?: computer.details.remoteAddress?.address ?: computer.details.manualAddress?.address ?: "Unknown"
 
             Text(
                 text = address,
