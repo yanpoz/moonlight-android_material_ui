@@ -150,7 +150,10 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDialog() },
         title = { Text(text = "Connecting to: ${computer.details.name}") },
-        text = { Text(text = viewModel.getPairStatusText(computer)) },
+        text = { Column {
+            Text(text = viewModel.getPairStatusText(computer))
+            Text(text = viewModel.getPairPinText(computer))
+        } },
         confirmButton = {
             TextButton(
                 onClick = { viewModel.dismissComputerDialog() }

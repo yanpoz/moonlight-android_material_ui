@@ -68,7 +68,6 @@ class MainViewModel : ViewModel() {
             ?: "Unknown Address"
     }
 
-
     fun getPairStatusText(computer: Computer): String {
         return when (computer.details.pairState) {
             PairingManager.PairState.PAIRED -> "Pair status: Paired"
@@ -77,6 +76,13 @@ class MainViewModel : ViewModel() {
             PairingManager.PairState.FAILED -> "Pair status: Pairing Failed"
             PairingManager.PairState.ALREADY_IN_PROGRESS -> "Pair status: Pairing in Progress"
             null -> "Pair status: Unknown"
+        }
+    }
+
+    fun getPairPinText(computer: Computer): String {
+        return when (computer.pairPin) {
+            null -> "Generating PIN..."
+            else -> "Pair PIN: ${computer.pairPin}"
         }
     }
 

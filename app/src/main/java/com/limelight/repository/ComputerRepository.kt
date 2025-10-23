@@ -134,14 +134,13 @@ class ComputerRepository {
                 val computer = computers.find { it.details.uuid == computerUUID } ?: break
                 if (computer.details.activeAddress != null &&
                     computer.details.state != ComputerDetails.State.OFFLINE &&
+                    computer.details.pairState != PairState.PAIRED &&
                     computerManagerBinder != null
                 ) {
-                    if (computer.details.pairState != PairState.PAIRED) {
-                        pairComputer(computer)
-                        break
-                    }
+                    pairComputer(computer)
+                    break
                 }
-                delay(1000L)
+                delay(500L)
             }
         }
     }
@@ -162,7 +161,7 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) return
-            computer.pairPin = PairingManager.generatePinString()
+            computer.pairPin = computer.pairPin ?: PairingManager.generatePinString()
         } catch (e: Exception) {
             // Handle exceptions if necessary. Revert to original state.
         } finally {
