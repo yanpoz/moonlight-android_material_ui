@@ -86,6 +86,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getRawAppListText(computer: Computer): String {
+        return when (computer.details.rawAppList) {
+            null -> "Fetching App List..."
+            else -> "App List: ${computer.details.rawAppList}"
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         // It'''s good practice to ensure resources are released.
