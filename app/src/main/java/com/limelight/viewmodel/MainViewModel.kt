@@ -60,6 +60,15 @@ class MainViewModel : ViewModel() {
         computerRepository.cancelConnection()
     }
 
+    fun getComputerAddressText(computer: Computer): String {
+        return computer.details.activeAddress?.address
+            ?: computer.details.localAddress?.address
+            ?: computer.details.remoteAddress?.address
+            ?: computer.details.manualAddress?.address
+            ?: "Unknown Address"
+    }
+
+
     fun getPairStatusText(computer: Computer): String {
         return when (computer.details.pairState) {
             PairingManager.PairState.PAIRED -> "Pair status: Paired"

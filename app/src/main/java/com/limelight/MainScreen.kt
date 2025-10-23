@@ -202,14 +202,8 @@ fun ComputerItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val address = computer.details.activeAddress?.address
-                ?: computer.details.localAddress?.address
-                ?: computer.details.remoteAddress?.address
-                ?: computer.details.manualAddress?.address
-                ?: "Unknown"
-
             Text(
-                text = address,
+                text = viewModel.getComputerAddressText(computer),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
