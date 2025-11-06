@@ -27,8 +27,8 @@ import kotlinx.coroutines.launch
 data class Computer(
     val details: ComputerDetails,
     val apps: List<NvApp> = emptyList(),
-    var pairResult: PairState? = null,
-    var pairPin: String? = null
+    val pairResult: PairState? = null,
+    val pairPin: String? = null
 )
 
 class ComputerRepository {
@@ -55,19 +55,17 @@ class ComputerRepository {
                 // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
                     computerManagerListener = ComposeComputerManagerListener { details ->
-                        // Update the list on the Main thread as it's observed by Compose
-                        uiScope.launch {
-                            val existingIndex = _computers.indexOfFirst {
-                                it.details.uuid == details.uuid }
-                            if (existingIndex >= 0) {
-                                // Create a new ComputerState object with the updated computer details
-                                // while preserving other state like apps, pairResult, etc.
-                                val currentComputer = _computers[existingIndex]
-                                if (currentComputer.details != details) { // Avoid unnecessary updates
-                                    _computers[existingIndex] = currentComputer.copy(details = details)
-                                }
-                            } else {
-                                // Add a new computer with a default ComputerState
+                        val existingIndex = _computers.indexOfFirst {
+                            it.details.uuid == details.uuid
+                        }
+                        if (existingIndex >= 0) {
+                            val currentComputer = _computers[existingIndex]
+                            if (currentComputer.details != details) { // Avoid unnecessary updates
+                                updateComputer(details.uuid) { it.copy(details = details) }
+                            }
+                        } else {
+                            // Add a new computer with a default ComputerState
+                            uiScope.launch {
                                 _computers.add(Computer(details = details))
                             }
                         }
@@ -121,6 +119,15 @@ class ComputerRepository {
         }
     }
 
+    private fun updateComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
+        uiScope.launch {
+            val index = _computers.indexOfFirst { it.details.uuid == computerUUID }
+            if (index != -1) {
+                _computers[index] = updateAction(_computers[index])
+            }
+        }
+    }
+
     fun addComputer(ipAddress: String) {
         // TODO: Implement the logic to add a computer,
         // similar to how it would have been in the ViewModel.
@@ -161,7 +168,19 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) return
-            computer.pairPin = computer.pairPin ?: PairingManager.generatePinString()
+
+            val computerIndex = _computers.indexOfFirst { it.details.uuid == computer.details.uuid }
+            val pairPin = _computers[computerIndex].pairPin ?: PairingManager.generatePinString()
+            updateComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
+
+            val result = httpConn.pairingManager.pair(
+                httpConn.getServerInfo(true),
+                pairPin
+            )
+            updateComputer(computer.details.uuid) { it.copy(pairResult = result) }
+
+        } catch (e: IndexOutOfBoundsException) {
+            // Computer not found in list, so we can't pair.
         } catch (e: Exception) {
             // Handle exceptions if necessary. Revert to original state.
         } finally {

@@ -93,6 +93,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getPairResult(computer: Computer): String {
+        return when (computer.pairResult) {
+            null -> "No pair"
+            else -> "Pair Result: ${computer.pairResult}"
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         // It'''s good practice to ensure resources are released.
