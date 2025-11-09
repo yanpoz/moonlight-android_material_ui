@@ -171,18 +171,16 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) return
-
-            val computerIndex = _computers.indexOfFirst { it.details.uuid == computer.details.uuid }
-            val pairPin = _computers[computerIndex].pairPin ?: PairingManager.generatePinString()
+            val pairPin = computer.pairPin ?: PairingManager.generatePinString()
             updateComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
             val pairingManager = httpConn.pairingManager
 
-            val result = pairingManager.pair(
+            val pairResult = pairingManager.pair(
                 httpConn.getServerInfo(true),
                 pairPin
             )
 
-            updateComputer(computer.details.uuid) { it.copy(pairResult = result) }
+            updateComputer(computer.details.uuid) { it.copy(pairResult = pairResult) }
             computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
                 pairingManager.pairedCert
             computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
