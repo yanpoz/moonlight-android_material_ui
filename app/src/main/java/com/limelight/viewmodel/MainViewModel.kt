@@ -1,12 +1,14 @@
 package com.limelight.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
-import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.R
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.repository.ComputerRepository
@@ -93,9 +95,19 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getPairResult(computer: Computer): String {
+    @Composable
+    fun getPairResultText(computer: Computer): String {
         return when (computer.pairResult) {
-            null -> "No pair"
+            null -> "NULL pair"
+            PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pair_already_in_progress)
+            PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
+            PairingManager.PairState.FAILED -> {
+                if (computer.details.runningGameId != 0) {
+                    stringResource(R.string.pair_pc_ingame)
+                } else {
+                    stringResource(R.string.pair_fail)
+                }
+            }
             else -> "Pair Result: ${computer.pairResult}"
         }
     }

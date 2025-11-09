@@ -88,7 +88,10 @@ class ComputerRepository {
     fun bindService(context: Context) {
         this@ComputerRepository.context = context.applicationContext
         val intent = Intent(context, ComputerManagerService::class.java)
-        context.bindService(intent, computerManagerServiceConnection, Service.BIND_AUTO_CREATE)
+        context.bindService(
+            intent,
+            computerManagerServiceConnection,
+            Service.BIND_AUTO_CREATE)
     }
 
     fun unbindService(context: Context) {
@@ -172,12 +175,17 @@ class ComputerRepository {
             val computerIndex = _computers.indexOfFirst { it.details.uuid == computer.details.uuid }
             val pairPin = _computers[computerIndex].pairPin ?: PairingManager.generatePinString()
             updateComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
+            val pairingManager = httpConn.pairingManager
 
-            val result = httpConn.pairingManager.pair(
+            val result = pairingManager.pair(
                 httpConn.getServerInfo(true),
                 pairPin
             )
+
             updateComputer(computer.details.uuid) { it.copy(pairResult = result) }
+            computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
+                pairingManager.pairedCert
+            computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
 
         } catch (e: IndexOutOfBoundsException) {
             // Computer not found in list, so we can't pair.

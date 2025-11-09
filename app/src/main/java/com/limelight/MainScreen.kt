@@ -153,7 +153,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
         text = { Column {
             Text(text = viewModel.getPairStatusText(computer))
             Text(text = viewModel.getPairPinText(computer))
-            Text(text = viewModel.getPairResult(computer))
+            Text(text = viewModel.getPairResultText(computer))
         } },
         confirmButton = {
             TextButton(
