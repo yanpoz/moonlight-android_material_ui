@@ -56,7 +56,7 @@ class MainViewModel : ViewModel() {
         computerRepository.initiateConnection(computerUUID)
     }
 
-    fun dismissComputerDialog() {
+    fun dismissConnectionDialog() {
         showConnectionDialog = false
         selectedComputerUUID = null
         computerRepository.cancelConnection()

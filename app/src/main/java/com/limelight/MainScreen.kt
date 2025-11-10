@@ -148,7 +148,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
 //  TODO Add container transformation
     AlertDialog(
-        onDismissRequest = { viewModel.dismissComputerDialog() },
+        onDismissRequest = { viewModel.dismissConnectionDialog() },
         title = { Text(text = "Connecting to: ${computer.details.name}") },
         text = { Column {
             Text(text = viewModel.getPairStatusText(computer))
@@ -157,7 +157,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
         } },
         confirmButton = {
             TextButton(
-                onClick = { viewModel.dismissComputerDialog() }
+                onClick = { viewModel.dismissConnectionDialog() }
             ) {
                 Text("Close")
             }

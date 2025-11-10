@@ -185,6 +185,11 @@ class ComputerRepository {
                 pairingManager.pairedCert
             computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
 
+            if (pairResult == PairState.PAIRED) {
+                loadApps(computer)
+            }
+            // TODO resumeComputerUpdates()
+
         } catch (e: IndexOutOfBoundsException) {
             // Computer not found in list, so we can't pair.
         } catch (e: Exception) {
@@ -192,6 +197,10 @@ class ComputerRepository {
         } finally {
             resumeComputerUpdates()
         }
+    }
+
+    fun loadApps(computer: Computer) {
+        // TODO: Implement the logic to load apps for a computer.
     }
 
     // Optional: A method to clean up resources like the CoroutineScope if needed.
