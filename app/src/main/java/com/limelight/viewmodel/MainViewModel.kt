@@ -95,10 +95,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun isComputerPaired(computer: Computer): Boolean {
-        return computer.pairResult == PairingManager.PairState.PAIRED
-    }
-
     @Composable
     fun getPairResultText(computer: Computer): String {
         return when (computer.pairResult) {
