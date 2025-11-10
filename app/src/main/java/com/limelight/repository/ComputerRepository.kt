@@ -170,7 +170,10 @@ class ComputerRepository {
                 computer.details.serverCert,
                 PlatformBinding.getCryptoProvider(context)
             )
-            if (httpConn.pairState == PairState.PAIRED) return
+            if (httpConn.pairState == PairState.PAIRED) {
+                updateComputer(computer.details.uuid) { it.copy(pairResult = PairState.PAIRED) }
+                return
+            }
             val pairPin = computer.pairPin ?: PairingManager.generatePinString()
             updateComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
             val pairingManager = httpConn.pairingManager
@@ -181,15 +184,12 @@ class ComputerRepository {
             )
 
             updateComputer(computer.details.uuid) { it.copy(pairResult = pairResult) }
-            computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
-                pairingManager.pairedCert
-            computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
 
             if (pairResult == PairState.PAIRED) {
-                loadApps(computer)
+                computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
+                    pairingManager.pairedCert
+                computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
             }
-            // TODO resumeComputerUpdates()
-
         } catch (e: IndexOutOfBoundsException) {
             // Computer not found in list, so we can't pair.
         } catch (e: Exception) {

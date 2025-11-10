@@ -155,11 +155,26 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
             Text(text = viewModel.getPairPinText(computer))
             Text(text = viewModel.getPairResultText(computer))
         } },
-        confirmButton = {
-            TextButton(
-                onClick = { viewModel.dismissConnectionDialog() }
-            ) {
-                Text("Close")
+        confirmButton = { 
+            if (viewModel.isComputerPaired(computer)) {
+                Row {
+                    TextButton(
+                        onClick = { viewModel.dismissConnectionDialog() }
+                    ) {
+                        Text("Open Desktop")
+                    }
+                    TextButton(
+                        onClick = { viewModel.dismissConnectionDialog() }
+                    ) {
+                        Text("Display Apps & Games")
+                    }
+                }
+            } else {
+                TextButton(
+                    onClick = { viewModel.dismissConnectionDialog() }
+                ) {
+                    Text("Cancel")
+                }
             }
         }
     )
@@ -211,7 +226,7 @@ fun ComputerItem(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
