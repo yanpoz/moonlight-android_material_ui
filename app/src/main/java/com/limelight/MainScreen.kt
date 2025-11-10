@@ -46,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
@@ -157,7 +156,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
             Text(text = viewModel.getPairResultText(computer))
         } },
         confirmButton = { 
-            if (computer.pairResult == PairingManager.PairState.PAIRED) { // move to viewModel ??
+            if (viewModel.isComputerPaired(computer)) {
                 Row {
                     TextButton(
                         onClick = { viewModel.dismissConnectionDialog() }
