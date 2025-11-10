@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
@@ -42,9 +43,10 @@ class ComputerRepository {
     val computers: List<Computer> = _computers
 
     private var connectionJob: Job? = null
-
     private var runningPolling = false
     private var context: Context? = null
+
+    private val connectionPollDelayMs = 500L
 
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
@@ -150,7 +152,7 @@ class ComputerRepository {
                     pairComputer(computer)
                     break
                 }
-                delay(500L)
+                delay(connectionPollDelayMs)
             }
         }
     }
@@ -190,10 +192,8 @@ class ComputerRepository {
                     pairingManager.pairedCert
                 computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
             }
-        } catch (e: IndexOutOfBoundsException) {
-            // Computer not found in list, so we can't pair.
         } catch (e: Exception) {
-            // Handle exceptions if necessary. Revert to original state.
+            Log.e("ComputerRepository", "Error pairing computer", e)
         } finally {
             resumeComputerUpdates()
         }
