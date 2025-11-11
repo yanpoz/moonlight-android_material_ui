@@ -1,14 +1,17 @@
 package com.limelight.viewmodel
 
 import android.content.Context
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import com.limelight.R
+import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.repository.ComputerRepository
@@ -97,6 +100,15 @@ class MainViewModel : ViewModel() {
 
     fun isComputerPaired(computer: Computer): Boolean {
         return computer.pairResult == PairingManager.PairState.PAIRED
+    }
+
+    @Composable
+    fun getStatusColor(computer: Computer): Color {
+        return when (computer.details.state) {
+            ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.primary
+            ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
+        }
     }
 
     @Composable

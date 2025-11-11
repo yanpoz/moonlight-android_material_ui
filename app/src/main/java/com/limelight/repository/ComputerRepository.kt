@@ -189,7 +189,7 @@ class ComputerRepository {
             if (pairResult == PairState.PAIRED) {
                 computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
                     pairingManager.pairedCert
-                computerManagerBinder?.invalidateStateForComputer(computer.details.uuid)
+                loadApps(computer)
             }
         } catch (e: Exception) {
             Log.e("ComputerRepository", "Error pairing computer", e)
@@ -199,7 +199,33 @@ class ComputerRepository {
     }
 
     fun loadApps(computer: Computer) {
-        // TODO: Implement the logic to load apps for a computer.
+        repositoryScope.launch {
+            // Find the computer to ensure we have the latest details
+            val currentComputer = computers.find { it.details.uuid == computer.details.uuid } ?: return@launch
+
+            // Proceed only if the computer is online and paired
+            if (currentComputer.details.state != ComputerDetails.State.ONLINE ||
+                currentComputer.details.pairState != PairState.PAIRED) {
+                return@launch
+            }
+
+            try {
+                val httpConn = NvHTTP(
+                    ServerHelper.getCurrentAddressFromComputer(currentComputer.details),
+                    currentComputer.details.httpsPort,
+                    computerManagerBinder?.uniqueId,
+                    currentComputer.details.serverCert,
+                    PlatformBinding.getCryptoProvider(context)
+                )
+
+                updateComputer(currentComputer.details.uuid) {
+                    it.copy(apps = httpConn.appList)
+                }
+            } catch (e: Exception) {
+                Log.e("ComputerRepository", "Failed to load app list for ${currentComputer.details.name}", e)
+                // Optionally, you could update the UI to show an error state
+            }
+        }
     }
 
     // Optional: A method to clean up resources like the CoroutineScope if needed.

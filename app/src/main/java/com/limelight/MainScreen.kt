@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
@@ -206,16 +205,10 @@ fun ComputerItem(
                 )
 
                 // Status indicator
-                val statusColor = when (computer.details.state) {
-                    ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.primary
-                    ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-
                 Box(
                     modifier = Modifier
                         .size(12.dp)
-                        .background(statusColor, CircleShape)
+                        .background(viewModel.getStatusColor(computer), CircleShape)
                 )
             }
 
