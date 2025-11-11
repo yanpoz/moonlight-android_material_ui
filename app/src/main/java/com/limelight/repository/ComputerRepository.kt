@@ -45,7 +45,6 @@ class ComputerRepository {
     private var connectionJob: Job? = null
     private var runningPolling = false
     private var context: Context? = null
-
     private val connectionPollDelayMs = 500L
 
     private val computerManagerServiceConnection = object : ServiceConnection {
