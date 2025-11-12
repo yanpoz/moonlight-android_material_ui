@@ -212,14 +212,6 @@ fun ComputerItem(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = viewModel.getComputerAddressText(computer),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(

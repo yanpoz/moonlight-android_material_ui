@@ -92,9 +92,9 @@ class MainViewModel : ViewModel() {
     }
 
     fun getRawAppListText(computer: Computer): String {
-        return when (computer.details.rawAppList) {
+        return when (computer.apps) {
             null -> "Fetching App List..."
-            else -> "App List: ${computer.details.rawAppList}"
+            else -> "App List: ${computer.apps}"
         }
     }
 

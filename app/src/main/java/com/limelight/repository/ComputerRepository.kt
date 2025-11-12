@@ -151,6 +151,14 @@ class ComputerRepository {
                     pairComputer(computer)
                     break
                 }
+                if (computer.details.activeAddress != null &&
+                    computer.details.state == ComputerDetails.State.ONLINE &&
+                    computer.details.pairState == PairState.PAIRED &&
+                    computerManagerBinder != null
+                ) {
+                    loadApps(computerUUID)
+                    break
+                }
                 delay(connectionPollDelayMs)
             }
         }
@@ -189,7 +197,6 @@ class ComputerRepository {
             if (pairResult == PairState.PAIRED) {
                 computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
                     pairingManager.pairedCert
-                loadApps(computer)
             }
         } catch (e: Exception) {
             Log.e("ComputerRepository", "Error pairing computer", e)
@@ -198,31 +205,33 @@ class ComputerRepository {
         }
     }
 
-    fun loadApps(computer: Computer) {
+    fun loadApps(computerUuid: String) {
         repositoryScope.launch {
             // Find the computer to ensure we have the latest details
-            val currentComputer = computers.find { it.details.uuid == computer.details.uuid } ?: return@launch
+            val computer = computers.find { it.details.uuid == computerUuid } ?: return@launch
 
             // Proceed only if the computer is online and paired
-            if (currentComputer.details.state != ComputerDetails.State.ONLINE ||
-                currentComputer.details.pairState != PairState.PAIRED) {
+            if (computer.details.state != ComputerDetails.State.ONLINE ||
+                computer.details.pairState != PairState.PAIRED) {
                 return@launch
             }
 
             try {
                 val httpConn = NvHTTP(
-                    ServerHelper.getCurrentAddressFromComputer(currentComputer.details),
-                    currentComputer.details.httpsPort,
+                    ServerHelper.getCurrentAddressFromComputer(computer.details),
+                    computer.details.httpsPort,
                     computerManagerBinder?.uniqueId,
-                    currentComputer.details.serverCert,
+                    computer.details.serverCert,
                     PlatformBinding.getCryptoProvider(context)
                 )
 
-                updateComputer(currentComputer.details.uuid) {
-                    it.copy(apps = httpConn.appList)
+                val appList = httpConn.appList
+
+                updateComputer(computer.details.uuid) {
+                    it.copy(apps = appList)
                 }
             } catch (e: Exception) {
-                Log.e("ComputerRepository", "Failed to load app list for ${currentComputer.details.name}", e)
+                Log.e("ComputerRepository", "Failed to load app list for ${computer.details.name}", e)
                 // Optionally, you could update the UI to show an error state
             }
         }
