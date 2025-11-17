@@ -24,12 +24,14 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.StringReader
 
 data class Computer(
     val details: ComputerDetails,
     val apps: List<NvApp> = emptyList(),
     val pairResult: PairState? = null,
-    val pairPin: String? = null
+    val pairPin: String? = null,
+    val applistPoller: ComputerManagerService.ApplistPoller? = null
 )
 
 class ComputerRepository {
@@ -55,25 +57,14 @@ class ComputerRepository {
 
                 // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
-                    computerManagerListener = ComposeComputerManagerListener { details ->
-                        val existingIndex = _computers.indexOfFirst {
-                            it.details.uuid == details.uuid
-                        }
-                        if (existingIndex >= 0) {
-                            val currentComputer = _computers[existingIndex]
-                            if (currentComputer.details != details) { // Avoid unnecessary updates
-                                updateComputer(details.uuid) { it.copy(details = details) }
-                            }
-                        } else {
-                            // Add a new computer with a default ComputerState
-                            uiScope.launch {
-                                _computers.add(Computer(details = details))
-                            }
-                        }
-                    }
+                    computerManagerListener = ComposeComputerManagerListener(
+                        ::processComputerDetails)
                 }
-                if (computerManagerBinder != null && !runningPolling && computerManagerListener != null) {
-                    computerManagerBinder?.startPolling(computerManagerListener!!)
+                if (computerManagerBinder != null &&
+                    computerManagerListener != null &&
+                    !runningPolling
+                    ) {
+                    computerManagerBinder!!.startPolling(computerManagerListener!!)
                     runningPolling = true
                 }
             }
@@ -81,8 +72,15 @@ class ComputerRepository {
 
         override fun onServiceDisconnected(componentName: ComponentName?) {
             computerManagerBinder = null
-            runningPolling = false // Reset polling state
-            // Optionally clear computerManagerListener = null if it must be recreated
+            runningPolling = false
+            uiScope.launch {
+                _computers.forEachIndexed { index, computer ->
+                    if (computer.applistPoller != null) {
+                        computer.applistPoller.stop()
+                        _computers[index] = computer.copy(applistPoller = null, apps = emptyList())
+                    }
+                }
+            }
         }
     }
 
@@ -98,6 +96,7 @@ class ComputerRepository {
     fun unbindService(context: Context) {
         try {
             pauseComputerUpdates() // Ensure polling is stopped
+            _computers.forEach { it.applistPoller?.stop() }
             context.unbindService(computerManagerServiceConnection)
         } catch (e: IllegalArgumentException) {
             // Service might not have been bound or already unbound
@@ -123,11 +122,52 @@ class ComputerRepository {
         }
     }
 
-    private fun updateComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
+    private fun modifyComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
         uiScope.launch {
             val index = _computers.indexOfFirst { it.details.uuid == computerUUID }
             if (index != -1) {
                 _computers[index] = updateAction(_computers[index])
+            }
+        }
+    }
+
+    private fun processComputerDetails(details: ComputerDetails) {
+        uiScope.launch {
+            val index = _computers.indexOfFirst { it.details.uuid == details.uuid }
+            val oldComputer = if (index != -1) _computers[index] else null
+
+            val (applistPoller, apps) = if (details.pairState == PairState.PAIRED && computerManagerBinder != null) {
+                // If paired and we have a binder, ensure we have an active poller.
+                val poller = oldComputer?.applistPoller
+                    ?: computerManagerBinder!!.createAppListPoller(details).also { it.start() }
+
+                // Determine the list of apps: use new raw data if available, otherwise use old list.
+                val appsList = details.rawAppList?.let { NvHTTP.getAppListByReader(StringReader(it)) }
+                    ?: oldComputer?.apps // Preserve the existing list if no new raw data is present
+                    ?: emptyList()
+
+                Pair(poller, appsList)
+            } else {
+                // If not paired or binder is gone, stop any existing poller and clear apps.
+                oldComputer?.applistPoller?.stop()
+                Pair(null, emptyList())
+            }
+
+            // Preserve fields not included in ComputerDetails (pairResult, pairPin)
+            val newComputer = Computer(
+                details = details,
+                apps = apps,
+                pairResult = oldComputer?.pairResult,
+                pairPin = oldComputer?.pairPin,
+                applistPoller = applistPoller
+            )
+
+            if (oldComputer != newComputer) {
+                if (index != -1) {
+                    _computers[index] = newComputer
+                } else {
+                    _computers.add(newComputer)
+                }
             }
         }
     }
@@ -151,14 +191,6 @@ class ComputerRepository {
                     pairComputer(computer)
                     break
                 }
-                if (computer.details.activeAddress != null &&
-                    computer.details.state == ComputerDetails.State.ONLINE &&
-                    computer.details.pairState == PairState.PAIRED &&
-                    computerManagerBinder != null
-                ) {
-                    loadApps(computerUUID)
-                    break
-                }
                 delay(connectionPollDelayMs)
             }
         }
@@ -180,11 +212,11 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) {
-                updateComputer(computer.details.uuid) { it.copy(pairResult = PairState.PAIRED) }
+                modifyComputer(computer.details.uuid) { it.copy(pairResult = PairState.PAIRED) }
                 return
             }
             val pairPin = computer.pairPin ?: PairingManager.generatePinString()
-            updateComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
+            modifyComputer(computer.details.uuid) { it.copy(pairPin = pairPin) }
             val pairingManager = httpConn.pairingManager
 
             val pairResult = pairingManager.pair(
@@ -192,7 +224,7 @@ class ComputerRepository {
                 pairPin
             )
 
-            updateComputer(computer.details.uuid) { it.copy(pairResult = pairResult) }
+            modifyComputer(computer.details.uuid) { it.copy(pairResult = pairResult) }
 
             if (pairResult == PairState.PAIRED) {
                 computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
@@ -202,38 +234,6 @@ class ComputerRepository {
             Log.e("ComputerRepository", "Error pairing computer", e)
         } finally {
             resumeComputerUpdates()
-        }
-    }
-
-    fun loadApps(computerUuid: String) {
-        repositoryScope.launch {
-            // Find the computer to ensure we have the latest details
-            val computer = computers.find { it.details.uuid == computerUuid } ?: return@launch
-
-            // Proceed only if the computer is online and paired
-            if (computer.details.state != ComputerDetails.State.ONLINE ||
-                computer.details.pairState != PairState.PAIRED) {
-                return@launch
-            }
-
-            try {
-                val httpConn = NvHTTP(
-                    ServerHelper.getCurrentAddressFromComputer(computer.details),
-                    computer.details.httpsPort,
-                    computerManagerBinder?.uniqueId,
-                    computer.details.serverCert,
-                    PlatformBinding.getCryptoProvider(context)
-                )
-
-                val appList = httpConn.appList
-
-                updateComputer(computer.details.uuid) {
-                    it.copy(apps = appList)
-                }
-            } catch (e: Exception) {
-                Log.e("ComputerRepository", "Failed to load app list for ${computer.details.name}", e)
-                // Optionally, you could update the UI to show an error state
-            }
         }
     }
 
