@@ -6,15 +6,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -45,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.limelight.nvstream.http.NvApp
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
@@ -98,12 +103,46 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                 }
             } else {
                 LazyColumn {
-                    items(computers) { computer ->
-                        ComputerItem(
-                            computer = computer,
-                            onClick = { viewModel.onComputerClicked(it.details.uuid) },
-                            viewModel = viewModel
-                        )
+                    items(computers, key = { it.details.uuid }) { computer ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp) // Fixed height for the entire row of items
+                                .padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // ComputerItem on the left
+                            ComputerItem(
+                                computer = computer,
+                                onClick = { viewModel.onComputerClicked(it.details.uuid) },
+                                viewModel = viewModel,
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(16f / 9f)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            // LazyRow for AppItems on the right
+                            if (computer.apps.isNotEmpty()) {
+                                LazyRow(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight(),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(computer.apps, key = { it.appId }) { app ->
+                                        AppItem(
+                                            appName = app.appName,
+                                            onClick = { /* TODO: handle app click */ },
+                                            modifier = Modifier
+                                                .fillMaxHeight()
+                                                .aspectRatio(2f / 3f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -181,16 +220,15 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
 
 
 @Composable
-fun ComputerItem(
+    fun ComputerItem(
     computer: Computer,
     onClick: (Computer) -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(0.5f)
+        modifier = modifier
             .aspectRatio(16f / 9f)
-            .padding(vertical = 8.dp)
             .clickable { onClick(computer) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -219,13 +257,30 @@ fun ComputerItem(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(4.dp))
-
+@Composable
+fun AppItem(
+    appName: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
+            .clickable { onClick() }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Bottom // Align app name to the bottom
+        ) {
             Text(
-                text = viewModel.getRawAppListText(computer),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = appName,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
