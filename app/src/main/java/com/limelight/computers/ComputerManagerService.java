@@ -1,6 +1,7 @@
 package com.limelight.computers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.Inet4Address;
@@ -732,6 +733,15 @@ public class ComputerManagerService extends Service {
         }
 
         for (ComputerDetails computer : dbManager.getAllComputers()) {
+            // Load the cached app list
+            try (InputStream cacheIn = CacheHelper.openCacheFileForInput(
+                    getCacheDir(), "applist", computer.uuid)) {
+                computer.rawAppList = CacheHelper.readInputStreamToString(cacheIn);
+            } catch (IOException e) {
+                // Not a big deal if we can't load the cached app list
+                e.printStackTrace();
+            }
+            
             // Add tuples for each computer
             addTuple(computer);
         }

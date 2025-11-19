@@ -136,21 +136,20 @@ class ComputerRepository {
             val index = _computers.indexOfFirst { it.details.uuid == details.uuid }
             val oldComputer = if (index != -1) _computers[index] else null
 
-            val (applistPoller, apps) = if (details.pairState == PairState.PAIRED && computerManagerBinder != null) {
+            // Always try to parse the app list from details if available.
+            val apps = details.rawAppList?.let { NvHTTP.getAppListByReader(StringReader(it)) }
+                ?: oldComputer?.apps // Preserve the existing list if no new raw data is present
+                ?: emptyList()
+
+            // App list polling is only done when paired.
+            val applistPoller = if (details.pairState == PairState.PAIRED && computerManagerBinder != null) {
                 // If paired and we have a binder, ensure we have an active poller.
-                val poller = oldComputer?.applistPoller
+                oldComputer?.applistPoller
                     ?: computerManagerBinder!!.createAppListPoller(details).also { it.start() }
-
-                // Determine the list of apps: use new raw data if available, otherwise use old list.
-                val appsList = details.rawAppList?.let { NvHTTP.getAppListByReader(StringReader(it)) }
-                    ?: oldComputer?.apps // Preserve the existing list if no new raw data is present
-                    ?: emptyList()
-
-                Pair(poller, appsList)
             } else {
-                // If not paired or binder is gone, stop any existing poller and clear apps.
+                // If not paired or binder is gone, stop any existing poller.
                 oldComputer?.applistPoller?.stop()
-                Pair(null, emptyList())
+                null
             }
 
             // Preserve fields not included in ComputerDetails (pairResult, pairPin)
