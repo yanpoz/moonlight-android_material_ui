@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -89,7 +90,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             )
         },
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).padding(horizontal = 20.dp)) {
+        Column(modifier = Modifier.padding(paddingValues)) {
             if (computers.isEmpty()) {
                 // Show empty state
                 Box(
@@ -104,43 +105,35 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             } else {
                 LazyColumn {
                     items(computers, key = { it.details.uuid }) { computer ->
-                        Row(
+                        LazyRow(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .height(200.dp) // Fixed height for the entire row of items
                                 .padding(vertical = 16.dp),
+                            contentPadding = PaddingValues(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // ComputerItem on the left
-                            ComputerItem(
-                                computer = computer,
-                                onClick = { viewModel.onComputerClicked(it.details.uuid) },
-                                viewModel = viewModel,
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(16f / 9f)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            // LazyRow for AppItems on the right
-                            if (computer.apps.isNotEmpty()) {
-                                LazyRow(
+                            // ComputerItem as the first item
+                            item(key = computer.details.uuid + "-computer") {
+                                ComputerItem(
+                                    computer = computer,
+                                    onClick = { viewModel.onComputerClicked(it.details.uuid) },
+                                    viewModel = viewModel,
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxHeight(),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    items(computer.apps, key = { it.appId }) { app ->
-                                        AppItem(
-                                            appName = app.appName,
-                                            onClick = { /* TODO: handle app click */ },
-                                            modifier = Modifier
-                                                .fillMaxHeight()
-                                                .aspectRatio(2f / 3f)
-                                        )
-                                    }
-                                }
+                                        .fillMaxHeight()
+                                        .aspectRatio(16f / 9f)
+                                )
+                            }
+                            
+                            // AppItems
+                            items(computer.apps, key = { it.appId }) { app ->
+                                AppItem(
+                                    appName = app.appName,
+                                    onClick = { /* TODO: handle app click */ },
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .aspectRatio(2f / 3f)
+                                )
                             }
                         }
                     }
