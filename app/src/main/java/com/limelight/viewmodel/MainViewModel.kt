@@ -40,6 +40,7 @@ class MainViewModel : ViewModel() {
 
     fun onUiResumed() {
         computerRepository.resumeComputerUpdates()
+        computerRepository.pollAppsForActiveComputers()
     }
 
     fun onUiPaused() {

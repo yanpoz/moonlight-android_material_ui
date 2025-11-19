@@ -236,6 +236,19 @@ class ComputerRepository {
         }
     }
 
+    fun pollAppsForActiveComputers() {
+        repositoryScope.launch {
+            // Access _computers on the UI thread as it's a mutableStateListOf,
+            // but run the actual pollNow() call in the repositoryScope (IO thread).
+            val computersToPoll = synchronized(_computers) {
+                _computers.toList()
+            }
+            computersToPoll.forEach { computer ->
+                computer.applistPoller?.pollNow()
+            }
+        }
+    }
+
     // Optional: A method to clean up resources like the CoroutineScope if needed.
     // fun clear() {
     // repositoryScope.cancel()
