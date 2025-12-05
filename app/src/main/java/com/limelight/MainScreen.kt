@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -40,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -50,7 +49,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.limelight.nvstream.http.NvApp
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
@@ -61,36 +59,39 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val computers = viewModel.computers
+    val isRefreshing = viewModel.isRefreshing
 
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = { Text("Moonlight") },
-                navigationIcon = {
-                    IconButton(onClick = { viewModel.showBottomSheet = true }) {
-                        Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.updateApps() }
+    ) {
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                CenterAlignedTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    title = { Text("Moonlight") },
+                    navigationIcon = {
+                        IconButton(onClick = { viewModel.showBottomSheet = true }) {
+                            Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
                         }
-                        context.startActivity(intent)
-                    }) {
-                        Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
-                    }
-                    IconButton(onClick = onSettingsClick ) {
-                        Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
-                    }
-                },
-            )
-        },
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
+                            }
+                            context.startActivity(intent)
+                        }) {
+                            Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
+                        }
+                        IconButton(onClick = onSettingsClick) {
+                            Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                        }
+                    },
+                )
+            },
+        ) { paddingValues ->
             if (computers.isEmpty()) {
                 // Show empty state
                 Box(
@@ -103,7 +104,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     )
                 }
             } else {
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
                     items(computers, key = { it.details.uuid }) { computer ->
                         LazyRow(
                             modifier = Modifier
@@ -124,7 +129,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                         .aspectRatio(16f / 9f)
                                 )
                             }
-                            
+
                             // AppItems
                             items(computer.apps, key = { it.appId }) { app ->
                                 AppItem(
@@ -181,12 +186,14 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
     AlertDialog(
         onDismissRequest = { viewModel.dismissConnectionDialog() },
         title = { Text(text = "Connecting to: ${computer.details.name}") },
-        text = { Column {
-            Text(text = viewModel.getPairStatusText(computer))
-            Text(text = viewModel.getPairPinText(computer))
-            Text(text = viewModel.getPairResultText(computer))
-        } },
-        confirmButton = { 
+        text = {
+            Column {
+                Text(text = viewModel.getPairStatusText(computer))
+                Text(text = viewModel.getPairPinText(computer))
+                Text(text = viewModel.getPairResultText(computer))
+            }
+        },
+        confirmButton = {
             if (viewModel.isComputerPaired(computer)) {
                 Row {
                     TextButton(
@@ -213,7 +220,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
 
 
 @Composable
-    fun ComputerItem(
+fun ComputerItem(
     computer: Computer,
     onClick: (Computer) -> Unit,
     viewModel: MainViewModel,

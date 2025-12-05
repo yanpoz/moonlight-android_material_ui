@@ -10,11 +10,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.repository.ComputerRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     var showBottomSheet by mutableStateOf(false)
@@ -29,6 +32,8 @@ class MainViewModel : ViewModel() {
     }
     private val computerRepository = ComputerRepository()
     val computers: List<Computer> = computerRepository.computers
+
+    var isRefreshing by mutableStateOf(false)
 
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
@@ -45,6 +50,18 @@ class MainViewModel : ViewModel() {
 
     fun onUiPaused() {
         computerRepository.pauseComputerUpdates()
+    }
+
+    fun updateApps() {
+        viewModelScope.launch {
+            isRefreshing = true
+            try {
+                computerRepository.pollAppsForActiveComputers()
+                delay(500)
+            } finally {
+                isRefreshing = false
+            }
+        }
     }
 
     fun addComputer(context: Context, ipAddress: String) {
