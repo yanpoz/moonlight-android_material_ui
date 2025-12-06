@@ -109,13 +109,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getRawAppListText(computer: Computer): String {
-        return when (computer.apps) {
-            null -> "Fetching App List..."
-            else -> "App List: ${computer.apps}"
-        }
-    }
-
     fun isComputerPaired(computer: Computer): Boolean {
         return computer.pairResult == PairingManager.PairState.PAIRED
     }
