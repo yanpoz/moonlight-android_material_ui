@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -229,6 +231,7 @@ fun ComputerItem(
     Card(
         modifier = modifier
             .aspectRatio(16f / 9f)
+            .clip(CardDefaults.shape)
             .clickable { onClick(computer) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -270,6 +273,7 @@ fun AppItem(
     Card(
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
+            .clip(CardDefaults.shape)
             .clickable { onClick() }
     ) {
         Column(
