@@ -35,6 +35,18 @@ class MainViewModel : ViewModel() {
 
     var isRefreshing by mutableStateOf(false)
 
+    // State for the expanded dropdown menu
+    var expandedMenuComputerUuid by mutableStateOf<String?>(null)
+        private set // Keep the setter private to enforce usage of open/dismiss methods
+
+    fun onComputerLongPress(computerUUID: String) {
+        expandedMenuComputerUuid = computerUUID
+    }
+
+    fun dismissComputerMenu() {
+        expandedMenuComputerUuid = null
+    }
+
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
     }

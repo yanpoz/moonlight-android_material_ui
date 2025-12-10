@@ -1,8 +1,9 @@
 package com.limelight
 
 import android.content.Intent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,14 +23,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,10 +57,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -221,6 +231,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ComputerItem(
     computer: Computer,
@@ -232,7 +243,10 @@ fun ComputerItem(
         modifier = modifier
             .aspectRatio(16f / 9f)
             .clip(CardDefaults.shape)
-            .clickable { onClick(computer) }
+            .combinedClickable(
+                onClick = { onClick(computer) },
+                onLongClick = { viewModel.onComputerLongPress(computer.details.uuid) }
+            )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -261,6 +275,62 @@ fun ComputerItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+
+        // Dropdown Menu as a sibling of Column inside Card content (implicit Box)
+        // TODO: add context (if PC is offline, if game is running or not)
+        DropdownMenu(
+            expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
+            onDismissRequest = { viewModel.dismissComputerMenu() }
+            // Resume Session
+        ) {
+            DropdownMenuItem(
+                text = { stringResource(id = (R.string.applist_menu_resume)) },
+                leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement Resume Session
+                }
+            )
+            // Quit Session
+            DropdownMenuItem(
+                text = { stringResource(id = (R.string.applist_menu_quit)) },
+                leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement Quit Session
+                }
+            )
+
+            HorizontalDivider()
+
+            // Test Network Connection
+            DropdownMenuItem(
+                text = { stringResource(id = (R.string.pcview_menu_test_network)) },
+                leadingIcon = { Icon(Icons.Outlined.Call, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement Test Network Connection
+                }
+            )
+            // Delete PC
+            DropdownMenuItem(
+                text = { stringResource(id = (R.string.applist_menu_resume)) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement Delete PC
+                }
+            )
+            // View Details
+            DropdownMenuItem(
+                text = { stringResource(id = (R.string.pcview_menu_details)) },
+                leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement View Details
+                }
+            )
+        }
     }
 }
 
@@ -274,7 +344,6 @@ fun AppItem(
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
             .clip(CardDefaults.shape)
-            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier
@@ -289,3 +358,10 @@ fun AppItem(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    // NOTE: You will need to replace MainViewModel() with a proper mock instance 
+    // that provides dummy data for your preview.
+    MainScreen(viewModel = MainViewModel(), onSettingsClick = {})}
