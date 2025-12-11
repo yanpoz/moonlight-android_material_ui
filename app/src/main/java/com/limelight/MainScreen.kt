@@ -27,8 +27,10 @@ import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -60,6 +62,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
 
@@ -111,7 +115,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(id = R.string.scut_pc_not_found),
+                        text = stringResource(R.string.scut_pc_not_found),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -165,19 +169,23 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             sheetState = sheetState
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text(stringResource(id = R.string.title_add_pc))
+                Text(stringResource(R.string.title_add_pc))
                 TextField(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
                     value = viewModel.inputIp,
                     onValueChange = { viewModel.inputIp = it },
-                    label = { Text(stringResource(id = R.string.ip_hint)) }
+                    label = { Text(stringResource(R.string.ip_hint)) }
                 )
 
                 Button(
                     onClick = { viewModel.addComputer(context, viewModel.inputIp) },
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
                 ) {
-                    Text(stringResource(id = R.string.title_add_pc))
+                    Text(stringResource(R.string.title_add_pc))
                 }
             }
         }
@@ -276,36 +284,63 @@ fun ComputerItem(
             )
         }
 
-        // Dropdown Menu as a sibling of Column inside Card content (implicit Box)
-        // TODO: add context (if PC is offline, if game is running or not)
         DropdownMenu(
             expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
-            // Resume Session
         ) {
-            DropdownMenuItem(
-                text = { stringResource(id = (R.string.applist_menu_resume)) },
-                leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement Resume Session
+            if (computer.details.state == ComputerDetails.State.OFFLINE ||
+                computer.details.state == ComputerDetails.State.UNKNOWN) {
+                // Send Wake-On-LAN
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
+                    // TODO: Replace icon to power-on icon
+                    leadingIcon = { Icon(Icons.Outlined.MailOutline, contentDescription = null) },
+                    onClick = {
+                        viewModel.dismissComputerMenu()
+                        // TODO: Send Wake-On-LAN
+                    }
+                )
+            }
+            else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
+                // Pair PC
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.pcview_menu_pair_pc)) },
+                    // TODO: Replace icon to handshake icon
+                    leadingIcon = { Icon(Icons.Outlined.Star, contentDescription = null) },
+                    onClick = {
+                        viewModel.dismissComputerMenu()
+                        onClick(computer)
+                    }
+                )
+            }
+            else {
+                if (computer.details.runningGameId != 0) {
+                    // Resume Session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_menu_resume)) },
+                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
+                        onClick = {
+                            viewModel.dismissComputerMenu()
+                            onClick(computer)
+                        }
+                    )
+                    // Quit Session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_menu_quit)) },
+                        leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
+                        onClick = {
+                            viewModel.dismissComputerMenu()
+                            // TODO: Implement Quit Session
+                        }
+                    )
                 }
-            )
-            // Quit Session
-            DropdownMenuItem(
-                text = { stringResource(id = (R.string.applist_menu_quit)) },
-                leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement Quit Session
-                }
-            )
+            }
 
-            HorizontalDivider()
+            HorizontalDivider() // TODO: replace with gap and rework conditions above
 
             // Test Network Connection
             DropdownMenuItem(
-                text = { stringResource(id = (R.string.pcview_menu_test_network)) },
+                text = { Text(stringResource(R.string.pcview_menu_test_network)) },
                 leadingIcon = { Icon(Icons.Outlined.Call, contentDescription = null) },
                 onClick = {
                     viewModel.dismissComputerMenu()
@@ -314,7 +349,7 @@ fun ComputerItem(
             )
             // Delete PC
             DropdownMenuItem(
-                text = { stringResource(id = (R.string.applist_menu_resume)) },
+                text = { Text(stringResource(R.string.pcview_menu_delete_pc)) },
                 leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
                 onClick = {
                     viewModel.dismissComputerMenu()
@@ -323,7 +358,7 @@ fun ComputerItem(
             )
             // View Details
             DropdownMenuItem(
-                text = { stringResource(id = (R.string.pcview_menu_details)) },
+                text = { Text(stringResource(R.string.pcview_menu_details)) },
                 leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
                 onClick = {
                     viewModel.dismissComputerMenu()
@@ -364,4 +399,5 @@ fun AppItem(
 fun MainScreenPreview() {
     // NOTE: You will need to replace MainViewModel() with a proper mock instance 
     // that provides dummy data for your preview.
-    MainScreen(viewModel = MainViewModel(), onSettingsClick = {})}
+    MainScreen(viewModel = MainViewModel(), onSettingsClick = {})
+}
