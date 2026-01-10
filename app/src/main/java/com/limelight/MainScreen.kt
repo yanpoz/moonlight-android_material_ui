@@ -22,11 +22,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
@@ -63,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
@@ -135,7 +139,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // ComputerItem as the first item
-                            item(key = computer.details.uuid + "-computer") {
+                            item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
                                     onClick = { viewModel.onComputerClicked(it.details.uuid) },
@@ -149,8 +153,10 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             // AppItems
                             items(computer.apps, key = { it.appId }) { app ->
                                 AppItem(
-                                    appName = app.appName,
+                                    app = app,
+                                    computer = computer,
                                     onClick = { /* TODO: handle app click */ },
+                                    viewModel = viewModel,
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(2f / 3f)
@@ -335,9 +341,7 @@ fun ComputerItem(
                     )
                 }
             }
-
-            HorizontalDivider() // TODO: replace with gap and rework conditions above
-
+            HorizontalDivider() // TODO: replace with gap Material expressive
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
@@ -369,16 +373,23 @@ fun ComputerItem(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
-    appName: String,
+    app: NvApp,
+    computer: Computer,
     onClick: () -> Unit,
+    viewModel: MainViewModel,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
             .clip(CardDefaults.shape)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = { viewModel.onAppLongPress(computer.details.uuid, app.appId) }
+            )
     ) {
         Column(
             modifier = Modifier
@@ -387,8 +398,58 @@ fun AppItem(
             verticalArrangement = Arrangement.Bottom // Align app name to the bottom
         ) {
             Text(
-                text = appName,
+                text = app.appName,
                 style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+
+        DropdownMenu(
+            expanded = viewModel.expandedMenuAppId == app.appId &&
+                       viewModel.expandedMenuComputerUuidForApp == computer.details.uuid,
+            onDismissRequest = { viewModel.dismissAppMenu() }
+        ) {
+            if (viewModel.lastRunningAppId != 0) {
+                if (viewModel.lastRunningAppId == app.appId) {
+                    // Resume Session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_menu_resume)) },
+                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
+                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                    )
+                    // Quit Session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_quit_app)) },
+                        leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
+                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                    )
+                }
+                else {
+                    // Quit running and Start new session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_menu_quit_and_start)) },
+                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, contentDescription = null) },
+                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                    )
+                }
+            }
+            HorizontalDivider() // TODO: replace with gap Material expressive
+            // Hide App
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_hide_app)) },
+                leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+            )
+            // App Details
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_details)) },
+                leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+            )
+            // Create shortcut
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_scut)) },
+                leadingIcon = { Icon(Icons.Outlined.Star, contentDescription = null) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
         }
     }

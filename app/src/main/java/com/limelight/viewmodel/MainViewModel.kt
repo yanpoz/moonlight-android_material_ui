@@ -39,12 +39,30 @@ class MainViewModel : ViewModel() {
     var expandedMenuComputerUuid by mutableStateOf<String?>(null)
         private set // Keep the setter private to enforce usage of open/dismiss methods
 
+    // State for the expanded dropdown menu for apps
+    var expandedMenuAppId by mutableStateOf<Int?>(null)
+        private set
+    var expandedMenuComputerUuidForApp by mutableStateOf<String?>(null)
+        private set
+
+    var lastRunningAppId by mutableStateOf<Int?>(null)
+
     fun onComputerLongPress(computerUUID: String) {
         expandedMenuComputerUuid = computerUUID
     }
 
     fun dismissComputerMenu() {
         expandedMenuComputerUuid = null
+    }
+
+    fun onAppLongPress(computerUUID: String, appId: Int) {
+        expandedMenuComputerUuidForApp = computerUUID
+        expandedMenuAppId = appId
+    }
+
+    fun dismissAppMenu() {
+        expandedMenuComputerUuidForApp = null
+        expandedMenuAppId = null
     }
 
     fun bindComputerManagerService(context: Context) {
@@ -153,8 +171,8 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        // It'''s good practice to ensure resources are released.
-        // computerRepository.unbindService() should be called by the Activity/Fragment'''s onDestroy
+        // It's good practice to ensure resources are released.
+        // computerRepository.unbindService() should be called by the Activity/Fragment's onDestroy
         // If computerRepository had its own CoroutineScope that needs cancelling,
         // you might add a clear() method to the repository and call it here.
     }
