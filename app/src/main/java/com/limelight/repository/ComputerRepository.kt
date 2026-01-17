@@ -211,7 +211,9 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) {
-                modifyComputer(computer.details.uuid) { it.copy(pairResult = PairState.PAIRED) }
+                modifyComputer(computer.details.uuid) {
+                    it.copy(pairResult = PairState.PAIRED)
+                }
                 return
             }
             val pairPin = computer.pairPin ?: PairingManager.generatePinString()

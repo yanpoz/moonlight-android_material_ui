@@ -94,7 +94,7 @@ apply plugin: 'kotlin-parcelize'
             resValue "string", "app_label_root", "Moonlight (Root Debug)"
 
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             // To whomever is releasing/using an APK in release mode with
@@ -132,7 +132,7 @@ apply plugin: 'kotlin-parcelize'
             resValue "string", "app_label_root", "Moonlight (Root)"
 
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
