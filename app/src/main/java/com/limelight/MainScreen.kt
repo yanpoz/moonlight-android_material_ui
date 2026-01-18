@@ -31,7 +31,6 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MailOutline
@@ -305,10 +304,7 @@ fun ComputerItem(
                     text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
                     // TODO: Replace icon to power-on icon
                     leadingIcon = { Icon(Icons.Outlined.MailOutline, contentDescription = null) },
-                    onClick = {
-                        viewModel.dismissComputerMenu()
-                        // TODO: Send Wake-On-LAN
-                    }
+                    onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
                 )
             }
             else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
@@ -338,10 +334,7 @@ fun ComputerItem(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit)) },
                         leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
-                        onClick = {
-                            viewModel.dismissComputerMenu()
-                            // TODO: Implement Quit Session
-                        }
+                        onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
                     )
                 }
             }
@@ -350,47 +343,32 @@ fun ComputerItem(
             DropdownMenuItem(
                 text = { Text(text ="Move Up") }, // TODO: Add string resource
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement move up
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
                 text = { Text(text ="Move Down") }, // TODO: Add string resource
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement move down
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
                 leadingIcon = { Icon(Icons.Outlined.Call, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement Test Network Connection
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // View Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
                 leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement View Details
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Delete PC
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_delete_pc)) },
                 leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement Delete PC
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
 
         }
@@ -461,19 +439,13 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(text ="Move Left") }, // TODO: Add string resource AutoMirrored (?)
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement move
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
                 text = { Text(text ="Move Right") }, // TODO: Add string resource AutoMirrored (?)
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement move
-                }
+                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Hide App
