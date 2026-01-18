@@ -294,9 +294,11 @@ fun ComputerItem(
         }
 
         DropdownMenu(
+            // TODO add caption
             expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
         ) {
+            // TODO add caption
             if (computer.details.state == ComputerDetails.State.OFFLINE ||
                 computer.details.state == ComputerDetails.State.UNKNOWN) {
                 // Send Wake-On-LAN
@@ -366,11 +368,10 @@ fun ComputerItem(
             )
             // Delete PC
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_delete_pc)) },
-                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+                text = { Text(stringResource(R.string.pcview_menu_delete_pc), color = MaterialTheme.colorScheme.error) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, tint = MaterialTheme.colorScheme.error, contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
-
         }
     }
 }
