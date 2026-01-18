@@ -23,12 +23,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -342,6 +346,25 @@ fun ComputerItem(
                 }
             }
             HorizontalDivider() // TODO: replace with gap Material expressive
+            // Move Up TODO: should not be available when on top
+            DropdownMenuItem(
+                text = { Text(text ="Move Up") }, // TODO: Add string resource
+                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement move up
+                }
+            )
+            // Move Down TODO: should not be available when on bottom
+            DropdownMenuItem(
+                text = { Text(text ="Move Down") }, // TODO: Add string resource
+                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement move down
+                }
+            )
+            HorizontalDivider() // TODO: replace with gap Material expressive
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
@@ -349,15 +372,6 @@ fun ComputerItem(
                 onClick = {
                     viewModel.dismissComputerMenu()
                     // TODO: Implement Test Network Connection
-                }
-            )
-            // Delete PC
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_delete_pc)) },
-                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    // TODO: Implement Delete PC
                 }
             )
             // View Details
@@ -369,6 +383,16 @@ fun ComputerItem(
                     // TODO: Implement View Details
                 }
             )
+            // Delete PC
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.pcview_menu_delete_pc)) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement Delete PC
+                }
+            )
+
         }
     }
 }
@@ -432,6 +456,25 @@ fun AppItem(
                     )
                 }
             }
+            HorizontalDivider() // TODO: replace with gap Material expressive
+            // Move Up TODO: should not be available when on top
+            DropdownMenuItem(
+                text = { Text(text ="Move Left") }, // TODO: Add string resource AutoMirrored (?)
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement move
+                }
+            )
+            // Move Down TODO: should not be available when on bottom
+            DropdownMenuItem(
+                text = { Text(text ="Move Right") }, // TODO: Add string resource AutoMirrored (?)
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null) },
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    // TODO: Implement move
+                }
+            )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Hide App
             DropdownMenuItem(
