@@ -48,7 +48,9 @@ class ComputerRepository {
     private var connectionJob: Job? = null
     private var runningPolling = false
     private var context: Context? = null
+
     private val connectionPollDelayMs = 500L
+    val desktopAppId = 881448767
 
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
@@ -178,18 +180,25 @@ class ComputerRepository {
         // This might involve using computerManagerBinder.
     }
 
-    fun initiateConnection(computerUUID: String) {
+    fun initiateConnection(context: Context, computerUUID: String, onAppLaunched: () -> Unit) {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
             while (true) {
                 val computer = computers.find { it.details.uuid == computerUUID } ?: break
                 if (computer.details.activeAddress != null &&
                     computer.details.state != ComputerDetails.State.OFFLINE &&
-                    computer.details.pairState != PairState.PAIRED &&
                     computerManagerBinder != null
                 ) {
-                    pairComputer(computer)
-                    break
+                    if (computer.details.pairState != PairState.PAIRED) {
+                        pairComputer(computer)
+                        break
+                    } else {
+                        val desktopApp = computer.apps.find { it.appId == desktopAppId }
+                        if (desktopApp != null) {
+                            launchApp(context, desktopApp, computer, onAppLaunched)
+                            break
+                        }
+                    }
                 }
                 delay(connectionPollDelayMs)
             }
@@ -239,8 +248,9 @@ class ComputerRepository {
         }
     }
 
-    fun launchApp(context: Context, app: NvApp, computer: Computer) {
+    fun launchApp(context: Context, app: NvApp, computer: Computer, onAppLaunched: () -> Unit) {
         ServerHelper.doStart(context as Activity?, app, computer.details, computerManagerBinder)
+        onAppLaunched()
     }
 
     fun pollAppsForActiveComputers() {

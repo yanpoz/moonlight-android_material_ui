@@ -147,7 +147,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    onClick = { viewModel.onComputerClicked(it.details.uuid) },
+                                    onClick = { viewModel.onComputerConnect(context, it.details.uuid) },
                                     viewModel = viewModel,
                                     modifier = Modifier
                                         .fillMaxHeight()
@@ -206,6 +206,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         ConnectionDialog(
             viewModel = viewModel,
             computer = viewModel.selectedComputer!!,
+            onConnect = { viewModel.onComputerConnect(context, viewModel.selectedComputerUUID!!) },
+            onDismiss = { viewModel.dismissConnectionDialog() }
         )
     }
 
@@ -240,11 +242,11 @@ fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
 
 
 @Composable
-fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
+fun ConnectionDialog(viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
-//  TODO Add container transformation
+    //  TODO Add container transformation
     AlertDialog(
-        onDismissRequest = { viewModel.dismissConnectionDialog() },
+        onDismissRequest = { onDismiss() },
         title = { Text(text = "Connecting to: ${computer.details.name}") },
         text = {
             Column {
@@ -256,16 +258,8 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
         confirmButton = {
             if (viewModel.isComputerPaired(computer)) {
                 Row {
-                    TextButton(
-                        onClick = { viewModel.dismissConnectionDialog() }
-                    ) {
-                        Text("Open Desktop")
-                    }
-                    TextButton(
-                        onClick = { viewModel.dismissConnectionDialog() }
-                    ) {
-                        Text("Display Apps & Games")
-                    }
+                    TextButton(onClick = { onConnect() } ) { Text("Connect to Desktop") }
+                    TextButton(onClick = { onDismiss() } ) { Text("Display Apps & Games") }
                 }
             } else {
                 TextButton(
@@ -279,7 +273,7 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
                     Text(stringResource(R.string.help))
                 }
                 TextButton(
-                    onClick = { viewModel.dismissConnectionDialog() }
+                    onClick = { onDismiss() }
                 ) {
                     Text(stringResource(R.string.applist_menu_cancel))
                 }

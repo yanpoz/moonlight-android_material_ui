@@ -25,7 +25,7 @@ class MainViewModel : ViewModel() {
     var inputIp by mutableStateOf("")
 
     var showConnectionDialog by mutableStateOf(false)
-    private var selectedComputerUUID by mutableStateOf<String?>(null)
+    var selectedComputerUUID by mutableStateOf<String?>(null)
     val selectedComputer: Computer? by derivedStateOf {
         selectedComputerUUID?.let { uuid ->
             computers.find { it.details.uuid == uuid }
@@ -128,14 +128,14 @@ class MainViewModel : ViewModel() {
         // showBottomSheet = false
     }
 
-    fun onComputerClicked(computerUUID: String) {
+    fun onComputerConnect(context: Context, computerUUID: String) {
         showConnectionDialog = true
         selectedComputerUUID = computerUUID
-        computerRepository.initiateConnection(computerUUID)
+        computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
     }
 
     fun launchApp(context: Context, app: NvApp, computer: Computer) {
-        computerRepository.launchApp(context, app, computer)
+        computerRepository.launchApp(context, app, computer, onAppLaunched = { dismissConnectionDialog() })
     }
 
     fun dismissConnectionDialog() {
