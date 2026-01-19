@@ -48,6 +48,32 @@ class MainViewModel : ViewModel() {
 
     var lastRunningAppId by mutableStateOf<Int?>(null)
 
+    var showAppDetailsDialog by mutableStateOf(false)
+    var selectedApp by mutableStateOf<NvApp?>(null)
+    var selectedComputerForApp by mutableStateOf<Computer?>(null)
+
+    fun onAppDetailsClicked(computer: Computer, app: NvApp) {
+        selectedApp = app
+        selectedComputerForApp = computer
+        showAppDetailsDialog = true
+    }
+
+    fun dismissAppDetailsDialog() {
+        selectedApp = null
+        selectedComputerForApp = null
+        showAppDetailsDialog = false
+    }
+
+    @Composable
+    fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
+        return listOf(
+            stringResource(R.string.applist_details_id) to app.appId.toString(),
+            "HDR Supported" to app.isHdrSupported.toString(), //TODO
+            "Computer" to computer.details.name,
+            "Computer ID" to computer.details.uuid
+        )
+    }
+
     fun onComputerLongPress(computerUUID: String) {
         expandedMenuComputerUuid = computerUUID
     }

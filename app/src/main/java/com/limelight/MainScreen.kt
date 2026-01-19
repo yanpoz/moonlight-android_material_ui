@@ -208,6 +208,34 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             computer = viewModel.selectedComputer!!,
         )
     }
+
+    if (viewModel.showAppDetailsDialog) {
+        AppDetailsDialog(
+            viewModel = viewModel,
+            app = viewModel.selectedApp!!,
+            computer = viewModel.selectedComputerForApp!!,
+        )
+    }
+}
+
+@Composable
+fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
+    val details = viewModel.getAppDetails(app, computer)
+    AlertDialog(
+        onDismissRequest = { viewModel.dismissAppDetailsDialog() },
+        title = { Text(text = app.appName) },
+        text = {
+            Column {
+                details.forEach { (key, value) ->
+                    Text(text = "$key: $value")
+                }
+            }
+        },
+        confirmButton = {
+            TextButton( onClick = { viewModel.dismissAppDetailsDialog() } )
+            { Text("OK") }
+        }
+    )
 }
 
 
@@ -472,7 +500,10 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
                 leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                onClick = {
+                    viewModel.dismissAppMenu()
+                    viewModel.onAppDetailsClicked(computer, app)
+                }
             )
             // Create shortcut
             DropdownMenuItem(
