@@ -113,28 +113,30 @@ class MainViewModel : ViewModel() {
         computerRepository.cancelConnection()
     }
 
+    @Composable
     fun getComputerAddressText(computer: Computer): String {
         return computer.details.activeAddress?.address
             ?: computer.details.localAddress?.address
             ?: computer.details.remoteAddress?.address
             ?: computer.details.manualAddress?.address
-            ?: "Unknown Address"
+            ?: stringResource(R.string.error_unknown_host)
     }
 
+    @Composable
     fun getPairStatusText(computer: Computer): String {
         return when (computer.details.pairState) {
             PairingManager.PairState.PAIRED -> "Pair status: Paired"
-            PairingManager.PairState.NOT_PAIRED -> "Pair status: Not Paired"
-            PairingManager.PairState.PIN_WRONG -> "Pair status: PIN Incorrect"
-            PairingManager.PairState.FAILED -> "Pair status: Pairing Failed"
-            PairingManager.PairState.ALREADY_IN_PROGRESS -> "Pair status: Pairing in Progress"
-            null -> "Pair status: Unknown"
+            PairingManager.PairState.NOT_PAIRED -> stringResource(R.string.scut_not_paired)
+            PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
+            PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
+            PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
+            null -> stringResource(R.string.pair_fail) //TODO: Handle this better
         }
     }
 
     fun getPairPinText(computer: Computer): String {
         return when (computer.pairPin) {
-            null -> "Generating PIN..."
+            null -> "Generating PIN..." // TODO: add animation
             else -> "Pair PIN: ${computer.pairPin}"
         }
     }
