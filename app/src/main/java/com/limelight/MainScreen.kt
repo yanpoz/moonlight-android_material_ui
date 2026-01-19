@@ -106,10 +106,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
                             context.startActivity(intent)
                         }) {
-                            Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info")
+                            Icon(imageVector = Icons.Outlined.Info,
+                                 contentDescription = stringResource(R.string.help))
                         }
                         IconButton(onClick = onSettingsClick) {
-                            Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                            Icon(imageVector = Icons.Outlined.Settings,
+                                 contentDescription = "Settings") //TODO: replace with resource
                         }
                     },
                 )
@@ -211,6 +213,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
 @Composable
 fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
+    val context = LocalContext.current
 //  TODO Add container transformation
     AlertDialog(
         onDismissRequest = { viewModel.dismissConnectionDialog() },
@@ -238,9 +241,19 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer) {
                 }
             } else {
                 TextButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting".toUri()
+                        }
+                        context.startActivity(intent)
+                    }
+                ) {
+                    Text(stringResource(R.string.help))
+                }
+                TextButton(
                     onClick = { viewModel.dismissConnectionDialog() }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.applist_menu_cancel))
                 }
             }
         }
@@ -343,13 +356,13 @@ fun ComputerItem(
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(
-                text = { Text(text ="Move Up") }, // TODO: Add string resource
+                text = { Text(text = "Move Up") }, // TODO: Add string resource
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
-                text = { Text(text ="Move Down") }, // TODO: Add string resource
+                text = { Text(text = "Move Down") }, // TODO: Add string resource
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
@@ -438,13 +451,13 @@ fun AppItem(
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(
-                text = { Text(text ="Move Left") }, // TODO: Add string resource AutoMirrored (?)
+                text = { Text(text = "Move Left") }, // TODO: Add string resource AutoMirrored (?)
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
-                text = { Text(text ="Move Right") }, // TODO: Add string resource AutoMirrored (?)
+                text = { Text(text = "Move Right") }, // TODO: Add string resource AutoMirrored (?)
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
