@@ -1,5 +1,6 @@
 package com.limelight.repository
 
+import android.app.Activity
 import android.app.Service
 import android.content.ComponentName
 import android.content.Context
@@ -236,6 +237,10 @@ class ComputerRepository {
         } finally {
             resumeComputerUpdates()
         }
+    }
+
+    fun launchApp(context: Context, app: NvApp, computer: Computer) {
+        ServerHelper.doStart(context as Activity?, app, computer.details, computerManagerBinder)
     }
 
     fun pollAppsForActiveComputers() {

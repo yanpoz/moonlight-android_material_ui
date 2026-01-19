@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.repository.ComputerRepository
@@ -105,6 +106,10 @@ class MainViewModel : ViewModel() {
         showConnectionDialog = true
         selectedComputerUUID = computerUUID
         computerRepository.initiateConnection(computerUUID)
+    }
+
+    fun launchApp(context: Context, app: NvApp, computer: Computer) {
+        computerRepository.launchApp(context, app, computer)
     }
 
     fun dismissConnectionDialog() {

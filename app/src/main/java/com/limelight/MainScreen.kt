@@ -160,7 +160,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 AppItem(
                                     app = app,
                                     computer = computer,
-                                    onClick = { /* TODO: handle app click */ },
+                                    onClick = { viewModel.launchApp(context, app, computer) },
                                     viewModel = viewModel,
                                     modifier = Modifier
                                         .fillMaxHeight()
