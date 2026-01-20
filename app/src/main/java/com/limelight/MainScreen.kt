@@ -333,7 +333,7 @@ fun ComputerItem(
         }
 
         DropdownMenu(
-            modifier = Modifier.widthIn(min = 192.dp),
+            modifier = Modifier.widthIn(min = 220.dp),
             // TODO add caption
             expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
@@ -394,19 +394,22 @@ fun ComputerItem(
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
-                leadingIcon = { Icon(Icons.Outlined.Speed, null) },
+                // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Create shortcut
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
-                leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // View Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
-                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
+                // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Delete PC
@@ -452,7 +455,7 @@ fun AppItem(
         }
 
         DropdownMenu(
-            modifier = Modifier.widthIn(min = 192.dp),
+            modifier = Modifier.widthIn(min = 220.dp),
             expanded = viewModel.expandedMenuAppId == app.appId &&
                        viewModel.expandedMenuComputerUuidForApp == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
@@ -498,13 +501,15 @@ fun AppItem(
             // Hide App
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_hide_app)) },
-                leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
+                // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // App Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
-                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
+                // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = {
                     viewModel.dismissAppMenu()
                     viewModel.onAppDetailsClicked(computer, app)
@@ -513,7 +518,8 @@ fun AppItem(
             // Create shortcut
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
-                leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
         }
