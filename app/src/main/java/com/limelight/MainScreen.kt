@@ -17,26 +17,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Handshake
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.Speed
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -96,7 +99,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     title = { Text("Moonlight") },
                     navigationIcon = {
                         IconButton(onClick = { viewModel.showBottomSheet = true }) {
-                            Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add")
+                            Icon(imageVector = Icons.Outlined.AddCircleOutline,
+                                 contentDescription = stringResource(R.string.title_add_pc))
                         }
                     },
                     actions = {
@@ -106,12 +110,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
                             context.startActivity(intent)
                         }) {
-                            Icon(imageVector = Icons.Outlined.Info,
+                            Icon(imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
                                  contentDescription = stringResource(R.string.help))
                         }
                         IconButton(onClick = onSettingsClick) {
                             Icon(imageVector = Icons.Outlined.Settings,
-                                 contentDescription = "Settings") //TODO: replace with resource
+                                 contentDescription = "Settings") //TODO: add string resource
                         }
                     },
                 )
@@ -160,7 +164,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 AppItem(
                                     app = app,
                                     computer = computer,
-                                    onClick = { viewModel.launchApp(context, app, computer) },
+                                    onClick = { viewModel.onLaunchApp(context, app, computer) },
                                     viewModel = viewModel,
                                     modifier = Modifier
                                         .fillMaxHeight()
@@ -191,7 +195,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                 )
 
                 Button(
-                    onClick = { viewModel.addComputer(context, viewModel.inputIp) },
+                    onClick = { viewModel.addComputer(viewModel.inputIp) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -329,18 +333,17 @@ fun ComputerItem(
         }
 
         DropdownMenu(
+            modifier = Modifier.widthIn(min = 192.dp),
             // TODO add caption
             expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
         ) {
-            // TODO add caption
             if (computer.details.state == ComputerDetails.State.OFFLINE ||
                 computer.details.state == ComputerDetails.State.UNKNOWN) {
                 // Send Wake-On-LAN
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
-                    // TODO: Replace icon to power-on icon
-                    leadingIcon = { Icon(Icons.Outlined.MailOutline, contentDescription = null) },
+                    leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
                     onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
                 )
             }
@@ -348,8 +351,7 @@ fun ComputerItem(
                 // Pair PC
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.pcview_menu_pair_pc)) },
-                    // TODO: Replace icon to handshake icon
-                    leadingIcon = { Icon(Icons.Outlined.Star, contentDescription = null) },
+                    leadingIcon = { Icon(Icons.Outlined.Handshake, null) },
                     onClick = {
                         viewModel.dismissComputerMenu()
                         onClick(computer)
@@ -361,7 +363,7 @@ fun ComputerItem(
                     // Resume Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
                         onClick = {
                             viewModel.dismissComputerMenu()
                             onClick(computer)
@@ -370,7 +372,7 @@ fun ComputerItem(
                     // Quit Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit)) },
-                        leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
                     )
                 }
@@ -379,32 +381,40 @@ fun ComputerItem(
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(
                 text = { Text(text = "Move Up") }, // TODO: Add string resource
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
                 text = { Text(text = "Move Down") }, // TODO: Add string resource
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
-                leadingIcon = { Icon(Icons.Outlined.Call, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Outlined.Speed, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+            )
+            // Create shortcut
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_scut)) },
+                leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // View Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
-                leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Delete PC
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_delete_pc), color = MaterialTheme.colorScheme.error) },
-                leadingIcon = { Icon(Icons.Outlined.Delete, tint = MaterialTheme.colorScheme.error, contentDescription = null) },
+                leadingIcon = { Icon(imageVector = Icons.Outlined.Delete,
+                                     tint = MaterialTheme.colorScheme.error,
+                                     contentDescription = null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
         }
@@ -442,6 +452,7 @@ fun AppItem(
         }
 
         DropdownMenu(
+            modifier = Modifier.widthIn(min = 192.dp),
             expanded = viewModel.expandedMenuAppId == app.appId &&
                        viewModel.expandedMenuComputerUuidForApp == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
@@ -451,13 +462,13 @@ fun AppItem(
                     // Resume Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
                         onClick = { viewModel.dismissAppMenu() /*TODO*/ }
                     )
                     // Quit Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_quit_app)) },
-                        leadingIcon = { Icon(Icons.Outlined.Close, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = { viewModel.dismissAppMenu() /*TODO*/ }
                     )
                 }
@@ -465,35 +476,35 @@ fun AppItem(
                     // Quit running and Start new session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit_and_start)) },
-                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, null) },
                         onClick = { viewModel.dismissAppMenu() /*TODO*/ }
                     )
                 }
             }
             HorizontalDivider() // TODO: replace with gap Material expressive
-            // Move Up TODO: should not be available when on top
+            // Move Up TODO: should not be available when on beginning
             DropdownMenuItem(
                 text = { Text(text = "Move Left") }, // TODO: Add string resource AutoMirrored (?)
-                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
                 text = { Text(text = "Move Right") }, // TODO: Add string resource AutoMirrored (?)
-                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // Hide App
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_hide_app)) },
-                leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // App Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
-                leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
                 onClick = {
                     viewModel.dismissAppMenu()
                     viewModel.onAppDetailsClicked(computer, app)
@@ -502,7 +513,7 @@ fun AppItem(
             // Create shortcut
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
-                leadingIcon = { Icon(Icons.Outlined.Star, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
         }

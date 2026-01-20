@@ -121,7 +121,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun addComputer(context: Context, ipAddress: String) {
+    fun addComputer(ipAddress: String) {
         computerRepository.addComputer(ipAddress)
         // Optionally, reset input IP and hide bottom sheet after attempting to add
         // inputIp = ""
@@ -134,7 +134,7 @@ class MainViewModel : ViewModel() {
         computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
     }
 
-    fun launchApp(context: Context, app: NvApp, computer: Computer) {
+    fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
         computerRepository.launchApp(context, app, computer, onAppLaunched = { dismissConnectionDialog() })
     }
 
@@ -202,11 +202,4 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        // It's good practice to ensure resources are released.
-        // computerRepository.unbindService() should be called by the Activity/Fragment's onDestroy
-        // If computerRepository had its own CoroutineScope that needs cancelling,
-        // you might add a clear() method to the repository and call it here.
-    }
 }
