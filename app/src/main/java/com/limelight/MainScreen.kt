@@ -159,7 +159,6 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                         .aspectRatio(16f / 9f)
                                 )
                             }
-
                             // AppItems
                             if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                                 items(computer.apps, key = { it.appId }) { app ->
@@ -196,7 +195,6 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     onValueChange = { viewModel.manualComputerAdding.inputIp = it },
                     label = { Text(stringResource(R.string.ip_hint)) }
                 )
-
                 Button(
                     onClick = {
                         viewModel.addComputer(viewModel.manualComputerAdding.inputIp)
@@ -335,7 +333,7 @@ fun ComputerItem(
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = { onClick(computer) },
-                onLongClick = { viewModel.onComputerLongPress(computer.details.uuid) }
+                onLongClick = { viewModel.onComputerLongClick(computer.details.uuid) }
             )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -391,6 +389,7 @@ fun ComputerItem(
                         onClick(computer)
                     }
                 )
+                HorizontalDivider() // TODO: replace with gap Material expressive
             }
             else {
                 if (computer.details.runningGameId != 0) {
@@ -409,9 +408,9 @@ fun ComputerItem(
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
                     )
+                    HorizontalDivider() // TODO: replace with gap Material expressive
                 }
             }
-            HorizontalDivider() // TODO: replace with gap Material expressive
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(
                 text = { Text(text = "Move Up") }, // TODO: Add string resource
@@ -451,10 +450,15 @@ fun ComputerItem(
             )
             // Delete PC
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_delete_pc), color = MaterialTheme.colorScheme.error) },
-                leadingIcon = { Icon(imageVector = Icons.Outlined.Delete,
-                                     tint = MaterialTheme.colorScheme.error,
-                                     contentDescription = null) },
+                text = { Text(
+                    text = stringResource(R.string.pcview_menu_delete_pc),
+                    color = MaterialTheme.colorScheme.error)
+                },
+                leadingIcon = { Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    tint = MaterialTheme.colorScheme.error,
+                    contentDescription = null)
+                },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
         }
@@ -474,7 +478,7 @@ fun AppItem(
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = {
-                    viewModel.onAppLongPress(app.appId, computer.details.uuid)
+                    viewModel.onAppLongClick(app.appId, computer.details.uuid)
                 }
             )
     ) {
@@ -484,10 +488,7 @@ fun AppItem(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Bottom // Align app name to the bottom
         ) {
-            Text(
-                text = app.appName,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            Text( text = app.appName, style = MaterialTheme.typography.bodyLarge )
         }
 
         DropdownMenu(

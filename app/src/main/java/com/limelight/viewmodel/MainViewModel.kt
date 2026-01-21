@@ -46,7 +46,6 @@ data class ConnectionDialogUiState(
 )
 
 
-
 class MainViewModel : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
@@ -57,7 +56,6 @@ class MainViewModel : ViewModel() {
     // Computers with Apps Lists
     private val computerRepository = ComputerRepository()
     val computers: List<Computer> = computerRepository.computers
-
     // UI States
     var appMenu by mutableStateOf(AppMenuUiState())
         private set
@@ -71,11 +69,9 @@ class MainViewModel : ViewModel() {
         private set
     var connectionDialog by mutableStateOf(ConnectionDialogUiState())
         private set
-
     // Other states
     var isRefreshing by mutableStateOf(false)
     var lastRunningAppId by mutableStateOf<Int?>(null)
-
 
     fun onAppDetailsClicked(app: NvApp, computer: Computer) {
         appViewDetails = AppViewDetailsUiState(true, app, computer)
@@ -118,13 +114,13 @@ class MainViewModel : ViewModel() {
             "NVIDIA Server" to details.nvidiaServer.toString(),
         )
     }
-    fun onComputerLongPress(computerUUID: String) {
+    fun onComputerLongClick(computerUUID: String) {
         computerMenu = ComputerMenuUiState(computerUUID)
     }
     fun dismissComputerMenu() {
         computerMenu = ComputerMenuUiState()
     }
-    fun onAppLongPress(appId: Int, computerUUID: String) {
+    fun onAppLongClick(appId: Int, computerUUID: String) {
         appMenu = AppMenuUiState(appId, computerUUID)
     }
     fun dismissAppMenu() {
