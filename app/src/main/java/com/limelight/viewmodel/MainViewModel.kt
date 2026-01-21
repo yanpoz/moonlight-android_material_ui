@@ -85,35 +85,6 @@ class MainViewModel : ViewModel() {
     fun dismissComputerDetailsDialog() {
         computerViewDetails = ComputerViewDetailsUiState()
     }
-    @Composable
-    fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
-        return listOf(
-            stringResource(R.string.applist_details_id) to app.appId.toString(),
-            "HDR Supported" to app.isHdrSupported.toString(), //TODO
-            "Computer" to computer.details.name,
-            "Computer ID" to computer.details.uuid
-        )
-    }
-    @Composable
-    fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
-        val details = computer.details
-        return listOfNotNull(
-            "Name" to details.name,
-            "UUID" to details.uuid,
-            "State" to details.state.toString(),
-            "Paired" to details.pairState.toString(),
-            details.activeAddress?.let { "Active Address" to it.toString() },
-            details.localAddress?.let { "Local Address" to it.toString() },
-            details.remoteAddress?.let { "Remote Address" to it.toString() },
-            details.manualAddress?.let { "Manual Address" to it.toString() },
-            details.ipv6Address?.let { "IPv6 Address" to it.toString() },
-            details.macAddress?.let { "MAC Address" to it },
-            "HTTPS Port" to details.httpsPort.toString(),
-            "External Port" to details.externalPort.toString(),
-            "Running Game ID" to details.runningGameId.toString(),
-            "NVIDIA Server" to details.nvidiaServer.toString(),
-        )
-    }
     fun onComputerLongClick(computerUUID: String) {
         computerMenu = ComputerMenuUiState(computerUUID)
     }
@@ -175,6 +146,9 @@ class MainViewModel : ViewModel() {
         connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()
     }
+    fun isComputerPaired(computer: Computer): Boolean {
+        return computer.pairResult == PairingManager.PairState.PAIRED
+    }
     @Composable
     fun getComputerAddressText(computer: Computer): String {
         return computer.details.activeAddress?.address
@@ -182,6 +156,35 @@ class MainViewModel : ViewModel() {
             ?: computer.details.remoteAddress?.address
             ?: computer.details.manualAddress?.address
             ?: stringResource(R.string.error_unknown_host)
+    }
+    @Composable
+    fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
+        return listOf(
+            stringResource(R.string.applist_details_id) to app.appId.toString(),
+            "HDR Supported" to app.isHdrSupported.toString(), //TODO
+            "Computer" to computer.details.name,
+            "Computer ID" to computer.details.uuid
+        )
+    }
+    @Composable
+    fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
+        val details = computer.details
+        return listOfNotNull(
+            "Name" to details.name,
+            "UUID" to details.uuid,
+            "State" to details.state.toString(),
+            "Paired" to details.pairState.toString(),
+            details.activeAddress?.let { "Active Address" to it.toString() },
+            details.localAddress?.let { "Local Address" to it.toString() },
+            details.remoteAddress?.let { "Remote Address" to it.toString() },
+            details.manualAddress?.let { "Manual Address" to it.toString() },
+            details.ipv6Address?.let { "IPv6 Address" to it.toString() },
+            details.macAddress?.let { "MAC Address" to it },
+            "HTTPS Port" to details.httpsPort.toString(),
+            "External Port" to details.externalPort.toString(),
+            "Running Game ID" to details.runningGameId.toString(),
+            "NVIDIA Server" to details.nvidiaServer.toString(),
+        )
     }
     @Composable
     fun getPairStatusText(computer: Computer): String {
@@ -199,9 +202,6 @@ class MainViewModel : ViewModel() {
             null -> "Generating PIN..." // TODO: add animation
             else -> "Pair PIN: ${computer.pairPin}"
         }
-    }
-    fun isComputerPaired(computer: Computer): Boolean {
-        return computer.pairResult == PairingManager.PairState.PAIRED
     }
     @Composable
     fun getStatusColor(computer: Computer): Color {
