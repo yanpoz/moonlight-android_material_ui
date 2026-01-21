@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Handshake
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -110,12 +111,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
                             context.startActivity(intent)
                         }) {
-                            Icon(imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
+                            Icon(imageVector = Icons.Outlined.Info,
                                  contentDescription = stringResource(R.string.help))
                         }
                         IconButton(onClick = onSettingsClick) {
                             Icon(imageVector = Icons.Outlined.Settings,
-                                 contentDescription = "Settings") //TODO: add string resource
+                                 contentDescription = "Settings")
                         }
                     },
                 )
@@ -400,19 +401,19 @@ fun ComputerItem(
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
-            // Create shortcut
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.applist_menu_scut)) },
-                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
-            )
             // View Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
                 // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+            )
+            // Create shortcut
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_scut)) },
+                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // Delete PC
             DropdownMenuItem(
@@ -500,13 +501,6 @@ fun AppItem(
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
-            // Hide App
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.applist_menu_hide_app)) },
-                // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
-            )
             // App Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
@@ -521,6 +515,13 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
+                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+            )
+            // Hide App
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.applist_menu_hide_app)) },
+                // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
