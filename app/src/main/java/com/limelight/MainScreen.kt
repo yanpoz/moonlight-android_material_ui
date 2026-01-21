@@ -79,7 +79,8 @@ import com.limelight.viewmodel.MainViewModel
 fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        rememberTopAppBarState())
     val computers = viewModel.computers
 
     PullToRefreshBox(
@@ -105,7 +106,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     actions = {
                         IconButton(onClick = {
                             val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/".toUri()
+                                data = MainViewModel.SETUP_GUIDE_URL.toUri()
                             }
                             context.startActivity(intent)
                         }) {
@@ -150,7 +151,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    onClick = { viewModel.onComputerConnect(context, it.details.uuid) },
+                                    onClick = { viewModel.onComputerConnect(
+                                        context = context, computerUUID = it.details.uuid) },
                                     viewModel = viewModel,
                                     modifier = Modifier
                                         .fillMaxHeight()
@@ -303,7 +305,7 @@ fun ConnectionDialog(
                 TextButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting".toUri()
+                            data = MainViewModel.TROUBLESHOOTING_URL.toUri()
                         }
                         context.startActivity(intent)
                     }
@@ -471,7 +473,9 @@ fun AppItem(
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = { viewModel.onAppLongPress(app.appId, computer.details.uuid) }
+                onLongClick = {
+                    viewModel.onAppLongPress(app.appId, computer.details.uuid)
+                }
             )
     ) {
         Column(

@@ -46,9 +46,12 @@ data class ConnectionDialogUiState(
 )
 
 
+
 class MainViewModel : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
+        const val SETUP_GUIDE_URL = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/"
+        const val TROUBLESHOOTING_URL = "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting"
     }
 
     // Computers with Apps Lists
@@ -190,7 +193,7 @@ class MainViewModel : ViewModel() {
             PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
             PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
             PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
-            null -> stringResource(R.string.pair_fail) //TODO: Handle this better
+            null -> stringResource(R.string.pair_fail) //TODO: loading
         }
     }
     fun getPairPinText(computer: Computer): String {
