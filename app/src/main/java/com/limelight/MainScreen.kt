@@ -81,10 +81,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val computers = viewModel.computers
-    val isRefreshing = viewModel.isRefreshing
 
     PullToRefreshBox(
-        isRefreshing = isRefreshing,
+        isRefreshing = viewModel.isRefreshing,
         onRefresh = { viewModel.updateApps() }
     ) {
         Scaffold(
@@ -280,8 +279,8 @@ fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
 
 
 @Composable
-fun ConnectionDialog(viewModel: MainViewModel, computer: Computer,
-                     onConnect: () -> Unit, onDismiss: () -> Unit) {
+fun ConnectionDialog(
+    viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     //  TODO Add container transformation
     AlertDialog(
@@ -325,10 +324,8 @@ fun ConnectionDialog(viewModel: MainViewModel, computer: Computer,
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ComputerItem(
-    computer: Computer,
-    onClick: (Computer) -> Unit,
-    viewModel: MainViewModel,
-    modifier: Modifier = Modifier
+    viewModel: MainViewModel, computer: Computer,
+    onClick: (Computer) -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
@@ -465,11 +462,8 @@ fun ComputerItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
-    app: NvApp,
-    computer: Computer,
-    onClick: () -> Unit,
-    viewModel: MainViewModel,
-    modifier: Modifier = Modifier
+    viewModel: MainViewModel, app: NvApp, computer: Computer,
+    onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier

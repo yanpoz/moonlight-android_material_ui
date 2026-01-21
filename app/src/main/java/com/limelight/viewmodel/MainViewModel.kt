@@ -24,27 +24,22 @@ data class AppMenuUiState(
     val appId: Int? = null,
     val computerUuid: String? = null,
 )
-
 data class AppViewDetailsUiState(
     val showDialog: Boolean = false,
     val app: NvApp? = null,
     val computer: Computer? = null,
 )
-
 data class ComputerMenuUiState(
     val computerUuid: String? = null,
 )
-
 data class ComputerViewDetailsUiState(
     val showDialog: Boolean = false,
     val computer: Computer? = null,
 )
-
 data class ManualComputerAddingUiState(
     var showDialog: Boolean = false,
     var inputIp: String = "",
 )
-
 data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
     val computer: Computer? = null,
@@ -52,6 +47,10 @@ data class ConnectionDialogUiState(
 
 
 class MainViewModel : ViewModel() {
+    companion object {
+        private const val APPS_POLL_DELAY_MS = 500L
+    }
+
     // Computers with Apps Lists
     private val computerRepository = ComputerRepository()
     val computers: List<Computer> = computerRepository.computers
@@ -87,7 +86,6 @@ class MainViewModel : ViewModel() {
     fun dismissComputerDetailsDialog() {
         computerViewDetails = ComputerViewDetailsUiState()
     }
-
     @Composable
     fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
         return listOf(
@@ -97,7 +95,6 @@ class MainViewModel : ViewModel() {
             "Computer ID" to computer.details.uuid
         )
     }
-    
     @Composable
     fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         val details = computer.details
@@ -118,77 +115,65 @@ class MainViewModel : ViewModel() {
             "NVIDIA Server" to details.nvidiaServer.toString(),
         )
     }
-
     fun onComputerLongPress(computerUUID: String) {
         computerMenu = ComputerMenuUiState(computerUUID)
     }
-
     fun dismissComputerMenu() {
         computerMenu = ComputerMenuUiState()
     }
-
     fun onAppLongPress(appId: Int, computerUUID: String) {
         appMenu = AppMenuUiState(appId, computerUUID)
     }
-
     fun dismissAppMenu() {
         appMenu = AppMenuUiState()
     }
-
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
     }
-
     fun unbindComputerManagerService(context: Context) {
         computerRepository.unbindService(context)
     }
-
     fun onUiResumed() {
         computerRepository.resumeComputerUpdates()
         computerRepository.pollAppsForActiveComputers()
     }
-
     fun onUiPaused() {
         computerRepository.pauseComputerUpdates()
     }
-
     fun updateApps() {
         viewModelScope.launch {
             isRefreshing = true
             try {
                 computerRepository.pollAppsForActiveComputers()
-                delay(500) // TODO const
+                delay(APPS_POLL_DELAY_MS)
             } finally {
                 isRefreshing = false
             }
         }
     }
-
     fun addComputer(ipAddress: String) {
         computerRepository.addComputer(ipAddress)
         // Optionally, reset input IP and hide bottom sheet after attempting to add
         // inputIp = ""
         // showBottomSheet = false
     }
-
     fun onComputerConnect(context: Context, computerUUID: String) {
         val computer = computers.find { it.details.uuid == computerUUID }
         if (computer != null) {
             connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
-            computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
+            computerRepository.initiateConnection(
+                context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
         }
     }
-
     fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
         connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
-        computerRepository.launchApp(context, app, computer, onAppLaunched = { dismissConnectionDialog() })
+        computerRepository.launchApp(
+            context, app, computer, onAppLaunched = { dismissConnectionDialog() })
     }
-
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()
     }
-
     @Composable
     fun getComputerAddressText(computer: Computer): String {
         return computer.details.activeAddress?.address
@@ -197,7 +182,6 @@ class MainViewModel : ViewModel() {
             ?: computer.details.manualAddress?.address
             ?: stringResource(R.string.error_unknown_host)
     }
-
     @Composable
     fun getPairStatusText(computer: Computer): String {
         return when (computer.details.pairState) {
@@ -209,18 +193,15 @@ class MainViewModel : ViewModel() {
             null -> stringResource(R.string.pair_fail) //TODO: Handle this better
         }
     }
-
     fun getPairPinText(computer: Computer): String {
         return when (computer.pairPin) {
             null -> "Generating PIN..." // TODO: add animation
             else -> "Pair PIN: ${computer.pairPin}"
         }
     }
-
     fun isComputerPaired(computer: Computer): Boolean {
         return computer.pairResult == PairingManager.PairState.PAIRED
     }
-
     @Composable
     fun getStatusColor(computer: Computer): Color {
         return when (computer.details.state) {
@@ -229,7 +210,6 @@ class MainViewModel : ViewModel() {
             else -> MaterialTheme.colorScheme.onSurfaceVariant
         }
     }
-
     @Composable
     fun getPairResultText(computer: Computer): String {
         return when (computer.pairResult) {
@@ -246,5 +226,4 @@ class MainViewModel : ViewModel() {
             else -> "Pair Result: ${computer.pairResult}"
         }
     }
-
 }
