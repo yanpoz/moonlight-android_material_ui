@@ -161,13 +161,15 @@ class MainViewModel : ViewModel() {
         if (computer != null) {
             connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
             computerRepository.initiateConnection(
-                context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
+                context, computerUUID, onAppLaunched = { dismissConnectionDialog() }
+            )
         }
     }
     fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
         connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
         computerRepository.launchApp(
-            context, app, computer, onAppLaunched = { dismissConnectionDialog() })
+            context, app, computer, onAppLaunched = { dismissConnectionDialog() }
+        )
     }
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()

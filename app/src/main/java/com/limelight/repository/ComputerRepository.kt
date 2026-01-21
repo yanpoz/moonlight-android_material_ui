@@ -36,22 +36,23 @@ data class Computer(
 )
 
 class ComputerRepository {
-
+    // Scopes
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val uiScope = MainScope() // Scope for main thread operations
-
-    private var computerManagerBinder: ComputerManagerService.ComputerManagerBinder? = null
-    private var computerManagerListener: ComposeComputerManagerListener? = null
+    // Computers with Apps Lists
     private val _computers = mutableStateListOf<Computer>()
     val computers: List<Computer> = _computers
-
+    // Other
     private var connectionJob: Job? = null
-    private var runningPolling = false
+    private var runningPolling: Boolean = false
     private var context: Context? = null
-
+    // Constants
     private val connectionPollDelayMs = 500L
     val desktopAppId = 881448767
 
+    // ComputerManagerService connection
+    private var computerManagerBinder: ComputerManagerService.ComputerManagerBinder? = null
+    private var computerManagerListener: ComposeComputerManagerListener? = null
     private val computerManagerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
             repositoryScope.launch {
@@ -61,7 +62,8 @@ class ComputerRepository {
                 // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
                     computerManagerListener = ComposeComputerManagerListener(
-                        ::processComputerDetails)
+                        onComputerUpdated = ::processComputerDetails
+                    )
                 }
                 if (computerManagerBinder != null &&
                     computerManagerListener != null &&
@@ -72,7 +74,6 @@ class ComputerRepository {
                 }
             }
         }
-
         override fun onServiceDisconnected(componentName: ComponentName?) {
             computerManagerBinder = null
             runningPolling = false
@@ -93,9 +94,9 @@ class ComputerRepository {
         context.bindService(
             intent,
             computerManagerServiceConnection,
-            Service.BIND_AUTO_CREATE)
+            Service.BIND_AUTO_CREATE
+        )
     }
-
     fun unbindService(context: Context) {
         try {
             pauseComputerUpdates() // Ensure polling is stopped
@@ -105,7 +106,6 @@ class ComputerRepository {
             // Service might not have been bound or already unbound
         }
     }
-
     fun resumeComputerUpdates() {
         repositoryScope.launch { // Ensure binder calls are off the main thread if they block
             if (computerManagerBinder != null && !runningPolling && computerManagerListener != null) {
@@ -114,7 +114,6 @@ class ComputerRepository {
             }
         }
     }
-
     fun pauseComputerUpdates() {
         repositoryScope.launch { // Ensure binder calls are off the main thread if they block
             if (computerManagerBinder != null && runningPolling) {
@@ -124,7 +123,6 @@ class ComputerRepository {
             }
         }
     }
-
     private fun modifyComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
         uiScope.launch {
             val index = _computers.indexOfFirst { it.details.uuid == computerUUID }
@@ -133,7 +131,6 @@ class ComputerRepository {
             }
         }
     }
-
     private fun processComputerDetails(details: ComputerDetails) {
         uiScope.launch {
             val index = _computers.indexOfFirst { it.details.uuid == details.uuid }
@@ -154,7 +151,6 @@ class ComputerRepository {
                 oldComputer?.applistPoller?.stop()
                 null
             }
-
             // Preserve fields not included in ComputerDetails (pairResult, pairPin)
             val newComputer = Computer(
                 details = details,
@@ -163,7 +159,6 @@ class ComputerRepository {
                 pairPin = oldComputer?.pairPin,
                 applistPoller = applistPoller
             )
-
             if (oldComputer != newComputer) {
                 if (index != -1) {
                     _computers[index] = newComputer
@@ -173,13 +168,11 @@ class ComputerRepository {
             }
         }
     }
-
     fun addComputer(ipAddress: String) {
         // TODO: Implement the logic to add a computer,
         // similar to how it would have been in the ViewModel.
         // This might involve using computerManagerBinder.
     }
-
     fun initiateConnection(context: Context, computerUUID: String, onAppLaunched: () -> Unit) {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
@@ -204,11 +197,9 @@ class ComputerRepository {
             }
         }
     }
-
     fun cancelConnection() {
         connectionJob?.cancel()
     }
-
     fun pairComputer(computer: Computer) {
         try {
             pauseComputerUpdates()
@@ -247,28 +238,16 @@ class ComputerRepository {
             resumeComputerUpdates()
         }
     }
-
     fun launchApp(context: Context, app: NvApp, computer: Computer, onAppLaunched: () -> Unit) {
-        ServerHelper.doStart(context as Activity?, app, computer.details, computerManagerBinder)
+        ServerHelper.doStart(context as Activity, app, computer.details, computerManagerBinder)
         onAppLaunched()
     }
-
     fun pollAppsForActiveComputers() {
         repositoryScope.launch {
             // Access _computers on the UI thread as it's a mutableStateListOf,
             // but run the actual pollNow() call in the repositoryScope (IO thread).
-            val computersToPoll = synchronized(_computers) {
-                _computers.toList()
-            }
-            computersToPoll.forEach { computer ->
-                computer.applistPoller?.pollNow()
-            }
+            val computersToPoll = synchronized(lock = _computers) { _computers.toList() }
+            computersToPoll.forEach { computer -> computer.applistPoller?.pollNow() }
         }
     }
-
-    // Optional: A method to clean up resources like the CoroutineScope if needed.
-    // fun clear() {
-    // repositoryScope.cancel()
-    // uiScope.cancel()
-    // }
 }
