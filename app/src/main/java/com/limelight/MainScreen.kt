@@ -94,9 +94,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     scrollBehavior = scrollBehavior,
                     title = { Text("Moonlight") },
                     navigationIcon = {
-                        IconButton(onClick = { viewModel.showBottomSheet = true }) {
-                            Icon(imageVector = Icons.Outlined.AddCircleOutline,
-                                 contentDescription = stringResource(R.string.title_add_pc))
+                        IconButton(
+                            onClick = { viewModel.manualComputerAdding.showDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.AddCircleOutline,
+                                contentDescription = stringResource(R.string.title_add_pc)
+                            )
                         }
                     },
                     actions = {
@@ -176,9 +180,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.showBottomSheet) {
+    if (viewModel.manualComputerAdding.showDialog) {
         ModalBottomSheet(
-            onDismissRequest = { viewModel.showBottomSheet = false },
+            onDismissRequest = { viewModel.manualComputerAdding.showDialog = false },
             sheetState = sheetState
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
@@ -187,13 +191,15 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 10.dp),
-                    value = viewModel.inputIp,
-                    onValueChange = { viewModel.inputIp = it },
+                    value = viewModel.manualComputerAdding.inputIp,
+                    onValueChange = { viewModel.manualComputerAdding.inputIp = it },
                     label = { Text(stringResource(R.string.ip_hint)) }
                 )
 
                 Button(
-                    onClick = { viewModel.addComputer(viewModel.inputIp) },
+                    onClick = {
+                        viewModel.addComputer(viewModel.manualComputerAdding.inputIp)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -204,40 +210,43 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.showConnectionDialog && viewModel.computerForConnect != null) {
+    if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computer != null) {
         ConnectionDialog(
             viewModel = viewModel,
-            computer = viewModel.computerForConnect!!,
-            onConnect = { viewModel.onComputerConnect(context, viewModel.computerForConnectUUID!!) },
+            computer = viewModel.connectionDialog.computer!!,
+            onConnect = { viewModel.onComputerConnect(
+                context = context,
+                computerUUID = viewModel.connectionDialog.computer!!.details.uuid)
+            },
             onDismiss = { viewModel.dismissConnectionDialog() }
         )
     }
 
-    if (viewModel.showAppDetailsDialog) {
+    if (viewModel.appViewDetails.showDialog) {
         AppDetailsDialog(
             viewModel = viewModel,
-            app = viewModel.appForAppDetails!!,
-            computer = viewModel.computerForAppDetails!!,
+            app = viewModel.appViewDetails.app!!,
+            computer = viewModel.appViewDetails.computer!!,
         )
     }
     
-    if (viewModel.showComputerDetailsDialog) {
+    if (viewModel.computerViewDetails.showDialog) {
         ComputerDetailsDialog(
             viewModel = viewModel,
-            computer = viewModel.computerForComputerDetails!!,
+            computer = viewModel.computerViewDetails.computer!!,
         )
     }
 }
 
 @Composable
 fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
-    val details = viewModel.getAppDetails(app, computer)
+    val appDetails = viewModel.getAppDetails(app, computer)
     AlertDialog(
         onDismissRequest = { viewModel.dismissAppDetailsDialog() },
         title = { Text(text = app.appName) },
         text = {
             Column {
-                details.forEach { (key, value) ->
+                appDetails.forEach { (key, value) ->
                     Text(text = "$key: $value")
                 }
             }
@@ -251,13 +260,13 @@ fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
 
 @Composable
 fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
-    val details = viewModel.getComputerDetails(computer)
+    val computerDetailsText = viewModel.getComputerDetailsText(computer)
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDetailsDialog() },
         title = { Text(text = computer.details.name) },
         text = {
             Column {
-                details.forEach { (key, value) ->
+                computerDetailsText.forEach { (key, value) ->
                     Text(text = "$key: $value")
                 }
             }
@@ -271,7 +280,8 @@ fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
 
 
 @Composable
-fun ConnectionDialog(viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
+fun ConnectionDialog(viewModel: MainViewModel, computer: Computer,
+                     onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     //  TODO Add container transformation
     AlertDialog(
@@ -360,7 +370,7 @@ fun ComputerItem(
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
             // TODO add caption
-            expanded = viewModel.computerUuidForComputerMenu == computer.details.uuid,
+            expanded = viewModel.computerMenu.computerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
         ) {
             if (computer.details.state == ComputerDetails.State.OFFLINE ||
@@ -467,7 +477,7 @@ fun AppItem(
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = { viewModel.onAppLongPress(computer.details.uuid, app.appId) }
+                onLongClick = { viewModel.onAppLongPress(app.appId, computer.details.uuid) }
             )
     ) {
         Column(
@@ -484,8 +494,8 @@ fun AppItem(
 
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
-            expanded = viewModel.appIdForAppMenu == app.appId &&
-                       viewModel.computerUuidForAppMenu == computer.details.uuid,
+            expanded = viewModel.appMenu.appId == app.appId &&
+                       viewModel.appMenu.computerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
         ) {
             if (viewModel.lastRunningAppId != 0) {
@@ -533,7 +543,7 @@ fun AppItem(
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = {
                     viewModel.dismissAppMenu()
-                    viewModel.onAppDetailsClicked(computer, app)
+                    viewModel.onAppDetailsClicked(app, computer)
                 }
             )
             // Create shortcut

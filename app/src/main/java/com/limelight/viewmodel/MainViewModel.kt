@@ -3,7 +3,6 @@ package com.limelight.viewmodel
 import android.content.Context
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,60 +19,73 @@ import com.limelight.repository.ComputerRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+data class AppMenuUiState(
+    val appId: Int? = null,
+    val computerUuid: String? = null,
+)
+
+data class AppViewDetailsUiState(
+    val showDialog: Boolean = false,
+    val app: NvApp? = null,
+    val computer: Computer? = null,
+)
+
+data class ComputerMenuUiState(
+    val computerUuid: String? = null,
+)
+
+data class ComputerViewDetailsUiState(
+    val showDialog: Boolean = false,
+    val computer: Computer? = null,
+)
+
+data class ManualComputerAddingUiState(
+    var showDialog: Boolean = false,
+    var inputIp: String = "",
+)
+
+data class ConnectionDialogUiState(
+    val showDialog: Boolean = false,
+    val computer: Computer? = null,
+)
+
+
 class MainViewModel : ViewModel() {
-    // Computers with Apps List
+    // Computers with Apps Lists
     private val computerRepository = ComputerRepository()
     val computers: List<Computer> = computerRepository.computers
-    // States for Manual PC addition
-    var showBottomSheet by mutableStateOf(false)
-    var inputIp by mutableStateOf("")
-    // States for Connection Dialog
-    var showConnectionDialog by mutableStateOf(false)
-    var computerForConnectUUID by mutableStateOf<String?>(null)
-    val computerForConnect: Computer? by derivedStateOf {
-        computerForConnectUUID?.let { uuid ->
-            computers.find { it.details.uuid == uuid }
-        }
-    }
-    // State for the computer expanded dropdown menu
-    var computerUuidForComputerMenu by mutableStateOf<String?>(null)
-        private set // Keep the setter private to enforce usage of open/dismiss methods
-    // States for the expanded dropdown menu for apps
-    var appIdForAppMenu by mutableStateOf<Int?>(null)
+
+    // UI States
+    var appMenu by mutableStateOf(AppMenuUiState())
         private set
-    var computerUuidForAppMenu by mutableStateOf<String?>(null)
+    var appViewDetails by mutableStateOf(AppViewDetailsUiState())
         private set
-    // States for App Details
-    var showAppDetailsDialog by mutableStateOf(false)
-    var appForAppDetails by mutableStateOf<NvApp?>(null)
-    var computerForAppDetails by mutableStateOf<Computer?>(null)
-    // States for Computer Details
-    var showComputerDetailsDialog by mutableStateOf(false)
-    var computerForComputerDetails by mutableStateOf<Computer?>(null)
+    var computerMenu by mutableStateOf(ComputerMenuUiState())
+        private set
+    var computerViewDetails by mutableStateOf(ComputerViewDetailsUiState())
+        private set
+    var manualComputerAdding by mutableStateOf(ManualComputerAddingUiState())
+        private set
+    var connectionDialog by mutableStateOf(ConnectionDialogUiState())
+        private set
+
     // Other states
     var isRefreshing by mutableStateOf(false)
     var lastRunningAppId by mutableStateOf<Int?>(null)
 
-    fun onAppDetailsClicked(computer: Computer, app: NvApp) {
-        appForAppDetails = app
-        computerForAppDetails = computer
-        showAppDetailsDialog = true
-    }
-    
-    fun onComputerDetailsClicked(computer: Computer) {
-        computerForComputerDetails = computer
-        showComputerDetailsDialog = true
-    }
 
-    fun dismissAppDetailsDialog() {
-        appForAppDetails = null
-        computerForAppDetails = null
-        showAppDetailsDialog = false
+    fun onAppDetailsClicked(app: NvApp, computer: Computer) {
+        appViewDetails = AppViewDetailsUiState(true, app, computer)
     }
-    
+    fun onComputerDetailsClicked(computer: Computer) {
+        computerViewDetails = ComputerViewDetailsUiState(true, computer)
+    }
+    fun dismissAppDetailsDialog() {
+        appViewDetails = AppViewDetailsUiState()
+    }
     fun dismissComputerDetailsDialog() {
-        computerForComputerDetails = null
-        showComputerDetailsDialog = false
+        computerViewDetails = ComputerViewDetailsUiState()
     }
 
     @Composable
@@ -87,7 +99,7 @@ class MainViewModel : ViewModel() {
     }
     
     @Composable
-    fun getComputerDetails(computer: Computer): List<Pair<String, String>> {
+    fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         val details = computer.details
         return listOfNotNull(
             "Name" to details.name,
@@ -108,21 +120,19 @@ class MainViewModel : ViewModel() {
     }
 
     fun onComputerLongPress(computerUUID: String) {
-        computerUuidForComputerMenu = computerUUID
+        computerMenu = ComputerMenuUiState(computerUUID)
     }
 
     fun dismissComputerMenu() {
-        computerUuidForComputerMenu = null
+        computerMenu = ComputerMenuUiState()
     }
 
-    fun onAppLongPress(computerUUID: String, appId: Int) {
-        computerUuidForAppMenu = computerUUID
-        appIdForAppMenu = appId
+    fun onAppLongPress(appId: Int, computerUUID: String) {
+        appMenu = AppMenuUiState(appId, computerUUID)
     }
 
     fun dismissAppMenu() {
-        computerUuidForAppMenu = null
-        appIdForAppMenu = null
+        appMenu = AppMenuUiState()
     }
 
     fun bindComputerManagerService(context: Context) {
@@ -147,7 +157,7 @@ class MainViewModel : ViewModel() {
             isRefreshing = true
             try {
                 computerRepository.pollAppsForActiveComputers()
-                delay(500)
+                delay(500) // TODO const
             } finally {
                 isRefreshing = false
             }
@@ -162,18 +172,20 @@ class MainViewModel : ViewModel() {
     }
 
     fun onComputerConnect(context: Context, computerUUID: String) {
-        showConnectionDialog = true
-        computerForConnectUUID = computerUUID
-        computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
+        val computer = computers.find { it.details.uuid == computerUUID }
+        if (computer != null) {
+            connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
+            computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
+        }
     }
 
     fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
+        connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
         computerRepository.launchApp(context, app, computer, onAppLaunched = { dismissConnectionDialog() })
     }
 
     fun dismissConnectionDialog() {
-        showConnectionDialog = false
-        computerForConnectUUID = null
+        connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()
     }
 
