@@ -160,16 +160,18 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
 
                             // AppItems
-                            items(computer.apps, key = { it.appId }) { app ->
-                                AppItem(
-                                    app = app,
-                                    computer = computer,
-                                    onClick = { viewModel.onLaunchApp(context, app, computer) },
-                                    viewModel = viewModel,
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .aspectRatio(2f / 3f)
-                                )
+                            if (computer.details.pairState == PairingManager.PairState.PAIRED) {
+                                items(computer.apps, key = { it.appId }) { app ->
+                                    AppItem(
+                                        app = app,
+                                        computer = computer,
+                                        onClick = { viewModel.onLaunchApp(context, app, computer) },
+                                        viewModel = viewModel,
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .aspectRatio(2f / 3f)
+                                    )
+                                }
                             }
                         }
                     }
