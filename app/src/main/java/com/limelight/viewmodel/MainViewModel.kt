@@ -21,47 +21,59 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
+    // Computers with Apps List
+    private val computerRepository = ComputerRepository()
+    val computers: List<Computer> = computerRepository.computers
+    // States for Manual PC addition
     var showBottomSheet by mutableStateOf(false)
     var inputIp by mutableStateOf("")
-
+    // States for Connection Dialog
     var showConnectionDialog by mutableStateOf(false)
-    var selectedComputerUUID by mutableStateOf<String?>(null)
-    val selectedComputer: Computer? by derivedStateOf {
-        selectedComputerUUID?.let { uuid ->
+    var computerForConnectUUID by mutableStateOf<String?>(null)
+    val computerForConnect: Computer? by derivedStateOf {
+        computerForConnectUUID?.let { uuid ->
             computers.find { it.details.uuid == uuid }
         }
     }
-    private val computerRepository = ComputerRepository()
-    val computers: List<Computer> = computerRepository.computers
-
-    var isRefreshing by mutableStateOf(false)
-
-    // State for the expanded dropdown menu
-    var expandedMenuComputerUuid by mutableStateOf<String?>(null)
+    // State for the computer expanded dropdown menu
+    var computerUuidForComputerMenu by mutableStateOf<String?>(null)
         private set // Keep the setter private to enforce usage of open/dismiss methods
-
-    // State for the expanded dropdown menu for apps
-    var expandedMenuAppId by mutableStateOf<Int?>(null)
+    // States for the expanded dropdown menu for apps
+    var appIdForAppMenu by mutableStateOf<Int?>(null)
         private set
-    var expandedMenuComputerUuidForApp by mutableStateOf<String?>(null)
+    var computerUuidForAppMenu by mutableStateOf<String?>(null)
         private set
-
+    // States for App Details
+    var showAppDetailsDialog by mutableStateOf(false)
+    var appForAppDetails by mutableStateOf<NvApp?>(null)
+    var computerForAppDetails by mutableStateOf<Computer?>(null)
+    // States for Computer Details
+    var showComputerDetailsDialog by mutableStateOf(false)
+    var computerForComputerDetails by mutableStateOf<Computer?>(null)
+    // Other states
+    var isRefreshing by mutableStateOf(false)
     var lastRunningAppId by mutableStateOf<Int?>(null)
 
-    var showAppDetailsDialog by mutableStateOf(false)
-    var selectedApp by mutableStateOf<NvApp?>(null)
-    var selectedComputerForApp by mutableStateOf<Computer?>(null)
-
     fun onAppDetailsClicked(computer: Computer, app: NvApp) {
-        selectedApp = app
-        selectedComputerForApp = computer
+        appForAppDetails = app
+        computerForAppDetails = computer
         showAppDetailsDialog = true
+    }
+    
+    fun onComputerDetailsClicked(computer: Computer) {
+        computerForComputerDetails = computer
+        showComputerDetailsDialog = true
     }
 
     fun dismissAppDetailsDialog() {
-        selectedApp = null
-        selectedComputerForApp = null
+        appForAppDetails = null
+        computerForAppDetails = null
         showAppDetailsDialog = false
+    }
+    
+    fun dismissComputerDetailsDialog() {
+        computerForComputerDetails = null
+        showComputerDetailsDialog = false
     }
 
     @Composable
@@ -73,23 +85,44 @@ class MainViewModel : ViewModel() {
             "Computer ID" to computer.details.uuid
         )
     }
+    
+    @Composable
+    fun getComputerDetails(computer: Computer): List<Pair<String, String>> {
+        val details = computer.details
+        return listOfNotNull(
+            "Name" to details.name,
+            "UUID" to details.uuid,
+            "State" to details.state.toString(),
+            "Paired" to details.pairState.toString(),
+            details.activeAddress?.let { "Active Address" to it.toString() },
+            details.localAddress?.let { "Local Address" to it.toString() },
+            details.remoteAddress?.let { "Remote Address" to it.toString() },
+            details.manualAddress?.let { "Manual Address" to it.toString() },
+            details.ipv6Address?.let { "IPv6 Address" to it.toString() },
+            details.macAddress?.let { "MAC Address" to it },
+            "HTTPS Port" to details.httpsPort.toString(),
+            "External Port" to details.externalPort.toString(),
+            "Running Game ID" to details.runningGameId.toString(),
+            "NVIDIA Server" to details.nvidiaServer.toString(),
+        )
+    }
 
     fun onComputerLongPress(computerUUID: String) {
-        expandedMenuComputerUuid = computerUUID
+        computerUuidForComputerMenu = computerUUID
     }
 
     fun dismissComputerMenu() {
-        expandedMenuComputerUuid = null
+        computerUuidForComputerMenu = null
     }
 
     fun onAppLongPress(computerUUID: String, appId: Int) {
-        expandedMenuComputerUuidForApp = computerUUID
-        expandedMenuAppId = appId
+        computerUuidForAppMenu = computerUUID
+        appIdForAppMenu = appId
     }
 
     fun dismissAppMenu() {
-        expandedMenuComputerUuidForApp = null
-        expandedMenuAppId = null
+        computerUuidForAppMenu = null
+        appIdForAppMenu = null
     }
 
     fun bindComputerManagerService(context: Context) {
@@ -130,7 +163,7 @@ class MainViewModel : ViewModel() {
 
     fun onComputerConnect(context: Context, computerUUID: String) {
         showConnectionDialog = true
-        selectedComputerUUID = computerUUID
+        computerForConnectUUID = computerUUID
         computerRepository.initiateConnection(context, computerUUID, onAppLaunched = { dismissConnectionDialog() })
     }
 
@@ -140,7 +173,7 @@ class MainViewModel : ViewModel() {
 
     fun dismissConnectionDialog() {
         showConnectionDialog = false
-        selectedComputerUUID = null
+        computerForConnectUUID = null
         computerRepository.cancelConnection()
     }
 

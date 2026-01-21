@@ -24,10 +24,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
@@ -38,9 +36,6 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Speed
-import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -209,11 +204,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.showConnectionDialog && viewModel.selectedComputer != null) {
+    if (viewModel.showConnectionDialog && viewModel.computerForConnect != null) {
         ConnectionDialog(
             viewModel = viewModel,
-            computer = viewModel.selectedComputer!!,
-            onConnect = { viewModel.onComputerConnect(context, viewModel.selectedComputerUUID!!) },
+            computer = viewModel.computerForConnect!!,
+            onConnect = { viewModel.onComputerConnect(context, viewModel.computerForConnectUUID!!) },
             onDismiss = { viewModel.dismissConnectionDialog() }
         )
     }
@@ -221,8 +216,15 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     if (viewModel.showAppDetailsDialog) {
         AppDetailsDialog(
             viewModel = viewModel,
-            app = viewModel.selectedApp!!,
-            computer = viewModel.selectedComputerForApp!!,
+            app = viewModel.appForAppDetails!!,
+            computer = viewModel.computerForAppDetails!!,
+        )
+    }
+    
+    if (viewModel.showComputerDetailsDialog) {
+        ComputerDetailsDialog(
+            viewModel = viewModel,
+            computer = viewModel.computerForComputerDetails!!,
         )
     }
 }
@@ -242,6 +244,26 @@ fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
         },
         confirmButton = {
             TextButton( onClick = { viewModel.dismissAppDetailsDialog() } )
+            { Text("OK") }
+        }
+    )
+}
+
+@Composable
+fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
+    val details = viewModel.getComputerDetails(computer)
+    AlertDialog(
+        onDismissRequest = { viewModel.dismissComputerDetailsDialog() },
+        title = { Text(text = computer.details.name) },
+        text = {
+            Column {
+                details.forEach { (key, value) ->
+                    Text(text = "$key: $value")
+                }
+            }
+        },
+        confirmButton = {
+            TextButton( onClick = { viewModel.dismissComputerDetailsDialog() } )
             { Text("OK") }
         }
     )
@@ -338,7 +360,7 @@ fun ComputerItem(
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
             // TODO add caption
-            expanded = viewModel.expandedMenuComputerUuid == computer.details.uuid,
+            expanded = viewModel.computerUuidForComputerMenu == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
         ) {
             if (computer.details.state == ComputerDetails.State.OFFLINE ||
@@ -406,7 +428,10 @@ fun ComputerItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
                 // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+                onClick = {
+                    viewModel.dismissComputerMenu()
+                    viewModel.onComputerDetailsClicked(computer)
+                }
             )
             // Create shortcut
             DropdownMenuItem(
@@ -459,8 +484,8 @@ fun AppItem(
 
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
-            expanded = viewModel.expandedMenuAppId == app.appId &&
-                       viewModel.expandedMenuComputerUuidForApp == computer.details.uuid,
+            expanded = viewModel.appIdForAppMenu == app.appId &&
+                       viewModel.computerUuidForAppMenu == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
         ) {
             if (viewModel.lastRunningAppId != 0) {
