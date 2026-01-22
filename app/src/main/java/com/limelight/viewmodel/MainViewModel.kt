@@ -167,6 +167,9 @@ class MainViewModel : ViewModel() {
             onQuitApp(context, it, computer)
         }
     }
+    fun onSendWakeOnLan(context: Context, computer: Computer) {
+        computerRepository.sendWakeOnLan(context, computer)
+    }
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()

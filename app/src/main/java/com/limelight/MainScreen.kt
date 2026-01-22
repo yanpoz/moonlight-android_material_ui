@@ -417,7 +417,10 @@ fun ComputerItem(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
                     leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
-                    onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+                    onClick = {
+                        viewModel.dismissComputerMenu()
+                        viewModel.onSendWakeOnLan(context, computer)
+                    }
                 )
             }
             else if (computer.details.pairState != PairingManager.PairState.PAIRED) {

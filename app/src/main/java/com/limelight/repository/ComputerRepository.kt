@@ -17,6 +17,7 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.NvHTTP
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.nvstream.http.PairingManager.PairState
+import com.limelight.nvstream.wol.WakeOnLanSender
 import com.limelight.utils.ServerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -258,6 +259,22 @@ class ComputerRepository {
         }
         ServerHelper.doQuit(
             context as Activity, computer.details, app, computerManagerBinder, null)
+    }
+    fun sendWakeOnLan(context: Context, computer: Computer) {
+        if (computer.details.state == ComputerDetails.State.ONLINE) {
+            // TODO: Implement Toasts
+            Log.e("ComputerRepository", "Computer is already online")
+        }
+        if (computer.details.macAddress == null) {
+            Log.e("ComputerRepository", "Computer has no MAC address")
+        }
+        repositoryScope.launch {
+            try {
+                WakeOnLanSender.sendWolPacket(computer.details)
+            } catch (e: Exception) {
+                Log.e("ComputerRepository", "Error sending Wake-On-LAN packet", e)
+            }
+        }
     }
     fun pollAppsForActiveComputers() {
         repositoryScope.launch {
