@@ -10,8 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.limelight.R
 import com.limelight.nvstream.http.NvApp
-import com.limelight.nvstream.http.PairingManager
-import com.limelight.repository.Computer
+import com.limelight.computers.Computer
 import com.limelight.repository.ComputerRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,6 +58,7 @@ class MainViewModel : ViewModel() {
     // Computers with Apps Lists
     private val computerRepository = ComputerRepository()
     val computers: List<Computer> = computerRepository.computers
+
     // UI States
     var appMenu by mutableStateOf(AppMenuUiState())
         private set
@@ -74,6 +74,7 @@ class MainViewModel : ViewModel() {
         private set
     var confirmationDialog by mutableStateOf(ConfirmationDialogUiState())
         private set
+
     // Other states
     var isRefreshing by mutableStateOf(false)
 
@@ -171,9 +172,7 @@ class MainViewModel : ViewModel() {
         connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()
     }
-    fun isComputerPaired(computer: Computer): Boolean {
-        return computer.pairResult == PairingManager.PairState.PAIRED
-    }
+
     @Composable
     fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
         return listOf(

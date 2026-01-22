@@ -74,10 +74,11 @@ import com.limelight.computers.getComputerStatusColor
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
-import com.limelight.repository.Computer
+import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
+import com.limelight.computers.isComputerPaired
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -314,7 +315,7 @@ fun ConnectionDialog(
             }
         },
         confirmButton = {
-            if (viewModel.isComputerPaired(computer)) {
+            if (isComputerPaired(computer)) {
                 Row {
                     TextButton(onClick = { onConnect() } ) { Text("Connect to Desktop") }
                     TextButton(onClick = { onDismiss() } ) { Text("Display Apps & Games") }

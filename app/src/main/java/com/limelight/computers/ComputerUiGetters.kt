@@ -7,7 +7,6 @@ import androidx.compose.ui.res.stringResource
 import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
-import com.limelight.repository.Computer
 
 @Composable
 fun getComputerAddressText(computer: Computer): String {

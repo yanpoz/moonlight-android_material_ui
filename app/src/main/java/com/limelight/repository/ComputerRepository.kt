@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
+import com.limelight.computers.Computer
 import com.limelight.computers.ComputerManagerService
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
@@ -27,19 +28,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.StringReader
-
-data class Computer(
-    val details: ComputerDetails,
-    val apps: List<NvApp> = emptyList(),
-    val pairResult: PairState? = null,
-    val pairPin: String? = null,
-    val applistPoller: ComputerManagerService.ApplistPoller? = null
-) {
-    fun getRunningApp(): NvApp? {
-        if (details.runningGameId == 0) { return null }
-        return apps.find { it.appId == details.runningGameId }
-    }
-}
 
 class ComputerRepository {
     // Scopes
