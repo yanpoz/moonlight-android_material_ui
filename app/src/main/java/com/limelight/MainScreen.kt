@@ -280,11 +280,11 @@ fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
 
 @Composable
 fun ConnectionDialog(
-    viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
+    viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit
+) {
     val context = LocalContext.current
     //  TODO Add container transformation
     AlertDialog(
-        onDismissRequest = { onDismiss() },
         title = { Text(text = "Connecting to: ${computer.details.name}") },
         text = {
             Column {
@@ -316,7 +316,8 @@ fun ConnectionDialog(
                     Text(stringResource(R.string.applist_menu_cancel))
                 }
             }
-        }
+        },
+        onDismissRequest = { onDismiss() },
     )
 }
 
@@ -413,13 +414,13 @@ fun ComputerItem(
             }
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(
-                text = { Text(text = "Move Up") }, // TODO: Add string resource
+                text = { Text(text = "Move Up") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // Move Down TODO: should not be available when on bottom
             DropdownMenuItem(
-                text = { Text(text = "Move Down") }, // TODO: Add string resource
+                text = { Text(text = "Move Down") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
@@ -497,8 +498,8 @@ fun AppItem(
                        viewModel.appMenu.computerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
         ) {
-            if (viewModel.lastRunningAppId != 0) {
-                if (viewModel.lastRunningAppId == app.appId) {
+            if (computer.details.runningGameId != 0) {
+                if (computer.details.runningGameId == app.appId) {
                     // Resume Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
@@ -507,10 +508,11 @@ fun AppItem(
                     )
                     // Quit Session
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_quit_app)) },
+                        text = { Text(stringResource(R.string.applist_menu_quit)) },
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = { viewModel.dismissAppMenu() /*TODO*/ }
                     )
+                    HorizontalDivider() // TODO: replace with gap Material expressive
                 }
                 else {
                     // Quit running and Start new session
@@ -519,18 +521,18 @@ fun AppItem(
                         leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, null) },
                         onClick = { viewModel.dismissAppMenu() /*TODO*/ }
                     )
+                    HorizontalDivider() // TODO: replace with gap Material expressive
                 }
             }
-            HorizontalDivider() // TODO: replace with gap Material expressive
-            // Move Up TODO: should not be available when on beginning
+            // Move Left TODO: should not be available when on beginning
             DropdownMenuItem(
-                text = { Text(text = "Move Left") }, // TODO: Add string resource AutoMirrored (?)
+                text = { Text(text = "Move Left") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
-            // Move Down TODO: should not be available when on bottom
+            // Move Right TODO: should not be available when on bottom
             DropdownMenuItem(
-                text = { Text(text = "Move Right") }, // TODO: Add string resource AutoMirrored (?)
+                text = { Text(text = "Move Right") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )

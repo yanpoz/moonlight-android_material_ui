@@ -71,7 +71,6 @@ class MainViewModel : ViewModel() {
         private set
     // Other states
     var isRefreshing by mutableStateOf(false)
-    var lastRunningAppId by mutableStateOf<Int?>(null)
 
     fun onAppDetailsClicked(app: NvApp, computer: Computer) {
         appViewDetails = AppViewDetailsUiState(true, app, computer)
@@ -161,7 +160,7 @@ class MainViewModel : ViewModel() {
     fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
         return listOf(
             stringResource(R.string.applist_details_id) to app.appId.toString(),
-            "HDR Supported" to app.isHdrSupported.toString(), //TODO
+            "HDR Supported" to app.isHdrSupported.toString(),
             "Computer" to computer.details.name,
             "Computer ID" to computer.details.uuid
         )
