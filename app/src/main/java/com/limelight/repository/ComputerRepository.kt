@@ -108,7 +108,9 @@ class ComputerRepository {
             _computers.forEach { it.applistPoller?.stop() }
             context.unbindService(computerManagerServiceConnection)
         } catch (e: IllegalArgumentException) {
-            // Service might not have been bound or already unbound
+            Log.e("ComputerRepository",
+                "Service might not have been bound or already unbound", e
+            )
         }
     }
     fun resumeComputerUpdates() {
