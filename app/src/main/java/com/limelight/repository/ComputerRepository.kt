@@ -33,7 +33,12 @@ data class Computer(
     val pairResult: PairState? = null,
     val pairPin: String? = null,
     val applistPoller: ComputerManagerService.ApplistPoller? = null
-)
+) {
+    fun getRunningApp(): NvApp? {
+        if (details.runningGameId == 0) { return null }
+        return apps.find { it.appId == details.runningGameId }
+    }
+}
 
 class ComputerRepository {
     // Scopes
@@ -241,6 +246,16 @@ class ComputerRepository {
     fun launchApp(context: Context, app: NvApp, computer: Computer, onAppLaunched: () -> Unit) {
         ServerHelper.doStart(context as Activity, app, computer.details, computerManagerBinder)
         onAppLaunched()
+    }
+    fun quitApp(context: Context, app: NvApp, computer: Computer) {
+        if (computerManagerBinder == null) {
+            Log.e(
+                "ComputerRepository", 
+                "ComputerManagerBinder not available, cannot quit app")
+            return
+        }
+        ServerHelper.doQuit(
+            context as Activity, computer.details, app, computerManagerBinder, null)
     }
     fun pollAppsForActiveComputers() {
         repositoryScope.launch {

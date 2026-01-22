@@ -1,5 +1,6 @@
 package com.limelight
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -154,6 +155,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     onClick = { viewModel.onComputerConnect(
                                         context = context, computerUUID = it.details.uuid) },
                                     viewModel = viewModel,
+                                    context = context,
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
@@ -163,6 +165,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                                 items(computer.apps, key = { it.appId }) { app ->
                                     AppItem(
+                                        context = context,
                                         app = app,
                                         computer = computer,
                                         onClick = { viewModel.onLaunchApp(context, app, computer) },
@@ -233,6 +236,18 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         ComputerDetailsDialog(
             viewModel = viewModel,
             computer = viewModel.computerViewDetails.computer!!,
+        )
+    }
+
+    if (viewModel.confirmationDialog.showDialog) {
+        ConfirmationDialog(
+            title = viewModel.confirmationDialog.title,
+            text = viewModel.confirmationDialog.text,
+            onConfirm = {
+                viewModel.confirmationDialog.action()
+                viewModel.dismissConfirmationDialog()
+            },
+            onDismiss = { viewModel.dismissConfirmationDialog() }
         )
     }
 }
@@ -322,10 +337,35 @@ fun ConnectionDialog(
 }
 
 
+@Composable
+fun ConfirmationDialog(
+    title: String,
+    text: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        title = { Text(text = title) },
+        text = { Text(text = text) },
+        confirmButton = {
+            TextButton(onClick = { onConfirm() } ) {
+                Text("Confirm") // TODO should be specific
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() } ) {
+                Text(stringResource(R.string.applist_menu_cancel))
+            }
+        },
+        onDismissRequest = { onDismiss() },
+    )
+}
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ComputerItem(
-    viewModel: MainViewModel, computer: Computer,
+    viewModel: MainViewModel, computer: Computer, context: Context,
     onClick: (Computer) -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
@@ -407,7 +447,10 @@ fun ComputerItem(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit)) },
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
-                        onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+                        onClick = {
+                            viewModel.dismissComputerMenu()
+                            viewModel.onQuitRunningApp(context, computer)
+                        }
                     )
                     HorizontalDivider() // TODO: replace with gap Material expressive
                 }
@@ -469,7 +512,7 @@ fun ComputerItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
-    viewModel: MainViewModel, app: NvApp, computer: Computer,
+    viewModel: MainViewModel, app: NvApp, computer: Computer, context: Context,
     onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
@@ -510,7 +553,10 @@ fun AppItem(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit)) },
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
-                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                        onClick = {
+                            viewModel.dismissAppMenu()
+                            viewModel.onQuitApp(context, app, computer)
+                        }
                     )
                     HorizontalDivider() // TODO: replace with gap Material expressive
                 }

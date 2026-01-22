@@ -44,6 +44,12 @@ data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
     val computer: Computer? = null,
 )
+data class ConfirmationDialogUiState(
+    val showDialog: Boolean = false,
+    val title: String = "",
+    val text: String = "",
+    val action: () -> Unit = {},
+)
 
 
 class MainViewModel : ViewModel() {
@@ -68,6 +74,8 @@ class MainViewModel : ViewModel() {
     var manualComputerAdding by mutableStateOf(ManualComputerAddingUiState())
         private set
     var connectionDialog by mutableStateOf(ConnectionDialogUiState())
+        private set
+    var confirmationDialog by mutableStateOf(ConfirmationDialogUiState())
         private set
     // Other states
     var isRefreshing by mutableStateOf(false)
@@ -95,6 +103,12 @@ class MainViewModel : ViewModel() {
     }
     fun dismissAppMenu() {
         appMenu = AppMenuUiState()
+    }
+    fun confirmAction(title: String, text: String, action: () -> Unit = {}) {
+        confirmationDialog = ConfirmationDialogUiState(true, title, text, action)
+    }
+    fun dismissConfirmationDialog() {
+        confirmationDialog = ConfirmationDialogUiState()
     }
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
@@ -140,6 +154,18 @@ class MainViewModel : ViewModel() {
         computerRepository.launchApp(
             context, app, computer, onAppLaunched = { dismissConnectionDialog() }
         )
+    }
+    fun onQuitApp(context: Context, app: NvApp, computer: Computer) {
+        confirmAction(
+            title = "Quit ${app.appName}?",
+            text = "Are you sure you want to quit ${app.appName}?",
+            action = { computerRepository.quitApp(context, app, computer) }
+        )
+    }
+    fun onQuitRunningApp(context: Context, computer: Computer) {
+        computer.getRunningApp()?.let {
+            onQuitApp(context, it, computer)
+        }
     }
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()
