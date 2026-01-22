@@ -152,7 +152,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    onClick = { viewModel.onComputerConnect(
+                                    onClick = { viewModel.onComputerInitiateConnection(
                                         context = context, computerUUID = it.details.uuid) },
                                     viewModel = viewModel,
                                     context = context,
@@ -216,7 +216,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         ConnectionDialog(
             viewModel = viewModel,
             computer = viewModel.connectionDialog.computer!!,
-            onConnect = { viewModel.onComputerConnect(
+            onConnect = { viewModel.onComputerInitiateConnection(
                 context = context,
                 computerUUID = viewModel.connectionDialog.computer!!.details.uuid)
             },
@@ -433,7 +433,18 @@ fun ComputerItem(
                 HorizontalDivider() // TODO: replace with gap Material expressive
             }
             else {
-                if (computer.details.runningGameId != 0) {
+                if (computer.details.runningGameId == 0) {
+                    // Start Session
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.applist_menu_resume)) },
+                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
+                        onClick = {
+                            viewModel.dismissComputerMenu()
+                            onClick(computer)
+                        }
+                    )
+                }
+                else {
                     // Resume Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
@@ -452,8 +463,8 @@ fun ComputerItem(
                             viewModel.onQuitRunningApp(context, computer)
                         }
                     )
-                    HorizontalDivider() // TODO: replace with gap Material expressive
                 }
+                HorizontalDivider() // TODO: replace with gap Material expressive
             }
             // Move Up TODO: should not be available when on top
             DropdownMenuItem(

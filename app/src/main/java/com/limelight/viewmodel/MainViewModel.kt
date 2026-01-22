@@ -140,7 +140,7 @@ class MainViewModel : ViewModel() {
         // inputIp = ""
         // showBottomSheet = false
     }
-    fun onComputerConnect(context: Context, computerUUID: String) {
+    fun onComputerInitiateConnection(context: Context, computerUUID: String) {
         val computer = computers.find { it.details.uuid == computerUUID }
         if (computer != null) {
             connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
