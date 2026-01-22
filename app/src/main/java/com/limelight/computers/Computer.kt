@@ -15,4 +15,7 @@ data class Computer(
         if (details.runningGameId == 0) { return null }
         return apps.find { it.appId == details.runningGameId }
     }
+    fun isPaired(): Boolean {
+        return pairResult == PairingManager.PairState.PAIRED
+    }
 }

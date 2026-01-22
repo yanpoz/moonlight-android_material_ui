@@ -78,7 +78,6 @@ import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
-import com.limelight.computers.isComputerPaired
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -315,7 +314,7 @@ fun ConnectionDialog(
             }
         },
         confirmButton = {
-            if (isComputerPaired(computer)) {
+            if (computer.isPaired()) {
                 Row {
                     TextButton(onClick = { onConnect() } ) { Text("Connect to Desktop") }
                     TextButton(onClick = { onDismiss() } ) { Text("Display Apps & Games") }

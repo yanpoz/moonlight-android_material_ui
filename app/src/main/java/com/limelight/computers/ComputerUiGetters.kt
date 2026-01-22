@@ -82,7 +82,3 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         "NVIDIA Server" to details.nvidiaServer.toString(),
     )
 }
-
-fun isComputerPaired(computer: Computer): Boolean {
-    return computer.pairResult == PairingManager.PairState.PAIRED
-}
