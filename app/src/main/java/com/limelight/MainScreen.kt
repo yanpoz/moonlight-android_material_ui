@@ -92,7 +92,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
     PullToRefreshBox(
         isRefreshing = viewModel.isRefreshing,
-        onRefresh = { viewModel.updateApps() }
+        onRefresh = { viewModel.updateComputerApps() }
     ) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

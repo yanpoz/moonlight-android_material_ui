@@ -121,7 +121,7 @@ class MainViewModel : ViewModel() {
     fun onUiPaused() {
         computerRepository.pauseComputerUpdates()
     }
-    fun updateApps() {
+    fun updateComputerApps() {
         viewModelScope.launch {
             isRefreshing = true
             try {
