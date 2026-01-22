@@ -68,11 +68,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.limelight.computers.getComputerDetailsText
+import com.limelight.computers.getComputerPairResultText
+import com.limelight.computers.getComputerStatusColor
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.repository.Computer
 import com.limelight.viewmodel.MainViewModel
+import com.limelight.computers.getComputerPairPinText
+import com.limelight.computers.getComputerPairStatusText
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -274,7 +279,7 @@ fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
 
 @Composable
 fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
-    val computerDetailsText = viewModel.getComputerDetailsText(computer)
+    val computerDetailsText = getComputerDetailsText(computer)
     AlertDialog(
         onDismissRequest = { viewModel.dismissComputerDetailsDialog() },
         title = { Text(text = computer.details.name) },
@@ -303,9 +308,9 @@ fun ConnectionDialog(
         title = { Text(text = "Connecting to: ${computer.details.name}") },
         text = {
             Column {
-                Text(text = viewModel.getPairStatusText(computer))
-                Text(text = viewModel.getPairPinText(computer))
-                Text(text = viewModel.getPairResultText(computer))
+                Text(text = getComputerPairStatusText(computer))
+                Text(text = getComputerPairPinText(computer))
+                Text(text = getComputerPairResultText(computer))
             }
         },
         confirmButton = {
@@ -392,14 +397,14 @@ fun ComputerItem(
                 Box(
                     modifier = Modifier
                         .size(12.dp)
-                        .background(viewModel.getStatusColor(computer), CircleShape)
+                        .background(getComputerStatusColor(computer), CircleShape)
                 )
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = viewModel.getPairStatusText(computer),
+                text = getComputerPairStatusText(computer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
