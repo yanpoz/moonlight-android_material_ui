@@ -114,7 +114,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     items(computers, key = { it.details.uuid }) { computer ->
                         LazyRow(
                             modifier = Modifier
-                                .height(200.dp) // Fixed height for the entire row of items
+                                .height(200.dp) // Fixed height for the row of items
                                 .padding(vertical = 16.dp),
                             contentPadding = PaddingValues(horizontal = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),

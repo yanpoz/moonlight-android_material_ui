@@ -46,6 +46,7 @@ data class ConfirmationDialogUiState(
 )
 
 
+
 class MainViewModel : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
@@ -53,11 +54,10 @@ class MainViewModel : ViewModel() {
         const val TROUBLESHOOTING_URL = "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting"
     }
 
-    // Computers with Apps Lists
+    //region States Init
     private val computerRepository = ComputerRepository()
     val computers: StateFlow<List<Computer>> = computerRepository.computers
 
-    // UI States
     var appMenu by mutableStateOf(AppMenuUiState())
         private set
     var appViewDetails by mutableStateOf(AppViewDetailsUiState())
@@ -72,18 +72,34 @@ class MainViewModel : ViewModel() {
         private set
     var confirmationDialog by mutableStateOf(ConfirmationDialogUiState())
         private set
-
-    // Other states
     var isRefreshing by mutableStateOf(false)
+    //endregion
 
+    //region Lifecycle & Service Management
+    fun bindComputerManagerService(context: Context) {
+        computerRepository.bindService(context)
+    }
+    fun unbindComputerManagerService(context: Context) {
+        computerRepository.unbindService(context)
+    }
+    fun onUiResumed() {
+        computerRepository.resumeComputerUpdates()
+        computerRepository.pollAppsForActiveComputers()
+    }
+    fun onUiPaused() {
+        computerRepository.pauseComputerUpdates()
+    }
+    //endregion
+
+    //region UI Menu and Dialog Management
     fun onAppDetailsClicked(app: NvApp, computer: Computer) {
         appViewDetails = AppViewDetailsUiState(true, app, computer)
     }
-    fun onComputerDetailsClicked(computer: Computer) {
-        computerViewDetails = ComputerViewDetailsUiState(true, computer)
-    }
     fun dismissAppDetailsDialog() {
         appViewDetails = AppViewDetailsUiState()
+    }
+    fun onComputerDetailsClicked(computer: Computer) {
+        computerViewDetails = ComputerViewDetailsUiState(true, computer)
     }
     fun dismissComputerDetailsDialog() {
         computerViewDetails = ComputerViewDetailsUiState()
@@ -106,19 +122,22 @@ class MainViewModel : ViewModel() {
     fun dismissConfirmationDialog() {
         confirmationDialog = ConfirmationDialogUiState()
     }
-    fun bindComputerManagerService(context: Context) {
-        computerRepository.bindService(context)
+    fun showManualComputerAddDialog() {
+        manualComputerAdding = manualComputerAdding.copy(showDialog = true)
     }
-    fun unbindComputerManagerService(context: Context) {
-        computerRepository.unbindService(context)
+    fun dismissManualComputerAddDialog() {
+        manualComputerAdding = ManualComputerAddingUiState()
     }
-    fun onUiResumed() {
-        computerRepository.resumeComputerUpdates()
-        computerRepository.pollAppsForActiveComputers()
+    fun onManualComputerInputChanged(ip: String) {
+        manualComputerAdding = manualComputerAdding.copy(inputIp = ip)
     }
-    fun onUiPaused() {
-        computerRepository.pauseComputerUpdates()
+    fun dismissConnectionDialog() {
+        connectionDialog = ConnectionDialogUiState()
+        computerRepository.cancelConnection()
     }
+    //endregion
+
+    //region Computer & App Actions
     fun updateComputerApps() {
         viewModelScope.launch {
             isRefreshing = true
@@ -164,20 +183,5 @@ class MainViewModel : ViewModel() {
     fun onSendWakeOnLan(context: Context, computerUuid: String) {
         computerRepository.sendWakeOnLan(context, computerUuid)
     }
-    fun dismissConnectionDialog() {
-        connectionDialog = ConnectionDialogUiState()
-        computerRepository.cancelConnection()
-    }
-
-    fun showManualComputerAddDialog() {
-        manualComputerAdding = manualComputerAdding.copy(showDialog = true)
-    }
-
-    fun dismissManualComputerAddDialog() {
-        manualComputerAdding = ManualComputerAddingUiState()
-    }
-
-    fun onManualComputerInputChanged(ip: String) {
-        manualComputerAdding = manualComputerAdding.copy(inputIp = ip)
-    }
+    //endregion
 }
