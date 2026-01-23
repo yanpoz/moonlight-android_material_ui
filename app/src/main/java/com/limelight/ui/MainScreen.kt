@@ -69,7 +69,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     title = { Text("Moonlight") },
                     navigationIcon = {
                         IconButton(
-                            onClick = { viewModel.manualComputerAdding.showDialog = true }
+                            onClick = { viewModel.showManualComputerAddDialog() }
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.AddCircleOutline,
@@ -161,7 +161,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     if (viewModel.manualComputerAdding.showDialog) {
-        ManualComputerAddDialog(viewModel)
+        ManualComputerAddDialog(
+            inputIp = viewModel.manualComputerAdding.inputIp,
+            onInputIpChange = { viewModel.onManualComputerInputChanged(it) },
+            onAddComputer = { viewModel.addComputer(viewModel.manualComputerAdding.inputIp) },
+            onDismiss = { viewModel.dismissManualComputerAddDialog() },
+        )
     }
 
     if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computerUuid != null) {

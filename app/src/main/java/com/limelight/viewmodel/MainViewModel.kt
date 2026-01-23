@@ -34,8 +34,8 @@ data class ComputerViewDetailsUiState(
     val computer: Computer? = null,
 )
 data class ManualComputerAddingUiState(
-    var showDialog: Boolean = false,
-    var inputIp: String = "",
+    val showDialog: Boolean = false,
+    val inputIp: String = "",
 )
 data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
@@ -135,9 +135,7 @@ class MainViewModel : ViewModel() {
     }
     fun addComputer(ipAddress: String) {
         computerRepository.addComputer(ipAddress)
-        // Optionally, reset input IP and hide bottom sheet after attempting to add
-        // inputIp = ""
-        // showBottomSheet = false
+        dismissManualComputerAddDialog()
     }
     fun computerInitiateConnection(context: Context, computerUuid: String) {
         val computer = computers.value.find { it.details.uuid == computerUuid }
@@ -172,6 +170,18 @@ class MainViewModel : ViewModel() {
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()
         computerRepository.cancelConnection()
+    }
+
+    fun showManualComputerAddDialog() {
+        manualComputerAdding = manualComputerAdding.copy(showDialog = true)
+    }
+
+    fun dismissManualComputerAddDialog() {
+        manualComputerAdding = ManualComputerAddingUiState()
+    }
+
+    fun onManualComputerInputChanged(ip: String) {
+        manualComputerAdding = manualComputerAdding.copy(inputIp = ip)
     }
 
     @Composable
