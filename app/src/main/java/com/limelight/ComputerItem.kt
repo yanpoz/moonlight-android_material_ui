@@ -1,4 +1,4 @@
-package com.limelight.viewmodel
+package com.limelight
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -38,12 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.computers.getComputerPairStatusText
 import com.limelight.computers.getComputerStatusColor
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.viewmodel.MainViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

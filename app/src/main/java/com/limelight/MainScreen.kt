@@ -55,7 +55,7 @@ import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
 import com.limelight.viewmodel.AppItem
-import com.limelight.viewmodel.ComputerItem
+import com.limelight.ComputerItem
 
 
 @OptIn(ExperimentalMaterial3Api::class)
