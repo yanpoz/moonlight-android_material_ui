@@ -54,7 +54,7 @@ import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
-import com.limelight.viewmodel.AppItem
+import com.limelight.AppItem
 import com.limelight.ComputerItem
 
 
