@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -46,14 +43,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.limelight.computers.getComputerDetailsText
-import com.limelight.computers.getComputerPairResultText
-import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
-import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
-import com.limelight.computers.getComputerPairPinText
-import com.limelight.computers.getComputerPairStatusText
 import com.limelight.ui.components.AppItem
 import com.limelight.ui.components.ComputerItem
 import com.limelight.R
@@ -204,8 +195,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         val computer = computers.find { it.details.uuid == viewModel.connectionDialog.computerUuid }
         if (computer != null) {
             ConnectionDialog(
-                viewModel = viewModel,
-                computer = computer,
+                viewModel, computer,
                 onConnect = { viewModel.computerInitiateConnection(
                     context = context,
                     computerUuid = computer.details.uuid)
@@ -217,7 +207,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
     if (viewModel.appViewDetails.showDialog) {
         AppDetailsDialog(
-            viewModel = viewModel,
+            viewModel,
             app = viewModel.appViewDetails.app!!,
             computer = viewModel.appViewDetails.computer!!,
         )
@@ -225,7 +215,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     
     if (viewModel.computerViewDetails.showDialog) {
         ComputerDetailsDialog(
-            viewModel = viewModel,
+            viewModel,
             computer = viewModel.computerViewDetails.computer!!,
         )
     }
@@ -241,115 +231,6 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             onDismiss = { viewModel.dismissConfirmationDialog() }
         )
     }
-}
-
-@Composable
-fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
-    val appDetails = viewModel.getAppDetails(app, computer)
-    AlertDialog(
-        onDismissRequest = { viewModel.dismissAppDetailsDialog() },
-        title = { Text(text = app.appName) },
-        text = {
-            Column {
-                appDetails.forEach { (key, value) ->
-                    Text(text = "$key: $value")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton( onClick = { viewModel.dismissAppDetailsDialog() } )
-            { Text("OK") }
-        }
-    )
-}
-
-@Composable
-fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
-    val computerDetailsText = getComputerDetailsText(computer)
-    AlertDialog(
-        onDismissRequest = { viewModel.dismissComputerDetailsDialog() },
-        title = { Text(text = computer.details.name) },
-        text = {
-            Column {
-                computerDetailsText.forEach { (key, value) ->
-                    Text(text = "$key: $value")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton( onClick = { viewModel.dismissComputerDetailsDialog() } )
-            { Text("OK") }
-        }
-    )
-}
-
-
-@Composable
-fun ConnectionDialog(
-    viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit
-) {
-    val context = LocalContext.current
-    //  TODO Add container transformation
-    AlertDialog(
-        title = { Text(text = "Connecting to: ${computer.details.name}") },
-        text = {
-            Column {
-                Text(text = getComputerPairStatusText(computer))
-                Text(text = getComputerPairPinText(computer))
-                Text(text = getComputerPairResultText(computer))
-            }
-        },
-        confirmButton = {
-            if (computer.isPaired()) {
-                Row {
-                    TextButton(onClick = { onConnect() } ) { Text("Connect to Desktop") }
-                    TextButton(onClick = { onDismiss() } ) { Text("Display Apps & Games") }
-                }
-            } else {
-                TextButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = MainViewModel.TROUBLESHOOTING_URL.toUri()
-                        }
-                        context.startActivity(intent)
-                    }
-                ) {
-                    Text(stringResource(R.string.help))
-                }
-                TextButton(
-                    onClick = { onDismiss() }
-                ) {
-                    Text(stringResource(R.string.applist_menu_cancel))
-                }
-            }
-        },
-        onDismissRequest = { onDismiss() },
-    )
-}
-
-
-@Composable
-fun ConfirmationDialog(
-    title: String,
-    text: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        title = { Text(text = title) },
-        text = { Text(text = text) },
-        confirmButton = {
-            TextButton(onClick = { onConfirm() } ) {
-                Text("Confirm") // TODO should be specific
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onDismiss() } ) {
-                Text(stringResource(R.string.applist_menu_cancel))
-            }
-        },
-        onDismissRequest = { onDismiss() },
-    )
 }
 
 
