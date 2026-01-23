@@ -135,14 +135,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             // ComputerItem as the first item
                             item(key = computer.details.uuid) {
                                 ComputerItem(
-                                    computer = computer,
-                                    onClick = {
-                                        viewModel.onComputerInitiateConnection(
-                                            context = context, computerUuid = it.details.uuid
-                                        )
-                                    },
-                                    viewModel = viewModel,
-                                    context = context,
+                                    viewModel, computer, context,
+                                    onClick = { viewModel.computerInitiateConnection(
+                                        context, computer.details.uuid
+                                    )},
+                                    onLongClick = { viewModel.computerOpenMenu(
+                                        computer.details.uuid
+                                    )},
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
@@ -152,11 +151,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                                 items(computer.apps, key = { it.appId }) { app ->
                                     AppItem(
-                                        context = context,
-                                        app = app,
-                                        computer = computer,
-                                        onClick = { viewModel.onLaunchApp(context, app, computer) },
-                                        viewModel = viewModel,
+                                        viewModel, app, computer, context,
+                                        onClick = { viewModel.onLaunchApp(
+                                            context, app, computer.details.uuid
+                                        )},
+                                        onLongClick = { viewModel.appOpenMenu(
+                                            app.appId, computer.details.uuid
+                                        )},
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .aspectRatio(2f / 3f)
@@ -205,7 +206,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             ConnectionDialog(
                 viewModel = viewModel,
                 computer = computer,
-                onConnect = { viewModel.onComputerInitiateConnection(
+                onConnect = { viewModel.computerInitiateConnection(
                     context = context,
                     computerUuid = computer.details.uuid)
                 },

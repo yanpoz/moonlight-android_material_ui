@@ -39,18 +39,13 @@ import com.limelight.viewmodel.MainViewModel
 @Composable
 fun AppItem(
     viewModel: MainViewModel, app: NvApp, computer: Computer, context: Context,
-    onClick: () -> Unit, modifier: Modifier = Modifier.Companion
+    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier.Companion
 ) {
     Card(
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
             .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = {
-                    viewModel.onAppLongClick(app.appId, computer.details.uuid)
-                }
-            )
+            .combinedClickable(onClick=onClick, onLongClick=onLongClick)
     ) {
         Column(
             modifier = Modifier.Companion
@@ -73,7 +68,10 @@ fun AppItem(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
                         leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
-                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                        onClick = {
+                            viewModel.dismissAppMenu()
+                            onClick()
+                        }
                     )
                     // Quit Session
                     DropdownMenuItem(

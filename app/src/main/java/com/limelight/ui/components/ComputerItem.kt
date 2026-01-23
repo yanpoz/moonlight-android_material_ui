@@ -50,16 +50,13 @@ import com.limelight.viewmodel.MainViewModel
 @Composable
 fun ComputerItem(
     viewModel: MainViewModel, computer: Computer, context: Context,
-    onClick: (Computer) -> Unit, modifier: Modifier = Modifier.Companion
+    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier.Companion
 ) {
     Card(
         modifier = modifier
-            .aspectRatio(16f / 9f)
+            .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
             .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = { onClick(computer) },
-                onLongClick = { viewModel.onComputerLongClick(computer.details.uuid) }
-            )
+            .combinedClickable(onClick=onClick, onLongClick=onLongClick)
     ) {
         Column(modifier = Modifier.Companion.padding(16.dp)) {
             Row(
@@ -114,7 +111,7 @@ fun ComputerItem(
                     leadingIcon = { Icon(Icons.Outlined.Handshake, null) },
                     onClick = {
                         viewModel.dismissComputerMenu()
-                        onClick(computer)
+                        onClick()
                     }
                 )
                 HorizontalDivider() // TODO: replace with gap Material expressive
@@ -126,7 +123,7 @@ fun ComputerItem(
                         leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
                         onClick = {
                             viewModel.dismissComputerMenu()
-                            onClick(computer)
+                            onClick()
                         }
                     )
                 } else {
@@ -136,7 +133,7 @@ fun ComputerItem(
                         leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
                         onClick = {
                             viewModel.dismissComputerMenu()
-                            onClick(computer)
+                            onClick()
                         }
                     )
                     // Quit Session

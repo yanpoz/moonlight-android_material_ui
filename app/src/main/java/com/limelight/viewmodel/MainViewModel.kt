@@ -91,14 +91,14 @@ class MainViewModel : ViewModel() {
     fun dismissComputerDetailsDialog() {
         computerViewDetails = ComputerViewDetailsUiState()
     }
-    fun onComputerLongClick(computerUUID: String) {
-        computerMenu = ComputerMenuUiState(computerUUID)
+    fun computerOpenMenu(computerUuid: String) {
+        computerMenu = ComputerMenuUiState(computerUuid)
     }
     fun dismissComputerMenu() {
         computerMenu = ComputerMenuUiState()
     }
-    fun onAppLongClick(appId: Int, computerUUID: String) {
-        appMenu = AppMenuUiState(appId, computerUUID)
+    fun appOpenMenu(appId: Int, computerUuid: String) {
+        appMenu = AppMenuUiState(appId, computerUuid)
     }
     fun dismissAppMenu() {
         appMenu = AppMenuUiState()
@@ -139,7 +139,7 @@ class MainViewModel : ViewModel() {
         // inputIp = ""
         // showBottomSheet = false
     }
-    fun onComputerInitiateConnection(context: Context, computerUuid: String) {
+    fun computerInitiateConnection(context: Context, computerUuid: String) {
         val computer = computers.value.find { it.details.uuid == computerUuid }
         if (computer != null) {
             connectionDialog = ConnectionDialogUiState(showDialog = true, computerUuid)
@@ -148,10 +148,10 @@ class MainViewModel : ViewModel() {
             )
         }
     }
-    fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
-        connectionDialog = ConnectionDialogUiState(showDialog = true, computer.details.uuid)
+    fun onLaunchApp(context: Context, app: NvApp, computerUuid: String) {
+        connectionDialog = ConnectionDialogUiState(showDialog = true, computerUuid)
         computerRepository.launchApp(
-            context, app, computer.details.uuid, onAppLaunched = { dismissConnectionDialog() }
+            context, app, computerUuid, onAppLaunched = { dismissConnectionDialog() }
         )
     }
     fun onQuitApp(context: Context, app: NvApp, computerUuid: String) {
