@@ -50,7 +50,7 @@ import com.limelight.viewmodel.MainViewModel
 @Composable
 fun ComputerItem(
     viewModel: MainViewModel, computer: Computer, context: Context,
-    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier.Companion
+    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier

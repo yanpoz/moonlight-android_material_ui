@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.nvstream.http.PairingManager
@@ -173,12 +172,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         val computer = computers.find { it.details.uuid == viewModel.connectionDialog.computerUuid }
         if (computer != null) {
             ConnectionDialog(
-                viewModel, computer,
-                onConnect = {
-                    viewModel.computerInitiateConnection(
-                        context = context,
-                        computerUuid = computer.details.uuid
-                    )
+                computer,
+                onConnect = { viewModel.computerInitiateConnection(
+                    context, computerUuid = computer.details.uuid)
                 },
                 onDismiss = { viewModel.dismissConnectionDialog() }
             )
@@ -211,13 +207,4 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             onDismiss = { viewModel.dismissConfirmationDialog() }
         )
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    // NOTE: You will need to replace MainViewModel() with a proper mock instance 
-    // that provides dummy data for your preview.
-    MainScreen(viewModel = MainViewModel(), onSettingsClick = {})
 }

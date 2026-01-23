@@ -18,9 +18,7 @@ import com.limelight.computers.getComputerPairStatusText
 import com.limelight.viewmodel.MainViewModel
 
 @Composable
-fun ConnectionDialog(
-    viewModel: MainViewModel, computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit
-) {
+fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     //  TODO Add container transformation
     AlertDialog(
