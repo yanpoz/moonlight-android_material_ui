@@ -187,16 +187,16 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
     if (viewModel.appViewDetails.showDialog) {
         AppDetailsDialog(
-            viewModel,
             app = viewModel.appViewDetails.app!!,
             computer = viewModel.appViewDetails.computer!!,
+            onDismiss = { viewModel.dismissAppDetailsDialog() },
         )
     }
     
     if (viewModel.computerViewDetails.showDialog) {
         ComputerDetailsDialog(
-            viewModel,
             computer = viewModel.computerViewDetails.computer!!,
+            onDismiss = { viewModel.dismissComputerDetailsDialog() },
         )
     }
 

@@ -7,13 +7,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.limelight.computers.Computer
 import com.limelight.computers.getComputerDetailsText
-import com.limelight.viewmodel.MainViewModel
 
 @Composable
-fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
+fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
     val computerDetailsText = getComputerDetailsText(computer)
     AlertDialog(
-        onDismissRequest = { viewModel.dismissComputerDetailsDialog() },
+        onDismissRequest = onDismiss,
         title = { Text(text = computer.details.name) },
         text = {
             Column {
@@ -23,7 +22,7 @@ fun ComputerDetailsDialog(viewModel: MainViewModel, computer: Computer) {
             }
         },
         confirmButton = {
-            TextButton(onClick = { viewModel.dismissComputerDetailsDialog() })
+            TextButton(onClick = onDismiss)
             { Text("OK") }
         }
     )

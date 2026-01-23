@@ -8,13 +8,12 @@ import androidx.compose.runtime.Composable
 import com.limelight.computers.Computer
 import com.limelight.computers.getAppDetails
 import com.limelight.nvstream.http.NvApp
-import com.limelight.viewmodel.MainViewModel
 
 @Composable
-fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
+fun AppDetailsDialog(app: NvApp, computer: Computer, onDismiss: () -> Unit) {
     val appDetails = getAppDetails(app, computer)
     AlertDialog(
-        onDismissRequest = { viewModel.dismissAppDetailsDialog() },
+        onDismissRequest = onDismiss,
         title = { Text(text = app.appName) },
         text = {
             Column {
@@ -24,7 +23,7 @@ fun AppDetailsDialog(viewModel: MainViewModel, app: NvApp, computer: Computer) {
             }
         },
         confirmButton = {
-            TextButton(onClick = { viewModel.dismissAppDetailsDialog() })
+            TextButton(onClick = onDismiss)
             { Text("OK") }
         }
     )
