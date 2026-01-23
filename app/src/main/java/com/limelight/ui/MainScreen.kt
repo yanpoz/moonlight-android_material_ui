@@ -123,13 +123,14 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             // ComputerItem as the first item
                             item(key = computer.details.uuid) {
                                 ComputerItem(
-                                    viewModel, computer, context,
-                                    onClick = { viewModel.computerInitiateConnection(
-                                        context, computer.details.uuid
-                                    )},
-                                    onLongClick = { viewModel.computerOpenMenu(
-                                        computer.details.uuid
-                                    )},
+                                    computer = computer,
+                                    isMenuExpanded = viewModel.computerMenu.computerUuid == computer.details.uuid,
+                                    onDismissMenu = { viewModel.dismissComputerMenu() },
+                                    onSendWakeOnLan = { viewModel.onSendWakeOnLan(context, computer.details.uuid) },
+                                    onQuitRunningApp = { viewModel.onQuitRunningApp(context, computer) },
+                                    onComputerDetailsClicked = { viewModel.onComputerDetailsClicked(computer) },
+                                    onClick = { viewModel.computerInitiateConnection(context, computer.details.uuid) },
+                                    onLongClick = { viewModel.computerOpenMenu(computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
