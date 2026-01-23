@@ -36,16 +36,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.limelight.nvstream.http.PairingManager
-import com.limelight.viewmodel.MainViewModel
-import com.limelight.ui.components.AppItem
-import com.limelight.ui.components.ComputerItem
 import com.limelight.R
+import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.components.AppDetailsDialog
+import com.limelight.ui.components.AppItem
 import com.limelight.ui.components.ComputerDetailsDialog
+import com.limelight.ui.components.ComputerItem
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
 import com.limelight.ui.components.ManualComputerAddDialog
+import com.limelight.viewmodel.MainViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +53,8 @@ import com.limelight.ui.components.ManualComputerAddDialog
 fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        rememberTopAppBarState())
+        rememberTopAppBarState()
+    )
     val computers by viewModel.computers.collectAsState()
 
     PullToRefreshBox(
@@ -68,7 +69,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     title = { Text("Moonlight") },
                     navigationIcon = {
                         IconButton(
-                            onClick = { viewModel.showManualComputerAddDialog() }
+                            onClick = { viewModel.manualComputerAddHandler.showDialog() }
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.AddCircleOutline,
@@ -83,12 +84,16 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
                             context.startActivity(intent)
                         }) {
-                            Icon(imageVector = Icons.Outlined.Info,
-                                 contentDescription = stringResource(R.string.help))
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = stringResource(R.string.help)
+                            )
                         }
                         IconButton(onClick = onSettingsClick) {
-                            Icon(imageVector = Icons.Outlined.Settings,
-                                 contentDescription = "Settings")
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Settings"
+                            )
                         }
                     },
                 )
@@ -124,13 +129,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    isMenuExpanded = viewModel.computerMenu.computerUuid == computer.details.uuid,
-                                    onDismissMenu = { viewModel.dismissComputerMenu() },
-                                    onSendWakeOnLan = { viewModel.onSendWakeOnLan(context, computer.details.uuid) },
-                                    onQuitRunningApp = { viewModel.onQuitRunningApp(context, computer) },
-                                    onComputerDetailsClicked = { viewModel.onComputerDetailsClicked(computer) },
-                                    onClick = { viewModel.computerInitiateConnection(context, computer.details.uuid) },
-                                    onLongClick = { viewModel.openComputerMenu(computer.details.uuid) },
+                                    isMenuExpanded = viewModel.computerItemHandler.menu.computerUuid == computer.details.uuid,
+                                    onDismissMenu = { viewModel.computerItemHandler.dismissMenu() },
+                                    onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
+                                    onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
+                                    onComputerDetailsClicked = { viewModel.computerItemHandler.onDetailsClicked(computer) },
+                                    onClick = { viewModel.connectionHandler.initiateConnection(context, computer.details.uuid) },
+                                    onLongClick = { viewModel.computerItemHandler.openMenu(computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
@@ -142,13 +147,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     AppItem(
                                         app = app,
                                         runningGameId = computer.details.runningGameId,
-                                        isMenuExpanded = viewModel.appMenu.appId == app.appId &&
-                                                viewModel.appMenu.computerUuid == computer.details.uuid,
-                                        onDismissMenu = { viewModel.dismissAppMenu() },
-                                        onQuitApp = { viewModel.onQuitApp(context, app, computer.details.uuid) },
-                                        onAppDetailsClicked = { viewModel.onAppDetailsClicked(app) },
-                                        onClick = { viewModel.onLaunchApp(context, app, computer.details.uuid) },
-                                        onLongClick = { viewModel.openAppMenu(app.appId, computer.details.uuid) },
+                                        isMenuExpanded = viewModel.appItemHandler.menu.appId == app.appId &&
+                                                viewModel.appItemHandler.menu.computerUuid == computer.details.uuid,
+                                        onDismissMenu = { viewModel.appItemHandler.dismissMenu() },
+                                        onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
+                                        onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
+                                        onClick = { viewModel.connectionHandler.launchApp(context, app, computer.details.uuid) },
+                                        onLongClick = { viewModel.appItemHandler.openMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .aspectRatio(2f / 3f)
@@ -162,51 +167,51 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.manualComputerAdding.showDialog) {
+    if (viewModel.manualComputerAddHandler.uiState.showDialog) {
         ManualComputerAddDialog(
-            inputIp = viewModel.manualComputerAdding.inputIp,
-            onInputIpChange = { viewModel.onManualComputerInputChanged(it) },
-            onAddComputer = { viewModel.addComputer(viewModel.manualComputerAdding.inputIp) },
-            onDismiss = { viewModel.dismissManualComputerAddDialog() },
+            inputIp = viewModel.manualComputerAddHandler.uiState.inputIp,
+            onInputIpChange = { viewModel.manualComputerAddHandler.onInputChanged(it) },
+            onAddComputer = { viewModel.manualComputerAddHandler.addComputer() },
+            onDismiss = { viewModel.manualComputerAddHandler.dismissDialog() },
         )
     }
 
-    if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computerUuid != null) {
-        val computer = computers.find { it.details.uuid == viewModel.connectionDialog.computerUuid }
+    if (viewModel.connectionHandler.dialog.showDialog && viewModel.connectionHandler.dialog.computerUuid != null) {
+        val computer = computers.find { it.details.uuid == viewModel.connectionHandler.dialog.computerUuid }
         if (computer != null) {
             ConnectionDialog(
                 computer,
-                onConnect = { viewModel.computerInitiateConnection(
+                onConnect = { viewModel.connectionHandler.initiateConnection(
                     context, computerUuid = computer.details.uuid)
                 },
-                onDismiss = { viewModel.dismissConnectionDialog() }
+                onDismiss = { viewModel.connectionHandler.cancelConnection() }
             )
         }
     }
 
-    if (viewModel.appViewDetails.showDialog) {
+    if (viewModel.appItemHandler.viewDetails.showDialog) {
         AppDetailsDialog(
-            app = viewModel.appViewDetails.app!!,
-            onDismiss = { viewModel.dismissAppDetailsDialog() },
-        )
-    }
-    
-    if (viewModel.computerViewDetails.showDialog) {
-        ComputerDetailsDialog(
-            computer = viewModel.computerViewDetails.computer!!,
-            onDismiss = { viewModel.dismissComputerDetailsDialog() },
+            app = viewModel.appItemHandler.viewDetails.app!!,
+            onDismiss = { viewModel.appItemHandler.dismissDetailsDialog() },
         )
     }
 
-    if (viewModel.confirmationDialog.showDialog) {
+    if (viewModel.computerItemHandler.viewDetails.showDialog) {
+        ComputerDetailsDialog(
+            computer = viewModel.computerItemHandler.viewDetails.computer!!,
+            onDismiss = { viewModel.computerItemHandler.dismissDetailsDialog() },
+        )
+    }
+
+    if (viewModel.confirmationHandler.dialog.showDialog) {
         ConfirmationDialog(
-            title = viewModel.confirmationDialog.title,
-            text = viewModel.confirmationDialog.text,
+            title = viewModel.confirmationHandler.dialog.title,
+            text = viewModel.confirmationHandler.dialog.text,
             onConfirm = {
-                viewModel.confirmationDialog.action()
-                viewModel.dismissConfirmationDialog()
+                viewModel.confirmationHandler.dialog.action()
+                viewModel.confirmationHandler.dismissDialog()
             },
-            onDismiss = { viewModel.dismissConfirmationDialog() }
+            onDismiss = { viewModel.confirmationHandler.dismissDialog() }
         )
     }
 }
