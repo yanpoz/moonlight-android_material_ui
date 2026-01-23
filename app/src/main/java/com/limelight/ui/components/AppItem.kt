@@ -1,6 +1,5 @@
 package com.limelight.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,13 +32,19 @@ import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.nvstream.http.NvApp
-import com.limelight.viewmodel.MainViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
-    viewModel: MainViewModel, app: NvApp, computer: Computer, context: Context,
-    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier
+    app: NvApp,
+    computer: Computer,
+    isMenuExpanded: Boolean,
+    onDismissMenu: () -> Unit,
+    onQuitApp: () -> Unit,
+    onAppDetailsClicked: () -> Unit,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
@@ -58,9 +63,8 @@ fun AppItem(
 
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
-            expanded = viewModel.appMenu.appId == app.appId &&
-                    viewModel.appMenu.computerUuid == computer.details.uuid,
-            onDismissRequest = { viewModel.dismissAppMenu() }
+            expanded = isMenuExpanded,
+            onDismissRequest = onDismissMenu
         ) {
             if (computer.details.runningGameId != 0) {
                 if (computer.details.runningGameId == app.appId) {
@@ -69,7 +73,7 @@ fun AppItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
                         leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
                         onClick = {
-                            viewModel.dismissAppMenu()
+                            onDismissMenu()
                             onClick()
                         }
                     )
@@ -78,8 +82,8 @@ fun AppItem(
                         text = { Text(stringResource(R.string.applist_menu_quit)) },
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = {
-                            viewModel.dismissAppMenu()
-                            viewModel.onQuitApp(context, app, computer.details.uuid)
+                            onDismissMenu()
+                            onQuitApp()
                         }
                     )
                     HorizontalDivider() // TODO: replace with gap Material expressive
@@ -88,7 +92,7 @@ fun AppItem(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit_and_start)) },
                         leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, null) },
-                        onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                        onClick = { onDismissMenu() /*TODO*/ }
                     )
                     HorizontalDivider() // TODO: replace with gap Material expressive
                 }
@@ -97,13 +101,13 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(text = "Move Left") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+                onClick = { onDismissMenu() /*TODO*/ }
             )
             // Move Right TODO: should not be available when on bottom
             DropdownMenuItem(
                 text = { Text(text = "Move Right") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
+                onClick = { onDismissMenu() /*TODO*/ }
             )
             HorizontalDivider() // TODO: replace with gap Material expressive
             // App Details
@@ -112,8 +116,8 @@ fun AppItem(
                 // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = {
-                    viewModel.dismissAppMenu()
-                    viewModel.onAppDetailsClicked(app, computer)
+                    onDismissMenu()
+                    onAppDetailsClicked()
                 }
             )
             // Create shortcut
@@ -121,14 +125,14 @@ fun AppItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                onClick = { onDismissMenu() /*TODO*/ }
             )
             // Hide App
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_hide_app)) },
                 // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
+                onClick = { onDismissMenu() /*TODO*/ }
             )
         }
     }

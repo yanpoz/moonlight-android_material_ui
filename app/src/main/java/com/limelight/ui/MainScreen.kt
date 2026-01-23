@@ -140,13 +140,15 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                                 items(computer.apps, key = { it.appId }) { app ->
                                     AppItem(
-                                        viewModel, app, computer, context,
-                                        onClick = { viewModel.onLaunchApp(
-                                            context, app, computer.details.uuid
-                                        )},
-                                        onLongClick = { viewModel.appOpenMenu(
-                                            app.appId, computer.details.uuid
-                                        )},
+                                        app = app,
+                                        computer = computer,
+                                        isMenuExpanded = viewModel.appMenu.appId == app.appId &&
+                                                viewModel.appMenu.computerUuid == computer.details.uuid,
+                                        onDismissMenu = { viewModel.dismissAppMenu() },
+                                        onQuitApp = { viewModel.onQuitApp(context, app, computer.details.uuid) },
+                                        onAppDetailsClicked = { viewModel.onAppDetailsClicked(app, computer) },
+                                        onClick = { viewModel.onLaunchApp(context, app, computer.details.uuid) },
+                                        onLongClick = { viewModel.appOpenMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .aspectRatio(2f / 3f)
