@@ -85,11 +85,9 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
 }
 
 @Composable
-fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
+fun getAppDetails(app: NvApp): List<Pair<String, String>> {
     return listOf(
         stringResource(R.string.applist_details_id) to app.appId.toString(),
         "HDR Supported" to app.isHdrSupported.toString(),
-        "Computer" to computer.details.name,
-        "Computer ID" to computer.details.uuid
     )
 }

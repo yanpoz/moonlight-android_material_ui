@@ -21,7 +21,6 @@ data class AppMenuUiState(
 data class AppViewDetailsUiState(
     val showDialog: Boolean = false,
     val app: NvApp? = null,
-    val computer: Computer? = null,
 )
 data class ComputerMenuUiState(
     val computerUuid: String? = null,
@@ -94,8 +93,8 @@ class MainViewModel : ViewModel() {
     //endregion
 
     //region UI Menu and Dialog Management
-    fun onAppDetailsClicked(app: NvApp, computer: Computer) {
-        appViewDetails = AppViewDetailsUiState(true, app, computer)
+    fun onAppDetailsClicked(app: NvApp) {
+        appViewDetails = AppViewDetailsUiState(true, app)
     }
     fun dismissAppDetailsDialog() {
         appViewDetails = AppViewDetailsUiState()

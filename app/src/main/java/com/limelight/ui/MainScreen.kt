@@ -146,7 +146,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                                 viewModel.appMenu.computerUuid == computer.details.uuid,
                                         onDismissMenu = { viewModel.dismissAppMenu() },
                                         onQuitApp = { viewModel.onQuitApp(context, app, computer.details.uuid) },
-                                        onAppDetailsClicked = { viewModel.onAppDetailsClicked(app, computer) },
+                                        onAppDetailsClicked = { viewModel.onAppDetailsClicked(app) },
                                         onClick = { viewModel.onLaunchApp(context, app, computer.details.uuid) },
                                         onLongClick = { viewModel.appOpenMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
@@ -187,7 +187,6 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     if (viewModel.appViewDetails.showDialog) {
         AppDetailsDialog(
             app = viewModel.appViewDetails.app!!,
-            computer = viewModel.appViewDetails.computer!!,
             onDismiss = { viewModel.dismissAppDetailsDialog() },
         )
     }
