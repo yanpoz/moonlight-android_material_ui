@@ -50,8 +50,10 @@ data class ConfirmationDialogUiState(
 class MainViewModel : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
-        const val SETUP_GUIDE_URL = "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/"
-        const val TROUBLESHOOTING_URL = "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting"
+        const val SETUP_GUIDE_URL =
+            "https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide/"
+        const val TROUBLESHOOTING_URL =
+            "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting"
     }
 
     //region States Init

@@ -40,7 +40,7 @@ fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () ->
                 TextButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = MainViewModel.Companion.TROUBLESHOOTING_URL.toUri()
+                            data = MainViewModel.TROUBLESHOOTING_URL.toUri()
                         }
                         context.startActivity(intent)
                     }

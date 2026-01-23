@@ -58,11 +58,11 @@ fun ComputerItem(
             .clip(CardDefaults.shape)
             .combinedClickable(onClick=onClick, onLongClick=onLongClick)
     ) {
-        Column(modifier = Modifier.Companion.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
-                modifier = Modifier.Companion.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Companion.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = computer.details.name,
@@ -71,13 +71,13 @@ fun ComputerItem(
 
                 // Status indicator
                 Box(
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .size(12.dp)
                         .background(getComputerStatusColor(computer), CircleShape)
                 )
             }
 
-            Spacer(modifier = Modifier.Companion.height(4.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = getComputerPairStatusText(computer),
@@ -87,7 +87,7 @@ fun ComputerItem(
         }
 
         DropdownMenu(
-            modifier = Modifier.Companion.widthIn(min = 220.dp),
+            modifier = Modifier.widthIn(min = 220.dp),
             // TODO add caption
             expanded = viewModel.computerMenu.computerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissComputerMenu() }
@@ -165,14 +165,14 @@ fun ComputerItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
                 // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
             )
             // View Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_details)) },
                 // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = {
                     viewModel.dismissComputerMenu()
                     viewModel.onComputerDetailsClicked(computer)
@@ -182,7 +182,7 @@ fun ComputerItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // Delete PC

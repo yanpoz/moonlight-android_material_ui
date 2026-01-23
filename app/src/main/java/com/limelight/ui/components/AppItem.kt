@@ -39,7 +39,7 @@ import com.limelight.viewmodel.MainViewModel
 @Composable
 fun AppItem(
     viewModel: MainViewModel, app: NvApp, computer: Computer, context: Context,
-    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier.Companion
+    onClick: () -> Unit, onLongClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
@@ -48,7 +48,7 @@ fun AppItem(
             .combinedClickable(onClick=onClick, onLongClick=onLongClick)
     ) {
         Column(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.Bottom // Align app name to the bottom
@@ -57,7 +57,7 @@ fun AppItem(
         }
 
         DropdownMenu(
-            modifier = Modifier.Companion.widthIn(min = 220.dp),
+            modifier = Modifier.widthIn(min = 220.dp),
             expanded = viewModel.appMenu.appId == app.appId &&
                     viewModel.appMenu.computerUuid == computer.details.uuid,
             onDismissRequest = { viewModel.dismissAppMenu() }
@@ -110,7 +110,7 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
                 // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = {
                     viewModel.dismissAppMenu()
                     viewModel.onAppDetailsClicked(app, computer)
@@ -120,14 +120,14 @@ fun AppItem(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
             // Hide App
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_hide_app)) },
                 // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
-                leadingIcon = { Spacer(modifier = Modifier.Companion.size(24.dp)) },
+                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
                 onClick = { viewModel.dismissAppMenu() /*TODO*/ }
             )
         }
