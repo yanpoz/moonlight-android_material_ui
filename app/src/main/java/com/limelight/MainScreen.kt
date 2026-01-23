@@ -429,7 +429,7 @@ fun ComputerItem(
                     leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
                     onClick = {
                         viewModel.dismissComputerMenu()
-                        viewModel.onSendWakeOnLan(context, computer)
+                        viewModel.onSendWakeOnLan(context, computer.details.uuid)
                     }
                 )
             }
@@ -579,7 +579,7 @@ fun AppItem(
                         leadingIcon = { Icon(Icons.Outlined.Close, null) },
                         onClick = {
                             viewModel.dismissAppMenu()
-                            viewModel.onQuitApp(context, app, computer)
+                            viewModel.onQuitApp(context, app, computer.details.uuid)
                         }
                     )
                     HorizontalDivider() // TODO: replace with gap Material expressive

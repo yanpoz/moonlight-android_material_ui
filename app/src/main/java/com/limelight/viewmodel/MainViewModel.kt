@@ -151,23 +151,23 @@ class MainViewModel : ViewModel() {
     fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
         connectionDialog = ConnectionDialogUiState(showDialog = true, computer.details.uuid)
         computerRepository.launchApp(
-            context, app, computer, onAppLaunched = { dismissConnectionDialog() }
+            context, app, computer.details.uuid, onAppLaunched = { dismissConnectionDialog() }
         )
     }
-    fun onQuitApp(context: Context, app: NvApp, computer: Computer) {
+    fun onQuitApp(context: Context, app: NvApp, computerUuid: String) {
         confirmAction(
             title = "Quit ${app.appName}?",
             text = "Are you sure you want to quit ${app.appName}?",
-            action = { computerRepository.quitApp(context, app, computer) }
+            action = { computerRepository.quitApp(context, app, computerUuid) }
         )
     }
     fun onQuitRunningApp(context: Context, computer: Computer) {
         computer.getRunningApp()?.let {
-            onQuitApp(context, it, computer)
+            onQuitApp(context, it, computer.details.uuid)
         }
     }
-    fun onSendWakeOnLan(context: Context, computer: Computer) {
-        computerRepository.sendWakeOnLan(context, computer)
+    fun onSendWakeOnLan(context: Context, computerUuid: String) {
+        computerRepository.sendWakeOnLan(context, computerUuid)
     }
     fun dismissConnectionDialog() {
         connectionDialog = ConnectionDialogUiState()

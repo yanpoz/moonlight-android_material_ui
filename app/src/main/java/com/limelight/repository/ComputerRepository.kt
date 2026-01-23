@@ -119,6 +119,7 @@ class ComputerRepository {
             }
         }
     }
+    private fun getComputer(computerUuid: String) = computers.value.find { it.details.uuid == computerUuid }
     private fun modifyComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
         _computers.update { computers ->
             computers.map {
@@ -175,18 +176,18 @@ class ComputerRepository {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
             while (true) {
-                val computer = computers.value.find { it.details.uuid == computerUuid } ?: break
+                val computer = getComputer(computerUuid) ?: break
                 if (computer.details.activeAddress != null &&
                     computer.details.state != ComputerDetails.State.OFFLINE &&
                     computerManagerBinder != null
                 ) {
                     if (computer.details.pairState != PairState.PAIRED) {
-                        pairComputer(computer)
+                        pairComputer(computer.details.uuid)
                         break
                     } else {
                         val desktopApp = computer.apps.find { it.appId == desktopAppId }
                         if (desktopApp != null) {
-                            launchApp(context, desktopApp, computer, onAppLaunched)
+                            launchApp(context, desktopApp, computer.details.uuid, onAppLaunched)
                             break
                         }
                     }
@@ -198,7 +199,8 @@ class ComputerRepository {
     fun cancelConnection() {
         connectionJob?.cancel()
     }
-    fun pairComputer(computer: Computer) {
+    fun pairComputer(computerUuid: String) {
+        val computer = getComputer(computerUuid) ?: return
         try {
             pauseComputerUpdates()
 
@@ -236,27 +238,33 @@ class ComputerRepository {
             resumeComputerUpdates()
         }
     }
-    fun launchApp(context: Context, app: NvApp, computer: Computer, onAppLaunched: () -> Unit) {
+    fun launchApp(context: Context, app: NvApp, computerUuid: String, onAppLaunched: () -> Unit) {
+        val computer = getComputer(computerUuid) ?: return
         ServerHelper.doStart(context as Activity, app, computer.details, computerManagerBinder)
         onAppLaunched()
     }
-    fun quitApp(context: Context, app: NvApp, computer: Computer) {
+    fun quitApp(context: Context, app: NvApp, computerUuid: String) {
         if (computerManagerBinder == null) {
             Log.e(
-                "ComputerRepository", 
+                "ComputerRepository",
                 "ComputerManagerBinder not available, cannot quit app")
             return
         }
+        val computer = getComputer(computerUuid) ?: return
         ServerHelper.doQuit(
             context as Activity, computer.details, app, computerManagerBinder, null)
     }
-    fun sendWakeOnLan(context: Context, computer: Computer) {
+    fun sendWakeOnLan(context: Context, computerUuid: String) {
+        val computer = getComputer(computerUuid) ?: return
+
         if (computer.details.state == ComputerDetails.State.ONLINE) {
             // TODO: Implement Toasts
             Log.e("ComputerRepository", "Computer is already online")
+            return
         }
         if (computer.details.macAddress == null) {
             Log.e("ComputerRepository", "Computer has no MAC address")
+            return
         }
         repositoryScope.launch {
             try {
