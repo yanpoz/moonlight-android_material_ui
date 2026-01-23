@@ -105,13 +105,13 @@ class MainViewModel : ViewModel() {
     fun dismissComputerDetailsDialog() {
         computerViewDetails = ComputerViewDetailsUiState()
     }
-    fun computerOpenMenu(computerUuid: String) {
+    fun openComputerMenu(computerUuid: String) {
         computerMenu = ComputerMenuUiState(computerUuid)
     }
     fun dismissComputerMenu() {
         computerMenu = ComputerMenuUiState()
     }
-    fun appOpenMenu(appId: Int, computerUuid: String) {
+    fun openAppMenu(appId: Int, computerUuid: String) {
         appMenu = AppMenuUiState(appId, computerUuid)
     }
     fun dismissAppMenu() {

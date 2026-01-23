@@ -130,7 +130,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     onQuitRunningApp = { viewModel.onQuitRunningApp(context, computer) },
                                     onComputerDetailsClicked = { viewModel.onComputerDetailsClicked(computer) },
                                     onClick = { viewModel.computerInitiateConnection(context, computer.details.uuid) },
-                                    onLongClick = { viewModel.computerOpenMenu(computer.details.uuid) },
+                                    onLongClick = { viewModel.openComputerMenu(computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
@@ -148,7 +148,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                         onQuitApp = { viewModel.onQuitApp(context, app, computer.details.uuid) },
                                         onAppDetailsClicked = { viewModel.onAppDetailsClicked(app) },
                                         onClick = { viewModel.onLaunchApp(context, app, computer.details.uuid) },
-                                        onLongClick = { viewModel.appOpenMenu(app.appId, computer.details.uuid) },
+                                        onLongClick = { viewModel.openAppMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .aspectRatio(2f / 3f)
