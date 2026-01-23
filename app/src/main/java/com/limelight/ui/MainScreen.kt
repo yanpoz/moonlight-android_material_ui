@@ -48,6 +48,10 @@ import com.limelight.viewmodel.MainViewModel
 import com.limelight.ui.components.AppItem
 import com.limelight.ui.components.ComputerItem
 import com.limelight.R
+import com.limelight.ui.components.AppDetailsDialog
+import com.limelight.ui.components.ComputerDetailsDialog
+import com.limelight.ui.components.ConfirmationDialog
+import com.limelight.ui.components.ConnectionDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,9 +200,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         if (computer != null) {
             ConnectionDialog(
                 viewModel, computer,
-                onConnect = { viewModel.computerInitiateConnection(
-                    context = context,
-                    computerUuid = computer.details.uuid)
+                onConnect = {
+                    viewModel.computerInitiateConnection(
+                        context = context,
+                        computerUuid = computer.details.uuid
+                    )
                 },
                 onDismiss = { viewModel.dismissConnectionDialog() }
             )

@@ -1,4 +1,4 @@
-package com.limelight.ui
+package com.limelight.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog

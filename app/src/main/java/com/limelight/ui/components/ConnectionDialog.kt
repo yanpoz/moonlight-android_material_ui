@@ -1,4 +1,4 @@
-package com.limelight.ui
+package com.limelight.ui.components
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
