@@ -141,7 +141,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 items(computer.apps, key = { it.appId }) { app ->
                                     AppItem(
                                         app = app,
-                                        computer = computer,
+                                        runningGameId = computer.details.runningGameId,
                                         isMenuExpanded = viewModel.appMenu.appId == app.appId &&
                                                 viewModel.appMenu.computerUuid == computer.details.uuid,
                                         onDismissMenu = { viewModel.dismissAppMenu() },

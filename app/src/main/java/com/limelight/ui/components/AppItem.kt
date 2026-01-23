@@ -37,8 +37,8 @@ import com.limelight.nvstream.http.NvApp
 @Composable
 fun AppItem(
     app: NvApp,
-    computer: Computer,
     isMenuExpanded: Boolean,
+    runningGameId: Int,
     onDismissMenu: () -> Unit,
     onQuitApp: () -> Unit,
     onAppDetailsClicked: () -> Unit,
@@ -66,8 +66,8 @@ fun AppItem(
             expanded = isMenuExpanded,
             onDismissRequest = onDismissMenu
         ) {
-            if (computer.details.runningGameId != 0) {
-                if (computer.details.runningGameId == app.appId) {
+            if (runningGameId != 0) {
+                if (runningGameId == app.appId) {
                     // Resume Session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_resume)) },
