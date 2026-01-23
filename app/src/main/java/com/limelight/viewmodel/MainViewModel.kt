@@ -1,14 +1,11 @@
 package com.limelight.viewmodel
 
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.limelight.R
 import com.limelight.nvstream.http.NvApp
 import com.limelight.computers.Computer
 import com.limelight.repository.ComputerRepository
@@ -182,15 +179,5 @@ class MainViewModel : ViewModel() {
 
     fun onManualComputerInputChanged(ip: String) {
         manualComputerAdding = manualComputerAdding.copy(inputIp = ip)
-    }
-
-    @Composable
-    fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
-        return listOf(
-            stringResource(R.string.applist_details_id) to app.appId.toString(),
-            "HDR Supported" to app.isHdrSupported.toString(),
-            "Computer" to computer.details.name,
-            "Computer ID" to computer.details.uuid
-        )
     }
 }

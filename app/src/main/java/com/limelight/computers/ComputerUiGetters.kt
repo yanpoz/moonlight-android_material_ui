@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.limelight.R
 import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 
 @Composable
@@ -80,5 +81,15 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         "External Port" to details.externalPort.toString(),
         "Running Game ID" to details.runningGameId.toString(),
         "NVIDIA Server" to details.nvidiaServer.toString(),
+    )
+}
+
+@Composable
+fun getAppDetails(app: NvApp, computer: Computer): List<Pair<String, String>> {
+    return listOf(
+        stringResource(R.string.applist_details_id) to app.appId.toString(),
+        "HDR Supported" to app.isHdrSupported.toString(),
+        "Computer" to computer.details.name,
+        "Computer ID" to computer.details.uuid
     )
 }
