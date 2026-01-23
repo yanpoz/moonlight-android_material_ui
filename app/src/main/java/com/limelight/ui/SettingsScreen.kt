@@ -1,4 +1,4 @@
-package com.limelight
+package com.limelight.ui
 
 import android.os.Parcelable
 import androidx.compose.foundation.background

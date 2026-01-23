@@ -1,4 +1,4 @@
-package com.limelight
+package com.limelight.ui
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +54,9 @@ import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
-import com.limelight.AppItem
-import com.limelight.ComputerItem
+import com.limelight.ui.components.AppItem
+import com.limelight.ui.components.ComputerItem
+import com.limelight.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)

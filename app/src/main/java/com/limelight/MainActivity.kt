@@ -9,6 +9,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.limelight.ui.MainScreen
+import com.limelight.ui.SettingsScreen
 import com.limelight.ui.theme.MoonlightandroidTheme
 
 
