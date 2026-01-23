@@ -3,7 +3,6 @@ package com.limelight
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,20 +21,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Handshake
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -72,14 +65,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.computers.getComputerDetailsText
 import com.limelight.computers.getComputerPairResultText
-import com.limelight.computers.getComputerStatusColor
-import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.computers.Computer
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.computers.getComputerPairStatusText
+import com.limelight.viewmodel.ComputerItem
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,8 +151,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    onClick = { viewModel.onComputerInitiateConnection(
-                                        context = context, computerUuid = it.details.uuid) },
+                                    onClick = {
+                                        viewModel.onComputerInitiateConnection(
+                                            context = context, computerUuid = it.details.uuid
+                                        )
+                                    },
                                     viewModel = viewModel,
                                     context = context,
                                     modifier = Modifier
@@ -371,167 +366,6 @@ fun ConfirmationDialog(
     )
 }
 
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ComputerItem(
-    viewModel: MainViewModel, computer: Computer, context: Context,
-    onClick: (Computer) -> Unit, modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .aspectRatio(16f / 9f)
-            .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = { onClick(computer) },
-                onLongClick = { viewModel.onComputerLongClick(computer.details.uuid) }
-            )
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = computer.details.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                // Status indicator
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .background(getComputerStatusColor(computer), CircleShape)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = getComputerPairStatusText(computer),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        DropdownMenu(
-            modifier = Modifier.widthIn(min = 220.dp),
-            // TODO add caption
-            expanded = viewModel.computerMenu.computerUuid == computer.details.uuid,
-            onDismissRequest = { viewModel.dismissComputerMenu() }
-        ) {
-            if (computer.details.state == ComputerDetails.State.OFFLINE ||
-                computer.details.state == ComputerDetails.State.UNKNOWN) {
-                // Send Wake-On-LAN
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
-                    leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
-                    onClick = {
-                        viewModel.dismissComputerMenu()
-                        viewModel.onSendWakeOnLan(context, computer.details.uuid)
-                    }
-                )
-            }
-            else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
-                // Pair PC
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.pcview_menu_pair_pc)) },
-                    leadingIcon = { Icon(Icons.Outlined.Handshake, null) },
-                    onClick = {
-                        viewModel.dismissComputerMenu()
-                        onClick(computer)
-                    }
-                )
-                HorizontalDivider() // TODO: replace with gap Material expressive
-            }
-            else {
-                if (computer.details.runningGameId == 0) {
-                    // Start Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
-                        onClick = {
-                            viewModel.dismissComputerMenu()
-                            onClick(computer)
-                        }
-                    )
-                }
-                else {
-                    // Resume Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
-                        onClick = {
-                            viewModel.dismissComputerMenu()
-                            onClick(computer)
-                        }
-                    )
-                    // Quit Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_quit)) },
-                        leadingIcon = { Icon(Icons.Outlined.Close, null) },
-                        onClick = {
-                            viewModel.dismissComputerMenu()
-                            viewModel.onQuitRunningApp(context, computer)
-                        }
-                    )
-                }
-                HorizontalDivider() // TODO: replace with gap Material expressive
-            }
-            // Move Up TODO: should not be available when on top
-            DropdownMenuItem(
-                text = { Text(text = "Move Up") },
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
-            )
-            // Move Down TODO: should not be available when on bottom
-            DropdownMenuItem(
-                text = { Text(text = "Move Down") },
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
-            )
-            HorizontalDivider() // TODO: replace with gap Material expressive
-            // Test Network Connection
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_test_network)) },
-                // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
-            )
-            // View Details
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_details)) },
-                // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = {
-                    viewModel.dismissComputerMenu()
-                    viewModel.onComputerDetailsClicked(computer)
-                }
-            )
-            // Create shortcut
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.applist_menu_scut)) },
-                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { viewModel.dismissAppMenu() /*TODO*/ }
-            )
-            // Delete PC
-            DropdownMenuItem(
-                text = { Text(
-                    text = stringResource(R.string.pcview_menu_delete_pc),
-                    color = MaterialTheme.colorScheme.error)
-                },
-                leadingIcon = { Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    tint = MaterialTheme.colorScheme.error,
-                    contentDescription = null)
-                },
-                onClick = { viewModel.dismissComputerMenu() /*TODO*/ }
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
