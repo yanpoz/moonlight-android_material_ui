@@ -13,6 +13,7 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.computers.Computer
 import com.limelight.repository.ComputerRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
@@ -38,7 +39,7 @@ data class ManualComputerAddingUiState(
 )
 data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
-    val computer: Computer? = null,
+    val computerUuid: String? = null,
 )
 data class ConfirmationDialogUiState(
     val showDialog: Boolean = false,
@@ -57,7 +58,7 @@ class MainViewModel : ViewModel() {
 
     // Computers with Apps Lists
     private val computerRepository = ComputerRepository()
-    val computers: List<Computer> = computerRepository.computers
+    val computers: StateFlow<List<Computer>> = computerRepository.computers
 
     // UI States
     var appMenu by mutableStateOf(AppMenuUiState())
@@ -138,17 +139,17 @@ class MainViewModel : ViewModel() {
         // inputIp = ""
         // showBottomSheet = false
     }
-    fun onComputerInitiateConnection(context: Context, computerUUID: String) {
-        val computer = computers.find { it.details.uuid == computerUUID }
+    fun onComputerInitiateConnection(context: Context, computerUuid: String) {
+        val computer = computers.value.find { it.details.uuid == computerUuid }
         if (computer != null) {
-            connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
+            connectionDialog = ConnectionDialogUiState(showDialog = true, computerUuid)
             computerRepository.initiateConnection(
-                context, computerUUID, onAppLaunched = { dismissConnectionDialog() }
+                context, computerUuid, onAppLaunched = { dismissConnectionDialog() }
             )
         }
     }
     fun onLaunchApp(context: Context, app: NvApp, computer: Computer) {
-        connectionDialog = ConnectionDialogUiState(showDialog = true, computer)
+        connectionDialog = ConnectionDialogUiState(showDialog = true, computer.details.uuid)
         computerRepository.launchApp(
             context, app, computer, onAppLaunched = { dismissConnectionDialog() }
         )

@@ -59,6 +59,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -87,7 +89,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState())
-    val computers = viewModel.computers
+    val computers by viewModel.computers.collectAsState()
 
     PullToRefreshBox(
         isRefreshing = viewModel.isRefreshing,
@@ -158,7 +160,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 ComputerItem(
                                     computer = computer,
                                     onClick = { viewModel.onComputerInitiateConnection(
-                                        context = context, computerUUID = it.details.uuid) },
+                                        context = context, computerUuid = it.details.uuid) },
                                     viewModel = viewModel,
                                     context = context,
                                     modifier = Modifier
@@ -217,16 +219,19 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         }
     }
 
-    if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computer != null) {
-        ConnectionDialog(
-            viewModel = viewModel,
-            computer = viewModel.connectionDialog.computer!!,
-            onConnect = { viewModel.onComputerInitiateConnection(
-                context = context,
-                computerUUID = viewModel.connectionDialog.computer!!.details.uuid)
-            },
-            onDismiss = { viewModel.dismissConnectionDialog() }
-        )
+    if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computerUuid != null) {
+        val computer = computers.find { it.details.uuid == viewModel.connectionDialog.computerUuid }
+        if (computer != null) {
+            ConnectionDialog(
+                viewModel = viewModel,
+                computer = computer,
+                onConnect = { viewModel.onComputerInitiateConnection(
+                    context = context,
+                    computerUuid = computer.details.uuid)
+                },
+                onDismiss = { viewModel.dismissConnectionDialog() }
+            )
+        }
     }
 
     if (viewModel.appViewDetails.showDialog) {

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.Computer
@@ -26,6 +25,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.StringReader
 
@@ -34,8 +36,8 @@ class ComputerRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val uiScope = MainScope() // Scope for main thread operations
     // Computers with Apps Lists
-    private val _computers = mutableStateListOf<Computer>()
-    val computers: List<Computer> = _computers
+    private val _computers = MutableStateFlow<List<Computer>>(emptyList())
+    val computers = _computers.asStateFlow()
     // Other
     private var connectionJob: Job? = null
     private var runningPolling: Boolean = false
@@ -71,12 +73,10 @@ class ComputerRepository {
         override fun onServiceDisconnected(componentName: ComponentName?) {
             computerManagerBinder = null
             runningPolling = false
-            uiScope.launch {
-                _computers.forEachIndexed { index, computer ->
-                    if (computer.applistPoller != null) {
-                        computer.applistPoller.stop()
-                        _computers[index] = computer.copy(applistPoller = null, apps = emptyList())
-                    }
+            _computers.update { computers ->
+                computers.map { computer ->
+                    computer.applistPoller?.stop()
+                    computer.copy(applistPoller = null, apps = emptyList())
                 }
             }
         }
@@ -94,7 +94,7 @@ class ComputerRepository {
     fun unbindService(context: Context) {
         try {
             pauseComputerUpdates() // Ensure polling is stopped
-            _computers.forEach { it.applistPoller?.stop() }
+            _computers.value.forEach { it.applistPoller?.stop() }
             context.unbindService(computerManagerServiceConnection)
         } catch (e: IllegalArgumentException) {
             Log.e("ComputerRepository",
@@ -120,17 +120,16 @@ class ComputerRepository {
         }
     }
     private fun modifyComputer(computerUUID: String, updateAction: (Computer) -> Computer) {
-        uiScope.launch {
-            val index = _computers.indexOfFirst { it.details.uuid == computerUUID }
-            if (index != -1) {
-                _computers[index] = updateAction(_computers[index])
+        _computers.update { computers ->
+            computers.map {
+                if (it.details.uuid == computerUUID) updateAction(it) else it
             }
         }
     }
     private fun processComputerDetails(details: ComputerDetails) {
-        uiScope.launch {
-            val index = _computers.indexOfFirst { it.details.uuid == details.uuid }
-            val oldComputer = if (index != -1) _computers[index] else null
+        _computers.update { computers ->
+            val index = computers.indexOfFirst { it.details.uuid == details.uuid }
+            val oldComputer = if (index != -1) computers[index] else null
 
             // Always try to parse the app list from details if available.
             val apps = details.rawAppList?.let { NvHTTP.getAppListByReader(StringReader(it)) }
@@ -155,12 +154,15 @@ class ComputerRepository {
                 pairPin = oldComputer?.pairPin,
                 applistPoller = applistPoller
             )
+
             if (oldComputer != newComputer) {
                 if (index != -1) {
-                    _computers[index] = newComputer
+                    computers.toMutableList().apply { this[index] = newComputer }
                 } else {
-                    _computers.add(newComputer)
+                    computers + newComputer
                 }
+            } else {
+                computers
             }
         }
     }
@@ -169,11 +171,11 @@ class ComputerRepository {
         // similar to how it would have been in the ViewModel.
         // This might involve using computerManagerBinder.
     }
-    fun initiateConnection(context: Context, computerUUID: String, onAppLaunched: () -> Unit) {
+    fun initiateConnection(context: Context, computerUuid: String, onAppLaunched: () -> Unit) {
         connectionJob?.cancel()
         connectionJob = repositoryScope.launch {
             while (true) {
-                val computer = computers.find { it.details.uuid == computerUUID } ?: break
+                val computer = computers.value.find { it.details.uuid == computerUuid } ?: break
                 if (computer.details.activeAddress != null &&
                     computer.details.state != ComputerDetails.State.OFFLINE &&
                     computerManagerBinder != null
@@ -268,7 +270,7 @@ class ComputerRepository {
         repositoryScope.launch {
             // Access _computers on the UI thread as it's a mutableStateListOf,
             // but run the actual pollNow() call in the repositoryScope (IO thread).
-            val computersToPoll = synchronized(lock = _computers) { _computers.toList() }
+            val computersToPoll = synchronized(lock = _computers) { _computers.value.toList() }
             computersToPoll.forEach { computer -> computer.applistPoller?.pollNow() }
         }
     }
