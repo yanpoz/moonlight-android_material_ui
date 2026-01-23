@@ -3,12 +3,10 @@ package com.limelight.ui
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,19 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -52,13 +46,13 @@ import com.limelight.ui.components.AppDetailsDialog
 import com.limelight.ui.components.ComputerDetailsDialog
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
+import com.limelight.ui.components.ManualComputerAddDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
-    val sheetState = rememberModalBottomSheetState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState())
     val computers by viewModel.computers.collectAsState()
@@ -167,32 +161,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     if (viewModel.manualComputerAdding.showDialog) {
-        ModalBottomSheet(
-            onDismissRequest = { viewModel.manualComputerAdding.showDialog = false },
-            sheetState = sheetState
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(stringResource(R.string.title_add_pc))
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp),
-                    value = viewModel.manualComputerAdding.inputIp,
-                    onValueChange = { viewModel.manualComputerAdding.inputIp = it },
-                    label = { Text(stringResource(R.string.ip_hint)) }
-                )
-                Button(
-                    onClick = {
-                        viewModel.addComputer(viewModel.manualComputerAdding.inputIp)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                ) {
-                    Text(stringResource(R.string.title_add_pc))
-                }
-            }
-        }
+        ManualComputerAddDialog(viewModel)
     }
 
     if (viewModel.connectionDialog.showDialog && viewModel.connectionDialog.computerUuid != null) {
