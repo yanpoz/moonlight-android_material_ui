@@ -130,12 +130,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 ComputerItem(
                                     computer = computer,
                                     isMenuExpanded = viewModel.computerItemHandler.menu.computerUuid == computer.details.uuid,
-                                    onDismissMenu = { viewModel.computerItemHandler.dismissMenu() },
+                                    onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
                                     onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
                                     onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
-                                    onComputerDetailsClicked = { viewModel.computerItemHandler.onDetailsClicked(computer) },
+                                    onComputerDetailsClicked = { viewModel.computerItemHandler.onViewDetailsClicked(computer) },
                                     onClick = { viewModel.connectionHandler.initiateConnection(context, computer.details.uuid) },
-                                    onLongClick = { viewModel.computerItemHandler.openMenu(computer.details.uuid) },
+                                    onLongClick = { viewModel.computerItemHandler.onOpenMenu(computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(16f / 9f)
@@ -199,7 +199,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     if (viewModel.computerItemHandler.viewDetails.showDialog) {
         ComputerDetailsDialog(
             computer = viewModel.computerItemHandler.viewDetails.computer!!,
-            onDismiss = { viewModel.computerItemHandler.dismissDetailsDialog() },
+            onDismiss = { viewModel.computerItemHandler.onDismissDetailsDialog() },
         )
     }
 

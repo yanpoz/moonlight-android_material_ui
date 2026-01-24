@@ -56,23 +56,25 @@ class ConfirmationHandler {
 }
 
 class ComputerItemHandler(
-    private val computerRepository: ComputerRepository,
     private val confirmationHandler: ConfirmationHandler,
+    private val quitRunningApp: (Context, Computer) -> Unit,
+    private val sendWakeOnLan: (Context, String) -> Unit,
 ) {
     var menu by mutableStateOf(ComputerMenuUiState())
         private set
     var viewDetails by mutableStateOf(ComputerViewDetailsUiState())
         private set
-    fun openMenu(computerUuid: String) {
+
+    fun onOpenMenu(computerUuid: String) {
         menu = ComputerMenuUiState(computerUuid)
     }
-    fun dismissMenu() {
+    fun onDismissMenu() {
         menu = ComputerMenuUiState()
     }
-    fun onDetailsClicked(computer: Computer) {
+    fun onViewDetailsClicked(computer: Computer) {
         viewDetails = ComputerViewDetailsUiState(true, computer)
     }
-    fun dismissDetailsDialog() {
+    fun onDismissDetailsDialog() {
         viewDetails = ComputerViewDetailsUiState()
     }
     fun onQuitRunningApp(context: Context, computer: Computer) {
@@ -80,12 +82,12 @@ class ComputerItemHandler(
             confirmationHandler.confirmAction(
                 title = "Quit ${app.appName}?",
                 text = "Are you sure you want to quit ${app.appName}?",
-                action = { computerRepository.quitApp(context, app, computer.details.uuid) }
+                action = { quitRunningApp(context, computer) }
             )
         }
     }
     fun onSendWakeOnLan(context: Context, computerUuid: String) {
-        computerRepository.sendWakeOnLan(context, computerUuid)
+        sendWakeOnLan(context, computerUuid)
     }
 }
 
@@ -178,7 +180,17 @@ class MainViewModel : ViewModel() {
     val computers: StateFlow<List<Computer>> = computerRepository.computers
 
     val confirmationHandler = ConfirmationHandler()
-    val computerItemHandler = ComputerItemHandler(computerRepository, confirmationHandler)
+    val computerItemHandler = ComputerItemHandler(
+        confirmationHandler = confirmationHandler,
+        quitRunningApp = { context, computer ->
+            computer.getRunningApp()?.let { app ->
+                computerRepository.quitApp(context, app, computer.details.uuid)
+            }
+        },
+        sendWakeOnLan = { context, computerUuid ->
+            computerRepository.sendWakeOnLan(context, computerUuid)
+        }
+    )
     val appItemHandler = AppItemHandler(computerRepository, confirmationHandler)
     val manualComputerAddHandler = ManualComputerAddHandler(computerRepository)
     val connectionHandler = ConnectionHandler(computerRepository)
