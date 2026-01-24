@@ -12,39 +12,16 @@ import com.limelight.repository.ComputerRepository
 import com.limelight.viewmodel.components.AppItemHandler
 import com.limelight.viewmodel.components.ComputerItemHandler
 import com.limelight.viewmodel.components.ConfirmationHandler
+import com.limelight.viewmodel.components.ManualComputerAddHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-data class ManualComputerAddingUiState(
-    val showDialog: Boolean = false,
-    val inputIp: String = "",
-)
 data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
     val computerUuid: String? = null,
 )
-
-class ManualComputerAddHandler(
-    private val computerRepository: ComputerRepository,)
-{
-    var uiState by mutableStateOf(ManualComputerAddingUiState())
-        private set
-    fun showDialog() {
-        uiState = uiState.copy(showDialog = true)
-    }
-    fun dismissDialog() {
-        uiState = ManualComputerAddingUiState()
-    }
-    fun onInputChanged(ip: String) {
-        uiState = uiState.copy(inputIp = ip)
-    }
-    fun addComputer() {
-        computerRepository.addComputer(uiState.inputIp)
-        dismissDialog()
-    }
-}
 
 class ConnectionHandler(
     private val computerRepository: ComputerRepository,)
@@ -103,7 +80,11 @@ class MainViewModel : ViewModel() {
             computerRepository.quitApp(context, app, computerUuid)
         }
     )
-    val manualComputerAddHandler = ManualComputerAddHandler(computerRepository)
+    val manualComputerAddHandler = ManualComputerAddHandler(
+        manualAddComputer = { ipAddress ->
+            computerRepository.addComputer(ipAddress)
+        },
+    )
     val connectionHandler = ConnectionHandler(computerRepository)
 
     var isRefreshing by mutableStateOf(false)
