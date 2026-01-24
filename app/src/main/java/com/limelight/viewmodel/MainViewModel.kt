@@ -67,6 +67,18 @@ class MainViewModel : ViewModel() {
 
     var isRefreshing by mutableStateOf(false)
 
+    init {
+        viewModelScope.launch {
+            computerRepository.connectionStatus.collect { status ->
+                if (status == ComputerRepository.ConnectionStatus.SUCCESS ||
+                    status == ComputerRepository.ConnectionStatus.CANCELED
+                ) {
+                    connectionHandler.dismissDialog()
+                }
+            }
+        }
+    }
+
     //region Lifecycle & Service Management
     fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)

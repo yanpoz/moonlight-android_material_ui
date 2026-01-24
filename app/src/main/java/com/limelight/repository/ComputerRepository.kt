@@ -22,7 +22,6 @@ import com.limelight.utils.ServerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +33,13 @@ import java.io.StringReader
 class ComputerRepository {
     // Scopes
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val uiScope = MainScope() // Scope for main thread operations
     // Computers with Apps Lists
     private val _computers = MutableStateFlow<List<Computer>>(emptyList())
     val computers = _computers.asStateFlow()
+    // Connection Status
+    enum class ConnectionStatus { IDLE, CONNECTING, SUCCESS, FAILED, CANCELED }
+    private val _connectionStatus = MutableStateFlow(ConnectionStatus.IDLE)
+    val connectionStatus = _connectionStatus.asStateFlow()
     // Other
     private var connectionJob: Job? = null
     private var runningPolling: Boolean = false
@@ -172,8 +174,9 @@ class ComputerRepository {
         // similar to how it would have been in the ViewModel.
         // This might involve using computerManagerBinder.
     }
-    fun initiateConnection(context: Context, computerUuid: String, onAppLaunched: () -> Unit) {
+    fun initiateConnection(context: Context, computerUuid: String) {
         connectionJob?.cancel()
+        _connectionStatus.value = ConnectionStatus.CONNECTING
         connectionJob = repositoryScope.launch {
             while (true) {
                 val computer = getComputer(computerUuid) ?: break
@@ -187,7 +190,7 @@ class ComputerRepository {
                     } else {
                         val desktopApp = computer.apps.find { it.appId == desktopAppId }
                         if (desktopApp != null) {
-                            launchApp(context, desktopApp, computer.details.uuid, onAppLaunched)
+                            launchApp(context, desktopApp, computer.details.uuid)
                             break
                         }
                     }
@@ -198,7 +201,13 @@ class ComputerRepository {
     }
     fun cancelConnection() {
         connectionJob?.cancel()
+        _connectionStatus.value = ConnectionStatus.CANCELED
     }
+
+    fun resetConnectionStatus() {
+        _connectionStatus.value = ConnectionStatus.IDLE
+    }
+
     fun pairComputer(computerUuid: String) {
         val computer = getComputer(computerUuid) ?: return
         try {
@@ -231,17 +240,24 @@ class ComputerRepository {
             if (pairResult == PairState.PAIRED) {
                 computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =
                     pairingManager.pairedCert
+            } else {
+                _connectionStatus.value = ConnectionStatus.FAILED
             }
         } catch (e: Exception) {
+            _connectionStatus.value = ConnectionStatus.FAILED
             Log.e("ComputerRepository", "Error pairing computer", e)
         } finally {
             resumeComputerUpdates()
         }
     }
-    fun launchApp(context: Context, app: NvApp, computerUuid: String, onAppLaunched: () -> Unit) {
-        val computer = getComputer(computerUuid) ?: return
-        ServerHelper.doStart(context as Activity, app, computer.details, computerManagerBinder)
-        onAppLaunched()
+    fun launchApp(context: Context, app: NvApp, computerUuid: String) {
+        val computer = getComputer(computerUuid)
+        if (computer != null) {
+            ServerHelper.doStart(context as Activity, app, computer.details, computerManagerBinder)
+            _connectionStatus.value = ConnectionStatus.SUCCESS
+        } else {
+            _connectionStatus.value = ConnectionStatus.FAILED
+        }
     }
     fun quitApp(context: Context, app: NvApp, computerUuid: String) {
         if (computerManagerBinder == null) {
