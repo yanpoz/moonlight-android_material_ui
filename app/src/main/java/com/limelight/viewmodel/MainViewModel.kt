@@ -7,47 +7,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.limelight.computers.Computer
-import com.limelight.nvstream.http.NvApp
 import com.limelight.repository.ComputerRepository
 import com.limelight.viewmodel.components.AppItemHandler
 import com.limelight.viewmodel.components.ComputerItemHandler
 import com.limelight.viewmodel.components.ConfirmationHandler
+import com.limelight.viewmodel.components.ConnectionHandler
 import com.limelight.viewmodel.components.ManualComputerAddHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-
-data class ConnectionDialogUiState(
-    val showDialog: Boolean = false,
-    val computerUuid: String? = null,
-)
-
-class ConnectionHandler(
-    private val computerRepository: ComputerRepository,)
-{
-    var dialog by mutableStateOf(ConnectionDialogUiState())
-        private set
-    private fun dismissDialog() {
-        dialog = ConnectionDialogUiState()
-    }
-    fun initiateConnection(context: Context, computerUuid: String) {
-        dialog = ConnectionDialogUiState(showDialog = true, computerUuid)
-        computerRepository.initiateConnection(
-            context, computerUuid, onAppLaunched = { dismissDialog() }
-        )
-    }
-    fun launchApp(context: Context, app: NvApp, computerUuid: String) {
-        dialog = ConnectionDialogUiState(showDialog = true, computerUuid)
-        computerRepository.launchApp(
-            context, app, computerUuid, onAppLaunched = { dismissDialog() }
-        )
-    }
-    fun cancelConnection() {
-        dialog = ConnectionDialogUiState()
-        computerRepository.cancelConnection()
-    }
-}
 
 
 class MainViewModel : ViewModel() {
@@ -85,7 +53,17 @@ class MainViewModel : ViewModel() {
             computerRepository.addComputer(ipAddress)
         },
     )
-    val connectionHandler = ConnectionHandler(computerRepository)
+    val connectionHandler = ConnectionHandler(
+        initiateConnection = { context, computerUuid ->
+            computerRepository.initiateConnection(context, computerUuid)
+        },
+        launchApp = { context, app, computerUuid ->
+            computerRepository.launchApp(context, app, computerUuid)
+        },
+        cancelConnection = {
+            computerRepository.cancelConnection()
+        }
+    )
 
     var isRefreshing by mutableStateOf(false)
 

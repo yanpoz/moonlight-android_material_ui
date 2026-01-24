@@ -134,7 +134,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
                                     onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
                                     onComputerDetailsClicked = { viewModel.computerItemHandler.onViewDetailsClicked(computer) },
-                                    onClick = { viewModel.connectionHandler.initiateConnection(context, computer.details.uuid) },
+                                    onClick = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
                                     onLongClick = { viewModel.computerItemHandler.onOpenMenu(computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
@@ -148,11 +148,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                         app = app,
                                         runningGameId = computer.details.runningGameId,
                                         isMenuExpanded = viewModel.appItemHandler.menu.appId == app.appId &&
-                                                viewModel.appItemHandler.menu.computerUuid == computer.details.uuid,
+                                                         viewModel.appItemHandler.menu.computerUuid == computer.details.uuid,
                                         onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
                                         onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
                                         onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
-                                        onClick = { viewModel.connectionHandler.launchApp(context, app, computer.details.uuid) },
+                                        onClick = { viewModel.connectionHandler.onLaunchApp(context, app, computer.details.uuid) },
                                         onLongClick = { viewModel.appItemHandler.onOpenMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
                                             .fillMaxHeight()
@@ -176,15 +176,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         )
     }
 
-    if (viewModel.connectionHandler.dialog.showDialog && viewModel.connectionHandler.dialog.computerUuid != null) {
-        val computer = computers.find { it.details.uuid == viewModel.connectionHandler.dialog.computerUuid }
+    if (viewModel.connectionHandler.uiState.showDialog && viewModel.connectionHandler.uiState.computerUuid != null) {
+        val computer = computers.find { it.details.uuid == viewModel.connectionHandler.uiState.computerUuid }
         if (computer != null) {
             ConnectionDialog(
                 computer,
-                onConnect = { viewModel.connectionHandler.initiateConnection(
-                    context, computerUuid = computer.details.uuid)
-                },
-                onDismiss = { viewModel.connectionHandler.cancelConnection() }
+                onConnect = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
+                onDismiss = { viewModel.connectionHandler.onCancelConnection() }
             )
         }
     }
