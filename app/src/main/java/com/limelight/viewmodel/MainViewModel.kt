@@ -9,26 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.limelight.computers.Computer
 import com.limelight.nvstream.http.NvApp
 import com.limelight.repository.ComputerRepository
+import com.limelight.viewmodel.components.AppItemHandler
+import com.limelight.viewmodel.components.ComputerItemHandler
+import com.limelight.viewmodel.components.ConfirmationHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-data class AppMenuUiState(
-    val appId: Int? = null,
-    val computerUuid: String? = null,
-)
-data class AppViewDetailsUiState(
-    val showDialog: Boolean = false,
-    val app: NvApp? = null,
-)
-data class ComputerMenuUiState(
-    val computerUuid: String? = null,
-)
-data class ComputerViewDetailsUiState(
-    val showDialog: Boolean = false,
-    val computer: Computer? = null,
-)
 data class ManualComputerAddingUiState(
     val showDialog: Boolean = false,
     val inputIp: String = "",
@@ -37,93 +25,10 @@ data class ConnectionDialogUiState(
     val showDialog: Boolean = false,
     val computerUuid: String? = null,
 )
-data class ConfirmationDialogUiState(
-    val showDialog: Boolean = false,
-    val title: String = "",
-    val text: String = "",
-    val action: () -> Unit = {},
-)
-
-class ConfirmationHandler {
-    var dialog by mutableStateOf(ConfirmationDialogUiState())
-        private set
-
-    fun confirmAction(title: String, text: String, action: () -> Unit = {}) {
-        dialog = ConfirmationDialogUiState(true, title, text, action)
-    }
-    fun dismissDialog() {
-        dialog = ConfirmationDialogUiState()
-    }
-}
-
-class ComputerItemHandler(
-    private val confirmationHandler: ConfirmationHandler,
-    private val quitRunningApp: (Context, Computer) -> Unit,
-    private val sendWakeOnLan: (Context, String) -> Unit,
-) {
-    var menu by mutableStateOf(ComputerMenuUiState())
-        private set
-    var viewDetails by mutableStateOf(ComputerViewDetailsUiState())
-        private set
-
-    fun onOpenMenu(computerUuid: String) {
-        menu = ComputerMenuUiState(computerUuid)
-    }
-    fun onDismissMenu() {
-        menu = ComputerMenuUiState()
-    }
-    fun onViewDetailsClicked(computer: Computer) {
-        viewDetails = ComputerViewDetailsUiState(true, computer)
-    }
-    fun onDismissDetailsDialog() {
-        viewDetails = ComputerViewDetailsUiState()
-    }
-    fun onQuitRunningApp(context: Context, computer: Computer) {
-        computer.getRunningApp()?.let { app ->
-            confirmationHandler.confirmAction(
-                title = "Quit ${app.appName}?",
-                text = "Are you sure you want to quit ${app.appName}?",
-                action = { quitRunningApp(context, computer) }
-            )
-        }
-    }
-    fun onSendWakeOnLan(context: Context, computerUuid: String) {
-        sendWakeOnLan(context, computerUuid)
-    }
-}
-
-class AppItemHandler(
-    private val confirmationHandler: ConfirmationHandler,
-    private val quitApp: (Context, NvApp, String) -> Unit,
-) {
-    var menu by mutableStateOf(AppMenuUiState())
-        private set
-    var viewDetails by mutableStateOf(AppViewDetailsUiState())
-        private set
-    fun onOpenMenu(appId: Int, computerUuid: String) {
-        menu = AppMenuUiState(appId, computerUuid)
-    }
-    fun onDismissMenu() {
-        menu = AppMenuUiState()
-    }
-    fun onDetailsClicked(app: NvApp) {
-        viewDetails = AppViewDetailsUiState(true, app)
-    }
-    fun onDismissDetailsDialog() {
-        viewDetails = AppViewDetailsUiState()
-    }
-    fun onQuitApp(context: Context, app: NvApp, computerUuid: String) {
-        confirmationHandler.confirmAction(
-            title = "Quit ${app.appName}?",
-            text = "Are you sure you want to quit ${app.appName}?",
-            action = { quitApp(context, app, computerUuid) }
-        )
-    }
-}
 
 class ManualComputerAddHandler(
-    private val computerRepository: ComputerRepository,
-) {
+    private val computerRepository: ComputerRepository,)
+{
     var uiState by mutableStateOf(ManualComputerAddingUiState())
         private set
     fun showDialog() {
@@ -142,8 +47,8 @@ class ManualComputerAddHandler(
 }
 
 class ConnectionHandler(
-    private val computerRepository: ComputerRepository,
-) {
+    private val computerRepository: ComputerRepository,)
+{
     var dialog by mutableStateOf(ConnectionDialogUiState())
         private set
     private fun dismissDialog() {
