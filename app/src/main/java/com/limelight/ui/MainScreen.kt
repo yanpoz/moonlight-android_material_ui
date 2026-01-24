@@ -149,11 +149,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                         runningGameId = computer.details.runningGameId,
                                         isMenuExpanded = viewModel.appItemHandler.menu.appId == app.appId &&
                                                 viewModel.appItemHandler.menu.computerUuid == computer.details.uuid,
-                                        onDismissMenu = { viewModel.appItemHandler.dismissMenu() },
+                                        onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
                                         onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
                                         onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
                                         onClick = { viewModel.connectionHandler.launchApp(context, app, computer.details.uuid) },
-                                        onLongClick = { viewModel.appItemHandler.openMenu(app.appId, computer.details.uuid) },
+                                        onLongClick = { viewModel.appItemHandler.onOpenMenu(app.appId, computer.details.uuid) },
                                         modifier = Modifier
                                             .fillMaxHeight()
                                             .aspectRatio(2f / 3f)
@@ -192,7 +192,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     if (viewModel.appItemHandler.viewDetails.showDialog) {
         AppDetailsDialog(
             app = viewModel.appItemHandler.viewDetails.app!!,
-            onDismiss = { viewModel.appItemHandler.dismissDetailsDialog() },
+            onDismiss = { viewModel.appItemHandler.onDismissDetailsDialog() },
         )
     }
 

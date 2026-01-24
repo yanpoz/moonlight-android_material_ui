@@ -47,6 +47,7 @@ data class ConfirmationDialogUiState(
 class ConfirmationHandler {
     var dialog by mutableStateOf(ConfirmationDialogUiState())
         private set
+
     fun confirmAction(title: String, text: String, action: () -> Unit = {}) {
         dialog = ConfirmationDialogUiState(true, title, text, action)
     }
@@ -92,30 +93,30 @@ class ComputerItemHandler(
 }
 
 class AppItemHandler(
-    private val computerRepository: ComputerRepository,
     private val confirmationHandler: ConfirmationHandler,
+    private val quitApp: (Context, NvApp, String) -> Unit,
 ) {
     var menu by mutableStateOf(AppMenuUiState())
         private set
     var viewDetails by mutableStateOf(AppViewDetailsUiState())
         private set
-    fun openMenu(appId: Int, computerUuid: String) {
+    fun onOpenMenu(appId: Int, computerUuid: String) {
         menu = AppMenuUiState(appId, computerUuid)
     }
-    fun dismissMenu() {
+    fun onDismissMenu() {
         menu = AppMenuUiState()
     }
     fun onDetailsClicked(app: NvApp) {
         viewDetails = AppViewDetailsUiState(true, app)
     }
-    fun dismissDetailsDialog() {
+    fun onDismissDetailsDialog() {
         viewDetails = AppViewDetailsUiState()
     }
     fun onQuitApp(context: Context, app: NvApp, computerUuid: String) {
         confirmationHandler.confirmAction(
             title = "Quit ${app.appName}?",
             text = "Are you sure you want to quit ${app.appName}?",
-            action = { computerRepository.quitApp(context, app, computerUuid) }
+            action = { quitApp(context, app, computerUuid) }
         )
     }
 }
@@ -191,7 +192,12 @@ class MainViewModel : ViewModel() {
             computerRepository.sendWakeOnLan(context, computerUuid)
         }
     )
-    val appItemHandler = AppItemHandler(computerRepository, confirmationHandler)
+    val appItemHandler = AppItemHandler(
+        confirmationHandler = confirmationHandler,
+        quitApp = { context, app, computerUuid ->
+            computerRepository.quitApp(context, app, computerUuid)
+        }
+    )
     val manualComputerAddHandler = ManualComputerAddHandler(computerRepository)
     val connectionHandler = ConnectionHandler(computerRepository)
 
