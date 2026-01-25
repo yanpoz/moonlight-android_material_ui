@@ -202,12 +202,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         )
     }
 
-    if (viewModel.confirmationHandler.dialog.showDialog) {
+    if (viewModel.confirmationHandler.uiState.showDialog) {
         ConfirmationDialog(
-            title = viewModel.confirmationHandler.dialog.title,
-            text = viewModel.confirmationHandler.dialog.text,
+            title = viewModel.confirmationHandler.uiState.title,
+            text = viewModel.confirmationHandler.uiState.text,
             onConfirm = {
-                viewModel.confirmationHandler.dialog.action()
+                viewModel.confirmationHandler.uiState.action()
                 viewModel.confirmationHandler.dismissDialog()
             },
             onDismiss = { viewModel.confirmationHandler.dismissDialog() }

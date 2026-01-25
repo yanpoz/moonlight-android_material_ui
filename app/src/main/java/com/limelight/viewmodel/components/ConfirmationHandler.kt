@@ -11,13 +11,13 @@ data class ConfirmationDialogUiState(
 )
 
 class ConfirmationHandler {
-    var dialog by mutableStateOf(ConfirmationDialogUiState())
+    var uiState by mutableStateOf(ConfirmationDialogUiState())
         private set
 
     fun confirmAction(title: String, text: String, action: () -> Unit = {}) {
-        dialog = ConfirmationDialogUiState(true, title, text, action)
+        uiState = ConfirmationDialogUiState(true, title, text, action)
     }
     fun dismissDialog() {
-        dialog = ConfirmationDialogUiState()
+        uiState = ConfirmationDialogUiState()
     }
 }

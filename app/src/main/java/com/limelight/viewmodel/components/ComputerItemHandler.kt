@@ -21,18 +21,18 @@ class ComputerItemHandler(
     private val quitRunningApp: (Context, Computer) -> Unit,
     private val sendWakeOnLan: (Context, String) -> Unit,)
 {
-    var menu by mutableStateOf(ComputerMenuUiState())
+    var uiState by mutableStateOf(ComputerMenuUiState())
         private set
     var viewDetails by mutableStateOf(ComputerViewDetailsUiState())
         private set
 
-    fun isMenuExpanded(computerUuid: String): Boolean = menu.computerUuid == computerUuid
+    fun isMenuExpanded(computerUuid: String): Boolean = uiState.computerUuid == computerUuid
 
     fun onOpenMenu(computerUuid: String) {
-        menu = ComputerMenuUiState(computerUuid)
+        uiState = ComputerMenuUiState(computerUuid)
     }
     fun onDismissMenu() {
-        menu = ComputerMenuUiState()
+        uiState = ComputerMenuUiState()
     }
     fun onViewDetailsClicked(computer: Computer) {
         viewDetails = ComputerViewDetailsUiState(true, computer)
