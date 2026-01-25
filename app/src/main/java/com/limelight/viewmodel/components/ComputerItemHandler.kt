@@ -26,6 +26,8 @@ class ComputerItemHandler(
     var viewDetails by mutableStateOf(ComputerViewDetailsUiState())
         private set
 
+    fun isMenuExpanded(computerUuid: String): Boolean = menu.computerUuid == computerUuid
+
     fun onOpenMenu(computerUuid: String) {
         menu = ComputerMenuUiState(computerUuid)
     }

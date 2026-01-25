@@ -129,7 +129,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             item(key = computer.details.uuid) {
                                 ComputerItem(
                                     computer = computer,
-                                    isMenuExpanded = viewModel.computerItemHandler.menu.computerUuid == computer.details.uuid,
+                                    isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(computer.details.uuid),
                                     onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
                                     onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
                                     onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
@@ -147,8 +147,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     AppItem(
                                         app = app,
                                         runningGameId = computer.details.runningGameId,
-                                        isMenuExpanded = viewModel.appItemHandler.menu.appId == app.appId &&
-                                                         viewModel.appItemHandler.menu.computerUuid == computer.details.uuid,
+                                        isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(app.appId, computer.details.uuid),
                                         onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
                                         onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
                                         onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },

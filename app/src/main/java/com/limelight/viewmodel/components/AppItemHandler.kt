@@ -24,6 +24,10 @@ class AppItemHandler(
         private set
     var viewDetails by mutableStateOf(AppViewDetailsUiState())
         private set
+
+    fun isMenuExpanded(appId: Int, computerUuid: String): Boolean =
+        menu.appId == appId && menu.computerUuid == computerUuid
+
     fun onOpenMenu(appId: Int, computerUuid: String) {
         menu = AppMenuUiState(appId, computerUuid)
     }

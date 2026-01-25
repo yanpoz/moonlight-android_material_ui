@@ -28,9 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
-import com.limelight.computers.Computer
 import com.limelight.nvstream.http.NvApp
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -136,4 +136,23 @@ fun AppItem(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun AppItemPreview() {
+    val app = NvApp(
+//        appName = "Steam",
+//        appId = 123
+    )
+    AppItem(
+        app = app,
+        isMenuExpanded = false,
+        runningGameId = 0,
+        onDismissMenu = {},
+        onQuitApp = {},
+        onAppDetailsClicked = {},
+        onClick = {},
+        onLongClick = {}
+    )
 }
