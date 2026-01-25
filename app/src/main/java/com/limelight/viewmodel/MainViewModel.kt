@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class MainViewModel : ViewModel() {
+open class MainViewModel(private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
         const val SETUP_GUIDE_URL =
@@ -27,8 +27,7 @@ class MainViewModel : ViewModel() {
             "https://github.com/moonlight-stream/moonlight-docs/wiki/Troubleshooting"
     }
 
-    private val computerRepository = ComputerRepository()
-    val computers: StateFlow<List<Computer>> = computerRepository.computers
+    open val computers: StateFlow<List<Computer>> = computerRepository.computers
 
     val confirmationHandler = ConfirmationHandler()
     val computerItemHandler = ComputerItemHandler(
@@ -65,7 +64,7 @@ class MainViewModel : ViewModel() {
         }
     )
 
-    var isRefreshing by mutableStateOf(false)
+    open var isRefreshing by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
@@ -80,23 +79,23 @@ class MainViewModel : ViewModel() {
     }
 
     //region Lifecycle & Service Management
-    fun bindComputerManagerService(context: Context) {
+    open fun bindComputerManagerService(context: Context) {
         computerRepository.bindService(context)
     }
-    fun unbindComputerManagerService(context: Context) {
+    open fun unbindComputerManagerService(context: Context) {
         computerRepository.unbindService(context)
     }
-    fun onUiResumed() {
+    open fun onUiResumed() {
         computerRepository.resumeComputerUpdates()
         computerRepository.pollAppsForActiveComputers()
     }
-    fun onUiPaused() {
+    open fun onUiPaused() {
         computerRepository.pauseComputerUpdates()
     }
     //endregion
 
     //region Computer & App Actions
-    fun updateComputerApps() {
+    open fun updateComputerApps() {
         viewModelScope.launch {
             isRefreshing = true
             try {
