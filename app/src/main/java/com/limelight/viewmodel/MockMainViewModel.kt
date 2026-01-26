@@ -12,7 +12,8 @@ class MockMainViewModel : MainViewModel() {
     private val _computers = MutableStateFlow<List<Computer>>(emptyList())
     override val computers: StateFlow<List<Computer>> = _computers
 
-    override var isRefreshing: Boolean = false
+    private val _isRefreshing = MutableStateFlow(false)
+    override val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     init {
         val apps = listOf(

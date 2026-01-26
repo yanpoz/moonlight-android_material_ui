@@ -14,7 +14,9 @@ import com.limelight.viewmodel.components.ConfirmationHandler
 import com.limelight.viewmodel.components.ConnectionHandler
 import com.limelight.viewmodel.components.ManualComputerAddHandler
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -64,7 +66,8 @@ open class MainViewModel(private val computerRepository: ComputerRepository = Co
         }
     )
 
-    open var isRefreshing by mutableStateOf(false)
+    private val _isRefreshing = MutableStateFlow(false)
+    open val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -97,14 +100,15 @@ open class MainViewModel(private val computerRepository: ComputerRepository = Co
     //region Computer & App Actions
     open fun updateComputerApps() {
         viewModelScope.launch {
-            isRefreshing = true
+            _isRefreshing.value = true
             try {
                 computerRepository.pollAppsForActiveComputers()
                 delay(APPS_POLL_DELAY_MS)
             } finally {
-                isRefreshing = false
+                _isRefreshing.value = false
             }
         }
     }
+
     //endregion
 }
