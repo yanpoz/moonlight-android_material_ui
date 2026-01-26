@@ -160,7 +160,7 @@ public class CachedAppAssetLoader {
             tuple = params[0];
 
             // Check whether it has been cancelled or the views are gone
-            if (isCancelled() || imageViewRef.get() == null || textViewRef.get() == null) {
+            if (isCancelled() || imageViewRef.get() == null) {
                 return null;
             }
 
@@ -202,7 +202,9 @@ public class CachedAppAssetLoader {
                 imageView.setImageDrawable(asyncDrawable);
                 imageView.startAnimation(AnimationUtils.loadAnimation(imageView.getContext(), R.anim.boxart_fadein));
                 imageView.setVisibility(View.VISIBLE);
-                textView.setVisibility(View.VISIBLE);
+                if (textView != null) {
+                    textView.setVisibility(View.VISIBLE);
+                }
                 task.executeOnExecutor(networkExecutor, tuple);
             }
         }
@@ -220,7 +222,9 @@ public class CachedAppAssetLoader {
                 // Fade in the box art
                 if (bitmap != null) {
                     // Show the text if it's a placeholder
-                    textView.setVisibility(isBitmapPlaceholder(bitmap) ? View.VISIBLE : View.GONE);
+                    if (textView != null) {
+                        textView.setVisibility(isBitmapPlaceholder(bitmap) ? View.VISIBLE : View.GONE);
+                    }
 
                     if (imageView.getVisibility() == View.VISIBLE) {
                         // Fade out the placeholder first
@@ -342,7 +346,9 @@ public class CachedAppAssetLoader {
         }
 
         // Always set the name text so we have it if needed later
-        textView.setText(app.getAppName());
+        if (textView != null) {
+            textView.setText(app.getAppName());
+        }
 
         // First, try the memory cache in the current context
         ScaledBitmap bmp = memoryLoader.loadBitmapFromCache(tuple);
@@ -352,7 +358,9 @@ public class CachedAppAssetLoader {
             imgView.setImageBitmap(bmp.bitmap);
 
             // Show the text if it's a placeholder bitmap
-            textView.setVisibility(isBitmapPlaceholder(bmp) ? View.VISIBLE : View.GONE);
+            if (textView != null) {
+                textView.setVisibility(isBitmapPlaceholder(bmp) ? View.VISIBLE : View.GONE);
+            }
             return true;
         }
 
@@ -360,7 +368,9 @@ public class CachedAppAssetLoader {
         // via AsyncDrawable to this view.
         final LoaderTask task = new LoaderTask(imgView, textView, true);
         final AsyncDrawable asyncDrawable = new AsyncDrawable(imgView.getResources(), placeholderBitmap, task);
-        textView.setVisibility(View.INVISIBLE);
+        if (textView != null) {
+            textView.setVisibility(View.INVISIBLE);
+        }
         imgView.setVisibility(View.INVISIBLE);
         imgView.setImageDrawable(asyncDrawable);
 

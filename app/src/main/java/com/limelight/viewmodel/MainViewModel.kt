@@ -30,6 +30,7 @@ open class MainViewModel(private val computerRepository: ComputerRepository = Co
     }
 
     open val computers: StateFlow<List<Computer>> = computerRepository.computers
+    open val uniqueId: StateFlow<String?> = computerRepository.uniqueId
 
     val confirmationHandler = ConfirmationHandler()
     val computerItemHandler = ComputerItemHandler(

@@ -1,6 +1,7 @@
 package com.limelight.ui
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,6 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.limelight.R
+import com.limelight.grid.assets.CachedAppAssetLoader
+import com.limelight.grid.assets.DiskAssetLoader
+import com.limelight.grid.assets.MemoryAssetLoader
+import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.components.AppDetailsDialog
 import com.limelight.ui.components.AppItem
@@ -60,6 +66,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     )
     val computers by viewModel.computers.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -121,6 +128,26 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                         .padding(paddingValues)
                 ) {
                     items(computers, key = { it.details.uuid }) { computer ->
+                        val assetLoader = remember(computer.details, uniqueId) {
+                            val ART_WIDTH_PX = 300
+                            val LARGE_WIDTH_DP = 150
+                            val dpi = context.resources.displayMetrics.densityDpi
+                            val dp = LARGE_WIDTH_DP
+                            var scalingDivisor = ART_WIDTH_PX / (dp * (dpi / 160.0))
+                            if (scalingDivisor < 1.0) {
+                                scalingDivisor = 1.0
+                            }
+
+                            CachedAppAssetLoader(
+                                computer.details,
+                                scalingDivisor,
+                                NetworkAssetLoader(context, uniqueId ?: ""),
+                                MemoryAssetLoader(),
+                                DiskAssetLoader(context),
+                                BitmapFactory.decodeResource(context.resources, R.drawable.no_app_image)
+                            )
+                        }
+
                         LazyRow(
                             modifier = Modifier
                                 .height(200.dp) // Fixed height for the row of items
@@ -150,6 +177,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 items(computer.apps, key = { it.appId }) { app ->
                                     AppItem(
                                         app = app,
+                                        assetLoader = assetLoader,
                                         runningGameId = computer.details.runningGameId,
                                         isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(app.appId, computer.details.uuid),
                                         onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },

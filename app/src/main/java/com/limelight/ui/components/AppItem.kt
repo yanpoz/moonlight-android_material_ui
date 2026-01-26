@@ -2,8 +2,7 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,18 +24,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
+import com.limelight.grid.assets.CachedAppAssetLoader
 import com.limelight.nvstream.http.NvApp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
     app: NvApp,
+    assetLoader: CachedAppAssetLoader?,
     isMenuExpanded: Boolean,
     runningGameId: Int,
     onDismissMenu: () -> Unit,
@@ -50,15 +52,24 @@ fun AppItem(
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
             .clip(CardDefaults.shape)
-            .combinedClickable(onClick=onClick, onLongClick=onLongClick)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom // Align app name to the bottom
-        ) {
-            Text(text = app.appName, style = MaterialTheme.typography.bodyLarge)
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (assetLoader != null) {
+                AppImage(
+                    app = app,
+                    assetLoader = assetLoader,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            Text(
+                text = app.appName,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            )
         }
 
         DropdownMenu(
@@ -147,6 +158,7 @@ fun AppItemPreview() {
     )
     AppItem(
         app = app,
+        assetLoader = null,
         isMenuExpanded = false,
         runningGameId = 0,
         onDismissMenu = {},

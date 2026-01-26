@@ -36,6 +36,9 @@ class ComputerRepository {
     // Computers with Apps Lists
     private val _computers = MutableStateFlow<List<Computer>>(emptyList())
     val computers = _computers.asStateFlow()
+    // Unique ID
+    private val _uniqueId = MutableStateFlow<String?>(null)
+    val uniqueId = _uniqueId.asStateFlow()
     // Connection Status
     enum class ConnectionStatus { IDLE, CONNECTING, SUCCESS, FAILED, CANCELED }
     private val _connectionStatus = MutableStateFlow(ConnectionStatus.IDLE)
@@ -56,6 +59,7 @@ class ComputerRepository {
             repositoryScope.launch {
                 computerManagerBinder = binder as? ComputerManagerService.ComputerManagerBinder
                 computerManagerBinder?.waitForReady()
+                _uniqueId.value = computerManagerBinder?.uniqueId
 
                 // Initialize the listener if it has not been, or if service reconnected
                 if (computerManagerListener == null) {
@@ -74,6 +78,7 @@ class ComputerRepository {
         }
         override fun onServiceDisconnected(componentName: ComponentName?) {
             computerManagerBinder = null
+            _uniqueId.value = null
             runningPolling = false
             _computers.update { computers ->
                 computers.map { computer ->
