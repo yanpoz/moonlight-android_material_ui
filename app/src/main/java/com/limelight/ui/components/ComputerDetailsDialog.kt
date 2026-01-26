@@ -39,7 +39,7 @@ fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
                                 )
                                 Text(
                                     text = value,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1.7f)
                                 )
                             }
                             if (index < computerDetailsText.lastIndex) {
