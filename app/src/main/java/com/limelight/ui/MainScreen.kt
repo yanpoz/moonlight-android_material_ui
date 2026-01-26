@@ -198,10 +198,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     if (viewModel.computerItemHandler.viewDetails.showDialog) {
-        ComputerDetailsDialog(
-            computer = viewModel.computerItemHandler.viewDetails.computer!!,
-            onDismiss = { viewModel.computerItemHandler.onDismissDetailsDialog() },
-        )
+        viewModel.computerItemHandler.viewDetails.computer?.let { computer ->
+            ComputerDetailsDialog(
+                computer = computer,
+                onDismiss = { viewModel.computerItemHandler.onDismissDetailsDialog() },
+            )
+        }
     }
 
     if (viewModel.confirmationHandler.uiState.showDialog) {

@@ -21,7 +21,7 @@ fun getComputerAddressText(computer: Computer): String {
 @Composable
 fun getComputerPairResultText(computer: Computer): String {
     return when (computer.pairResult) {
-        null -> "NULL pair"
+        null -> "NULL"
         PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pair_already_in_progress)
         PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
         PairingManager.PairState.FAILED -> {
@@ -66,31 +66,31 @@ fun getComputerPairStatusText(computer: Computer): String {
 @Composable
 fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
     val details = computer.details
-    return listOfNotNull(
-        "Name" to details.name,
-        "UUID" to details.uuid,
-        "State" to details.state.toString(),
-        "PairState" to details.pairState.toString(),
+    return listOf(
+        "Name" to (details.name ?: "NULL"),
+        "UUID" to (details.uuid ?: "NULL"),
+        "State" to (details.state.toString() ?: "NULL"),
+        "PairState" to (details.pairState?.toString() ?: "NULL"),
         "Pair Result" to getComputerPairResultText(computer),
         "Pair PIN" to getComputerPairPinText(computer),
-        details.activeAddress?.let { "Active Address" to it.toString() },
-        details.localAddress?.let { "Local Address" to it.toString() },
-        details.remoteAddress?.let { "Remote Address" to it.toString() },
-        details.manualAddress?.let { "Manual Address" to it.toString() },
-        details.ipv6Address?.let { "IPv6 Address" to it.toString() },
-        details.macAddress?.let { "MAC Address" to it },
-        "HTTPS Port" to details.httpsPort.toString(),
-        "External Port" to details.externalPort.toString(),
-        "Running Game ID" to details.runningGameId.toString(),
-        "NVIDIA Server" to details.nvidiaServer.toString(),
+        "Active Address" to (details.activeAddress?.toString() ?: "NULL"),
+        "Local Address" to (details.localAddress?.toString() ?: "NULL"),
+        "Remote Address" to (details.remoteAddress?.toString() ?: "NULL"),
+        "Manual Address" to (details.manualAddress?.toString() ?: "NULL"),
+        "IPv6 Address" to (details.ipv6Address?.toString() ?: "NULL"),
+        "MAC Address" to (details.macAddress ?: "NULL"),
+        "HTTPS Port" to (details.httpsPort.toString() ?: "NULL"),
+        "External Port" to (details.externalPort.toString() ?: "NULL"),
+        "Running Game ID" to (details.runningGameId.toString() ?: "NULL"),
+        "NVIDIA Server" to (details.nvidiaServer?.toString() ?: "NULL"),
     )
 }
 
 @Composable
 fun getAppDetails(app: NvApp): List<Pair<String, String>> {
     return listOf(
-        "App Name" to app.appName.toString(),
-        stringResource(R.string.applist_details_id) to app.appId.toString(),
-        "HDR Supported" to app.isHdrSupported.toString(),
+        "App Name" to (app.appName ?: "NULL"),
+        "App ID" to (app.appId.toString() ?: "NULL"),
+        "HDR Supported" to (app.isHdrSupported.toString() ?: "NULL"),
     )
 }
