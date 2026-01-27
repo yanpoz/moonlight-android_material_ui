@@ -11,10 +11,10 @@ import com.limelight.nvstream.http.PairingManager
 
 @Composable
 fun getComputerAddressText(computer: Computer): String {
-    return computer.details.activeAddress?.address
-        ?: computer.details.localAddress?.address
-        ?: computer.details.remoteAddress?.address
-        ?: computer.details.manualAddress?.address
+    return computer.details.activeAddress?.toString()
+        ?: computer.details.localAddress?.toString()
+        ?: computer.details.remoteAddress?.toString()
+        ?: computer.details.manualAddress?.toString()
         ?: stringResource(R.string.error_unknown_host)
 }
 
@@ -32,6 +32,16 @@ fun getComputerPairResultText(computer: Computer): String {
             }
         }
         else -> "Pair Result: ${computer.pairResult}"
+    }
+}
+
+@Composable
+fun getComputerNetworkStateText(computer: Computer): String {
+    return when (computer.details.state) {
+        ComputerDetails.State.ONLINE -> "Online"
+        ComputerDetails.State.OFFLINE -> "Offline"
+        ComputerDetails.State.UNKNOWN -> "Unknown"
+        else -> "NULL"
     }
 }
 
@@ -54,12 +64,12 @@ fun getComputerPairPinText(computer: Computer): String {
 @Composable
 fun getComputerPairStatusText(computer: Computer): String {
     return when (computer.details.pairState) {
-        PairingManager.PairState.PAIRED -> "Pair status: Paired"
+        PairingManager.PairState.PAIRED -> "Paired"
         PairingManager.PairState.NOT_PAIRED -> stringResource(R.string.scut_not_paired)
         PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
         PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
         PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
-        null -> stringResource(R.string.pair_fail) //TODO: loading
+        null -> "NULL"
     }
 }
 

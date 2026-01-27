@@ -40,6 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.computers.Computer
+import com.limelight.computers.getComputerAddressText
+import com.limelight.computers.getComputerNetworkStateText
 import com.limelight.computers.getComputerPairStatusText
 import com.limelight.computers.getComputerStatusColor
 import com.limelight.nvstream.http.ComputerDetails
@@ -86,8 +88,18 @@ fun ComputerItem(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
+                text = getComputerAddressText(computer),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = getComputerNetworkStateText(computer),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
                 text = getComputerPairStatusText(computer),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -217,6 +229,7 @@ fun ComputerItemPreview() {
     val computer = Computer(
         details = ComputerDetails().apply {
             name = "My Gaming PC"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.PAIRED
             runningGameId = 0
