@@ -16,7 +16,9 @@ fun AppImage(
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            ImageView(context)
+            ImageView(context).apply {
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }
         },
         update = { imageView ->
             assetLoader.populateImageView(app, imageView, null)

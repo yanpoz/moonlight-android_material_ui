@@ -69,7 +69,7 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
     return listOf(
         "Name" to (details.name ?: "NULL"),
         "UUID" to (details.uuid ?: "NULL"),
-        "State" to (details.state.toString() ?: "NULL"),
+        "State" to details.state.toString(),
         "PairState" to (details.pairState?.toString() ?: "NULL"),
         "Pair Result" to getComputerPairResultText(computer),
         "Pair PIN" to getComputerPairPinText(computer),
@@ -79,10 +79,10 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         "Manual Address" to (details.manualAddress?.toString() ?: "NULL"),
         "IPv6 Address" to (details.ipv6Address?.toString() ?: "NULL"),
         "MAC Address" to (details.macAddress ?: "NULL"),
-        "HTTPS Port" to (details.httpsPort.toString() ?: "NULL"),
-        "External Port" to (details.externalPort.toString() ?: "NULL"),
-        "Running Game ID" to (details.runningGameId.toString() ?: "NULL"),
-        "NVIDIA Server" to (details.nvidiaServer?.toString() ?: "NULL"),
+        "HTTPS Port" to details.httpsPort.toString(),
+        "External Port" to details.externalPort.toString(),
+        "Running Game ID" to details.runningGameId.toString(),
+        "NVIDIA Server" to details.nvidiaServer.toString(),
     )
 }
 
@@ -90,7 +90,7 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
 fun getAppDetails(app: NvApp): List<Pair<String, String>> {
     return listOf(
         "App Name" to (app.appName ?: "NULL"),
-        "App ID" to (app.appId.toString() ?: "NULL"),
-        "HDR Supported" to (app.isHdrSupported.toString() ?: "NULL"),
+        "App ID" to app.appId.toString(),
+        "HDR Supported" to app.isHdrSupported.toString(),
     )
 }
