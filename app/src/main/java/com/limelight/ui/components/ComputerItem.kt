@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,6 +45,7 @@ import com.limelight.computers.getComputerAddressText
 import com.limelight.computers.getComputerNetworkStateText
 import com.limelight.computers.getComputerPairStatusText
 import com.limelight.computers.getComputerStatusColor
+import com.limelight.computers.getRunningGameName
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 
@@ -66,7 +68,9 @@ fun ComputerItem(
             .clip(CardDefaults.shape)
             .combinedClickable(onClick=onClick, onLongClick=onLongClick)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .fillMaxHeight()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -99,6 +103,14 @@ fun ComputerItem(
             )
             Text(
                 text = getComputerPairStatusText(computer),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = getRunningGameName(computer),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

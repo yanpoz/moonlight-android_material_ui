@@ -19,6 +19,11 @@ fun getComputerAddressText(computer: Computer): String {
 }
 
 @Composable
+fun getRunningGameName(computer: Computer): String {
+    return computer.getRunningApp()?.let { "Running game: ${it.appName}" } ?: "Ready to start"
+}
+
+@Composable
 fun getComputerPairResultText(computer: Computer): String {
     return when (computer.pairResult) {
         null -> "NULL"

@@ -20,7 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-open class MainViewModel(private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
+open class MainViewModel(
+    private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
         const val SETUP_GUIDE_URL =
