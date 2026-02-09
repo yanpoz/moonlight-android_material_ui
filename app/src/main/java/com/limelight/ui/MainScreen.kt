@@ -14,18 +14,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -68,128 +68,129 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.updateComputerApps() }
-    ) {
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                CenterAlignedTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    title = { Text("Moonlight") },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { viewModel.manualComputerAddHandler.onShowDialog() }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.AddCircleOutline,
-                                contentDescription = stringResource(R.string.title_add_pc)
-                            )
+// TODO: return pull to refresh when 'enabled' property is added to PullToRefreshBox
+// https://issuetracker.google.com/issues/369044003
+//    PullToRefreshBox(
+//        isRefreshing = isRefreshing,
+//        onRefresh = { viewModel.updateComputerApps() }
+//    ) {
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = { Text("Moonlight") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { viewModel.manualComputerAddHandler.onShowDialog() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = stringResource(R.string.title_add_pc)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = MainViewModel.SETUP_GUIDE_URL.toUri()
                         }
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = MainViewModel.SETUP_GUIDE_URL.toUri()
-                            }
-                            context.startActivity(intent)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Info,
-                                contentDescription = stringResource(R.string.help)
-                            )
-                        }
-                        IconButton(onClick = onSettingsClick) {
-                            Icon(
-                                imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Settings"
-                            )
-                        }
-                    },
+                        context.startActivity(intent)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = stringResource(R.string.help)
+                        )
+                    }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
+                },
+            )
+        },
+    ) { paddingValues ->
+        if (computers.isEmpty()) {
+            // Show empty state
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.scut_pc_not_found),
+                    style = MaterialTheme.typography.bodyLarge
                 )
-            },
-        ) { paddingValues ->
-            if (computers.isEmpty()) {
-                // Show empty state
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.scut_pc_not_found),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-                    items(computers, key = { it.details.uuid }) { computer ->
-                        val assetLoader = remember(computer.details, uniqueId) {
-                            val ART_WIDTH_PX = 300
-                            val LARGE_WIDTH_DP = 150
-                            val dpi = context.resources.displayMetrics.densityDpi
-                            val dp = LARGE_WIDTH_DP
-                            var scalingDivisor = ART_WIDTH_PX / (dp * (dpi / 160.0))
-                            if (scalingDivisor < 1.0) {
-                                scalingDivisor = 1.0
-                            }
-
-                            CachedAppAssetLoader(
-                                computer.details,
-                                scalingDivisor,
-                                NetworkAssetLoader(context, uniqueId ?: ""),
-                                MemoryAssetLoader(),
-                                DiskAssetLoader(context),
-                                BitmapFactory.decodeResource(context.resources, R.drawable.no_app_image)
-                            )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                items(computers, key = { it.details.uuid }) { computer ->
+                    val assetLoader = remember(computer.details, uniqueId) {
+                        val ART_WIDTH_PX = 300
+                        val LARGE_WIDTH_DP = 150
+                        val dpi = context.resources.displayMetrics.densityDpi
+                        val dp = LARGE_WIDTH_DP
+                        var scalingDivisor = ART_WIDTH_PX / (dp * (dpi / 160.0))
+                        if (scalingDivisor < 1.0) {
+                            scalingDivisor = 1.0
                         }
 
-                        LazyRow(
-                            modifier = Modifier
-                                .height(200.dp) // Fixed height for the row of items
-                                .padding(vertical = 16.dp),
-                            contentPadding = PaddingValues(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // ComputerItem as the first item
-                            item(key = computer.details.uuid) {
-                                ComputerItem(
-                                    computer = computer,
-                                    isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(computer.details.uuid),
-                                    onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
-                                    onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
-                                    onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
-                                    onComputerDetailsClicked = { viewModel.computerItemHandler.onViewDetailsClicked(computer) },
-                                    onClick = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
-                                    onLongClick = { viewModel.computerItemHandler.onOpenMenu(computer.details.uuid) },
+                        CachedAppAssetLoader(
+                            computer.details,
+                            scalingDivisor,
+                            NetworkAssetLoader(context, uniqueId ?: ""),
+                            MemoryAssetLoader(),
+                            DiskAssetLoader(context),
+                            BitmapFactory.decodeResource(context.resources, R.drawable.no_app_image)
+                        )
+                    }
+
+                    LazyRow(
+                        modifier = Modifier
+                            .height(200.dp) // Fixed height for the row of items
+                            .padding(vertical = 16.dp),
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // ComputerItem as the first item
+                        item(key = computer.details.uuid) {
+                            ComputerItem(
+                                computer = computer,
+                                isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(computer.details.uuid),
+                                onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
+                                onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
+                                onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
+                                onComputerDetailsClicked = { viewModel.computerItemHandler.onViewDetailsClicked(computer) },
+                                onClick = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
+                                onLongClick = { viewModel.computerItemHandler.onOpenMenu(computer.details.uuid) },
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(16f / 9f)
+                            )
+                        }
+                        // AppItems
+                        if (computer.details.pairState == PairingManager.PairState.PAIRED) {
+                            items(computer.apps, key = { it.appId }) { app ->
+                                AppItem(
+                                    app = app,
+                                    assetLoader = assetLoader,
+                                    runningGameId = computer.details.runningGameId,
+                                    isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(app.appId, computer.details.uuid),
+                                    onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
+                                    onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
+                                    onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
+                                    onClick = { viewModel.connectionHandler.onLaunchApp(context, app, computer.details.uuid) },
+                                    onLongClick = { viewModel.appItemHandler.onOpenMenu(app.appId, computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .aspectRatio(16f / 9f)
+                                        .aspectRatio(2f / 3f)
                                 )
-                            }
-                            // AppItems
-                            if (computer.details.pairState == PairingManager.PairState.PAIRED) {
-                                items(computer.apps, key = { it.appId }) { app ->
-                                    AppItem(
-                                        app = app,
-                                        assetLoader = assetLoader,
-                                        runningGameId = computer.details.runningGameId,
-                                        isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(app.appId, computer.details.uuid),
-                                        onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
-                                        onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
-                                        onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
-                                        onClick = { viewModel.connectionHandler.onLaunchApp(context, app, computer.details.uuid) },
-                                        onLongClick = { viewModel.appItemHandler.onOpenMenu(app.appId, computer.details.uuid) },
-                                        modifier = Modifier
-                                            .fillMaxHeight()
-                                            .aspectRatio(2f / 3f)
-                                    )
-                                }
                             }
                         }
                     }
@@ -197,6 +198,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             }
         }
     }
+//    }
 
     if (viewModel.manualComputerAddHandler.uiState.showDialog) {
         ManualComputerAddDialog(
