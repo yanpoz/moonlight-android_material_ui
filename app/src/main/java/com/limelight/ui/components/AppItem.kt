@@ -2,6 +2,7 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +54,14 @@ fun AppItem(
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
             .clip(CardDefaults.shape)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .onKeyEvent {
+                if (it.key == Key.DirectionCenter) {
+                    onLongClick()
+                    return@onKeyEvent true
+                }
+                false
+            }
+            .focusable()
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (assetLoader != null) {
