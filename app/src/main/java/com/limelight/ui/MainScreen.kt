@@ -27,11 +27,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -66,6 +69,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val computers by viewModel.computers.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
+    val focusRequester = remember { FocusRequester() }
 
 // TODO: return pull to refresh when 'enabled' property is added to PullToRefreshBox
 // https://issuetracker.google.com/issues/369044003
@@ -171,6 +175,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(16f / 9f)
+                                    .then(if (computers.first() == computer) Modifier.focusRequester(focusRequester) else Modifier)
                             )
                         }
                         // AppItems
@@ -193,6 +198,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             }
                         }
                     }
+                }
+            }
+
+            LaunchedEffect(computers) {
+                if (computers.isNotEmpty()) {
+                    focusRequester.requestFocus()
                 }
             }
         }
