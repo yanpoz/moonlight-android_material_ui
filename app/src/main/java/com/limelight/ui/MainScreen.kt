@@ -49,9 +49,9 @@ import com.limelight.grid.assets.MemoryAssetLoader
 import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.components.AppDetailsDialog
-import com.limelight.ui.components.AppItem
+import com.limelight.ui.components.AppItemCard
 import com.limelight.ui.components.ComputerDetailsDialog
-import com.limelight.ui.components.ComputerItem
+import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
 import com.limelight.ui.components.ManualComputerAddDialog
@@ -163,7 +163,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     ) {
                         // ComputerItem as the first item
                         item(key = computer.details.uuid) {
-                            ComputerItem(
+                            ComputerItemCard(
                                 computer = computer,
                                 isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(computer.details.uuid),
                                 onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
@@ -181,7 +181,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                         // AppItems
                         if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                             items(computer.apps, key = { it.appId }) { app ->
-                                AppItem(
+                                AppItemCard(
                                     app = app,
                                     assetLoader = assetLoader,
                                     runningGameId = computer.details.runningGameId,

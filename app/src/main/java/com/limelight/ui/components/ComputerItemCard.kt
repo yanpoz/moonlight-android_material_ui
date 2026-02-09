@@ -2,8 +2,6 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +23,6 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerSettingsNew
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -36,10 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +47,7 @@ import com.limelight.nvstream.http.PairingManager
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ComputerItem(
+fun ComputerItemCard(
     computer: Computer,
     isMenuExpanded: Boolean,
     onDismissMenu: () -> Unit,
@@ -66,19 +58,11 @@ fun ComputerItem(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    ItemCard(
+        onClick = onClick,
+        onLongClick = onLongClick,
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
-            .clip(CardDefaults.shape)
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .onKeyEvent {
-                if (it.key == Key.DirectionCenter) {
-                    onLongClick()
-                    return@onKeyEvent true
-                }
-                false
-            }
-            .focusable()
     ) {
         Column(
             modifier = Modifier
@@ -251,7 +235,7 @@ fun ComputerItem(
 
 @Preview
 @Composable
-fun ComputerItemPreview() {
+fun ComputerItemCardPreview() {
     val computer = Computer(
         details = ComputerDetails().apply {
             name = "My Gaming PC"
@@ -262,7 +246,7 @@ fun ComputerItemPreview() {
         },
         apps = emptyList()
     )
-    ComputerItem(
+    ComputerItemCard(
         computer = computer,
         isMenuExpanded = false,
         onDismissMenu = { },
