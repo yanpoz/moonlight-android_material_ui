@@ -2,6 +2,7 @@ package com.limelight.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
@@ -10,6 +11,15 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.ColorLens
+import androidx.compose.material.icons.outlined.Computer
+import androidx.compose.material.icons.outlined.DesktopWindows
+import androidx.compose.material.icons.outlined.Mouse
+import androidx.compose.material.icons.outlined.SportsEsports
+import androidx.compose.material.icons.outlined.Theaters
+import androidx.compose.material.icons.outlined.VideogameAsset
+import androidx.compose.material.icons.outlined.VolumeUp
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.limelight.R
 
@@ -56,7 +66,7 @@ object SettingsData {
         SettingCategory(
             name = "Video",
             category_title = R.string.category_basic_settings,
-            icon = Icons.Default.Face,
+            icon = Icons.Outlined.Theaters,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Enable Fullscreen",
@@ -78,7 +88,7 @@ object SettingsData {
         SettingCategory(
             name = "Audio",
             category_title = R.string.category_audio_settings,
-            icon = Icons.Default.Notifications,
+            icon = Icons.AutoMirrored.Outlined.VolumeUp,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Mute",
@@ -92,7 +102,7 @@ object SettingsData {
         SettingCategory(
             name = "Gamepad",
             category_title = R.string.category_gamepad_settings,
-            icon = Icons.Default.Person,
+            icon = Icons.Outlined.SportsEsports,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Automatic gamepad presence detection",
@@ -162,7 +172,7 @@ object SettingsData {
         SettingCategory(
             name = "Mouse",
             category_title = R.string.category_input_settings,
-            icon = Icons.Default.AccountBox,
+            icon = Icons.Outlined.Mouse,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Use the touchscreen as a trackpad",
@@ -190,7 +200,7 @@ object SettingsData {
         SettingCategory(
             name = "On-screen Controls Settings",
             category_title = R.string.category_on_screen_controls_settings,
-            icon = Icons.Default.AccountCircle,
+            icon = Icons.Outlined.VideogameAsset,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Show on-screen controls",
@@ -204,7 +214,7 @@ object SettingsData {
         SettingCategory(
             name = "Host Settings",
             category_title = R.string.category_host_settings,
-            icon = Icons.Default.Home,
+            icon = Icons.Outlined.DesktopWindows,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Optimize game settings",
@@ -225,7 +235,7 @@ object SettingsData {
         SettingCategory(
             name = "UI Settings",
             category_title = R.string.category_ui_settings,
-            icon = Icons.Default.Star,
+            icon = Icons.Outlined.ColorLens,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Enable Picture-in-Picture observer mode",
@@ -246,7 +256,7 @@ object SettingsData {
         SettingCategory(
             name = "Advanced Settings",
             category_title = R.string.category_advanced_settings,
-            icon = Icons.Default.Build,
+            icon = Icons.Outlined.Build,
             items = listOf(
                 SettingItem.Toggle(
                     name = "Unlock all possible frame rates",

@@ -20,7 +20,7 @@ fun getComputerAddressText(computer: Computer): String {
 
 @Composable
 fun getRunningGameName(computer: Computer): String {
-    return computer.getRunningApp()?.let { "Running game: ${it.appName}" } ?: "Ready to start"
+    return computer.getRunningApp()?.let { "Running: ${it.appName}" } ?: "Ready to start"
 }
 
 @Composable
