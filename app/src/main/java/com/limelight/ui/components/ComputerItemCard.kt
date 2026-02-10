@@ -95,12 +95,7 @@ fun ComputerItemCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = getComputerNetworkStateText(computer),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = getComputerPairStatusText(computer),
+                text = "${getComputerNetworkStateText(computer)} • ${getComputerPairStatusText(computer)}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
