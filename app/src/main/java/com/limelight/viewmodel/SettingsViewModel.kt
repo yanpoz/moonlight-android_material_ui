@@ -39,16 +39,6 @@ sealed class SettingItem {
         val onToggle: (Boolean) -> Unit
     ) : SettingItem()
 
-    data class Slider(
-        override val name: String,
-        override val category: String,
-        override val title: Int,
-        override val summary: Int,
-        val value: Float,
-        val range: ClosedFloatingPointRange<Float>,
-        val onValueChange: (Float) -> Unit
-    ) : SettingItem()
-
     // Add more types as needed (e.g., TextInput, Dropdown)
 }
 
@@ -74,15 +64,7 @@ object SettingsData {
                     title = R.string.title_checkbox_stretch_video,
                     summary = R.string.summary_resolution_list,
                     isEnabled = true
-                ) { /* Handle toggle */ },
-                SettingItem.Slider(
-                    name ="Bitrate",
-                    category = "Video",
-                    title = R.string.title_seekbar_bitrate,
-                    summary = R.string.summary_seekbar_bitrate,
-                    value = 0.5f,
-                    range = 0f..1f
-                ) { /* Handle slider */ }
+                ) { /* Handle toggle */ }
             ),
         ),
         SettingCategory(
@@ -270,13 +252,6 @@ object SettingsData {
                     category = "Advanced",
                     title = R.string.title_checkbox_reduce_refresh_rate,
                     summary = R.string.summary_checkbox_reduce_refresh_rate,
-                    isEnabled = false
-                ) { /* Handle toggle */ },
-                SettingItem.Toggle(
-                    name = "Disable warning messages",
-                    category = "Advanced",
-                    title = R.string.title_checkbox_disable_warnings,
-                    summary = R.string.summary_checkbox_disable_warnings,
                     isEnabled = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(

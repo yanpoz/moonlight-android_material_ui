@@ -146,7 +146,7 @@ fun SettingsCategoryDetail(category: SettingCategory) {
             items(category.items.size) { index ->
                 when (val item = category.items[index]) {
                     is SettingItem.Toggle -> ToggleSettingListItem(item)
-                    is SettingItem.Slider -> SliderSettingItem(item)
+
                 }
             }
         }
@@ -170,40 +170,4 @@ fun ToggleSettingListItem(item: SettingItem.Toggle) {
             )
         }
     )
-}
-
-@Composable
-fun SliderSettingItem(item: SettingItem.Slider) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Text(
-            text = stringResource(item.title),
-            fontWeight = FontWeight.Medium
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 4.dp)
-        ) {
-            Text(text = item.range.start.toString())
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Slider(
-                value = item.value,
-                onValueChange = item.onValueChange,
-                valueRange = item.range,
-                modifier = Modifier.weight(1f)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(text = item.range.endInclusive.toString())
-        }
-    }
 }
