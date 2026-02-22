@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -43,9 +42,17 @@ import kotlinx.parcelize.Parcelize
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-@Preview
+@Preview(widthDp = 840, heightDp = 800, showBackground = true)
 fun SettingsScreen() {
-    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<SettingCategoryItem>()
+    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
+        initialDestinationHistory = listOf(
+            ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
+            ThreePaneScaffoldDestinationItem(
+                ListDetailPaneScaffoldRole.Detail,
+                SettingCategoryItem(SettingsData.categories.first().name)
+            )
+        )
+    )
     val scope = rememberCoroutineScope()
 
     NavigableListDetailPaneScaffold(
@@ -88,7 +95,9 @@ fun SettingsCategoryList(
     onCategoryClick: (SettingCategory) -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(vertical = 16.dp).background(MaterialTheme.colorScheme.surface)
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Text(
             text = "Settings",
@@ -124,24 +133,20 @@ fun SettingsCategoryList(
 
 @Composable
 fun SettingsCategoryDetail(category: SettingCategory) {
-    Card(
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier.padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = stringResource(category.category_title),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            LazyColumn {
-                items(category.items.size) { index ->
-                    when (val item = category.items[index]) {
-                        is SettingItem.Toggle -> ToggleSettingListItem(item)
-                        is SettingItem.Slider -> SliderSettingItem(item)
-                    }
+        Text(
+            text = stringResource(category.category_title),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+        LazyColumn {
+            items(category.items.size) { index ->
+                when (val item = category.items[index]) {
+                    is SettingItem.Toggle -> ToggleSettingListItem(item)
+                    is SettingItem.Slider -> SliderSettingItem(item)
                 }
             }
         }
