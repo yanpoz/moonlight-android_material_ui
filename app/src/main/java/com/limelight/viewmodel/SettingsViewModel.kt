@@ -1,12 +1,15 @@
 package com.limelight.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SettingsViewModel(private val repository: SettingsRepository = SettingsRepository()) : ViewModel() {
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository: SettingsRepository = SettingsRepository(application)
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
@@ -25,8 +28,33 @@ class SettingsViewModel(private val repository: SettingsRepository = SettingsRep
     }
 
     fun onSettingToggled(categoryName: String, settingName: String, isEnabled: Boolean) {
-        // In a real app, you would have logic here to persist the setting
-        // and then update the UI state.
+        val updatedCategories = uiState.value.categories.map {
+            if (it.name == categoryName) {
+                it.copy(items = it.items.map {
+                    if (it.name == settingName) {
+                        (it as com.limelight.repository.SettingItem.Toggle).copy(default = isEnabled)
+                    } else {
+                        it
+                    }
+                })
+            } else {
+                it
+            }
+        }
+
+        val updatedSelectedCategory = updatedCategories.find { it.name == categoryName }
+
+        // Find the specific setting and call its onToggle lambda
+        updatedSelectedCategory?.items?.find { it.name == settingName }?.let {
+            if (it is com.limelight.repository.SettingItem.Toggle) {
+                it.onToggle(isEnabled)
+            }
+        }
+
+        _uiState.value = uiState.value.copy(
+            categories = updatedCategories,
+            selectedCategory = updatedSelectedCategory ?: uiState.value.selectedCategory
+        )
     }
 }
 
