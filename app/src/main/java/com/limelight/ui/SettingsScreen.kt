@@ -171,7 +171,7 @@ fun ToggleSettingListItem(item: SettingItem.Toggle, onToggle: (Boolean) -> Unit)
         },
         trailingContent = {
             Switch(
-                checked = item.isEnabled,
+                checked = item.default,
                 onCheckedChange = onToggle
             )
         }

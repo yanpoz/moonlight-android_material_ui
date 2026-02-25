@@ -26,7 +26,7 @@ sealed class SettingItem {
         override val category: String,
         override val title: Int,
         override val summary: Int,
-        val isEnabled: Boolean,
+        val default: Boolean,
         val onToggle: (Boolean) -> Unit
     ) : SettingItem()
 
@@ -50,11 +50,11 @@ object SettingsData {
             icon = Icons.Outlined.Theaters,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Enable Fullscreen",
+                    name = "checkbox_stretch_video",
                     category = "Video",
                     title = R.string.title_checkbox_stretch_video,
-                    summary = R.string.summary_resolution_list,
-                    isEnabled = true
+                    summary = R.string.title_checkbox_stretch_video,
+                    default = false
                 ) { /* Handle toggle */ }
             ),
         ),
@@ -64,11 +64,11 @@ object SettingsData {
             icon = Icons.AutoMirrored.Outlined.VolumeUp,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Mute",
+                    name = "checkbox_enable_audiofx",
                     category = "Audio",
                     title = R.string.title_checkbox_enable_audiofx,
                     summary = R.string.summary_checkbox_enable_audiofx,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -78,67 +78,67 @@ object SettingsData {
             icon = Icons.Outlined.SportsEsports,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Automatic gamepad presence detection",
+                    name = "checkbox_multi_controller",
                     category = "Gamepad",
                     title = R.string.title_checkbox_multi_controller,
                     summary = R.string.summary_checkbox_multi_controller,
-                    isEnabled = true
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Xbox 360/One USB gamepad driver",
+                    name = "checkbox_usb_driver",
                     category = "Gamepad",
                     title = R.string.title_checkbox_xb1_driver,
                     summary = R.string.summary_checkbox_xb1_driver,
-                    isEnabled = true
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Override native Xbox gamepad support",
+                    name = "checkbox_usb_bind_all",
                     category = "Gamepad",
                     title = R.string.title_checkbox_usb_bind_all,
                     summary = R.string.summary_checkbox_usb_bind_all,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Mouse emulation via gamepad",
+                    name = "checkbox_mouse_emulation",
                     category = "Gamepad",
                     title = R.string.title_checkbox_mouse_emulation,
                     summary = R.string.summary_checkbox_mouse_emulation,
-                    isEnabled = false
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Emulate rumble support with vibration",
+                    name = "checkbox_vibrate_fallback",
                     category = "Gamepad",
                     title = R.string.title_checkbox_vibrate_fallback,
                     summary = R.string.summary_checkbox_vibrate_fallback,
-                    isEnabled = true
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Flip face buttons",
+                    name = "checkbox_flip_face_buttons",
                     category = "Gamepad",
                     title = R.string.title_checkbox_flip_face_buttons,
                     summary = R.string.summary_checkbox_flip_face_buttons,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Always control mouse with touchpad",
+                    name = "checkbox_gamepad_touchpad_as_mouse",
                     category = "Gamepad",
                     title = R.string.title_checkbox_gamepad_touchpad_as_mouse,
                     summary = R.string.summary_checkbox_gamepad_touchpad_as_mouse,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Allow use of gamepad motion sensors",
+                    name = "checkbox_gamepad_motion_sensors",
                     category = "Gamepad",
                     title = R.string.title_checkbox_gamepad_motion_sensors,
                     summary = R.string.summary_checkbox_gamepad_motion_sensors,
-                    isEnabled = true
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Emulate gamepad motion sensor support",
+                    name = "checkbox_gamepad_motion_fallback",
                     category = "Gamepad",
                     title = R.string.title_checkbox_gamepad_motion_fallback,
                     summary = R.string.summary_checkbox_gamepad_motion_fallback,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -148,25 +148,25 @@ object SettingsData {
             icon = Icons.Outlined.Mouse,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Use the touchscreen as a trackpad",
+                    name = "checkbox_touchscreen_trackpad",
                     category = "Mouse",
                     title = R.string.title_checkbox_touchscreen_trackpad,
                     summary = R.string.summary_checkbox_touchscreen_trackpad,
-                    isEnabled = false
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Enable back and forward mouse buttons",
+                    name = "checkbox_mouse_nav_buttons",
                     category = "Mouse",
                     title = R.string.title_checkbox_mouse_nav_buttons,
                     summary = R.string.summary_checkbox_mouse_nav_buttons,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Remote desktop mouse mode",
+                    name = "checkbox_absolute_mouse_mode",
                     category = "Mouse",
                     title = R.string.title_checkbox_absolute_mouse_mode,
                     summary = R.string.summary_checkbox_absolute_mouse_mode,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -176,11 +176,32 @@ object SettingsData {
             icon = Icons.Outlined.VideogameAsset,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Show on-screen controls",
+                    name = "checkbox_show_onscreen_controls",
                     category = "On-screen Controls Settings",
                     title = R.string.title_checkbox_show_onscreen_controls,
                     summary = R.string.summary_checkbox_show_onscreen_controls,
-                    isEnabled = false
+                    default = false
+                ) { /* Handle toggle */ },
+                SettingItem.Toggle(
+                    name = "checkbox_vibrate_osc",
+                    category = "On-screen Controls Settings",
+                    title = R.string.title_checkbox_vibrate_osc,
+                    summary = R.string.summary_checkbox_vibrate_osc,
+                    default = true
+                ) { /* Handle toggle */ },
+                SettingItem.Toggle(
+                    name = "checkbox_only_show_L3R3",
+                    category = "On-screen Controls Settings",
+                    title = R.string.title_only_l3r3,
+                    summary = R.string.summary_only_l3r3,
+                    default = false
+                ) { /* Handle toggle */ },
+                SettingItem.Toggle(
+                    name = "checkbox_show_guide_button",
+                    category = "On-screen Controls Settings",
+                    title = R.string.title_show_guide_button,
+                    summary = R.string.summary_show_guide_button,
+                    default = true
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -190,18 +211,18 @@ object SettingsData {
             icon = Icons.Outlined.DesktopWindows,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Optimize game settings",
+                    name = "checkbox_enable_sops",
                     category = "Host Settings",
                     title = R.string.title_checkbox_enable_sops,
                     summary = R.string.summary_checkbox_enable_sops,
-                    isEnabled = false
+                    default = true
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Play audio on PC",
+                    name = "checkbox_host_audio",
                     category = "Host Settings",
                     title = R.string.title_checkbox_host_audio,
                     summary = R.string.summary_checkbox_host_audio,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -211,18 +232,18 @@ object SettingsData {
             icon = Icons.Outlined.ColorLens,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Enable Picture-in-Picture observer mode",
+                    name = "checkbox_enable_pip",
                     category = "Appearance",
                     title = R.string.title_checkbox_enable_pip,
                     summary = R.string.summary_checkbox_enable_pip,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Use small box art",
+                    name = "checkbox_small_icon_mode",
                     category = "Appearance",
                     title = R.string.title_checkbox_small_icon_mode,
                     summary = R.string.summary_checkbox_small_icon_mode,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         ),
@@ -232,39 +253,53 @@ object SettingsData {
             icon = Icons.Outlined.Build,
             items = listOf(
                 SettingItem.Toggle(
-                    name = "Unlock all possible frame rates",
+                    name = "checkbox_unlock_fps",
                     category = "Advanced",
                     title = R.string.title_unlock_fps,
                     summary = R.string.summary_unlock_fps,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Allow refresh rate reduction",
+                    name = "checkbox_reduce_refresh_rate",
                     category = "Advanced",
                     title = R.string.title_checkbox_reduce_refresh_rate,
                     summary = R.string.summary_checkbox_reduce_refresh_rate,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Force full range video (Experimental)",
+                    name = "checkbox_disable_warnings",
+                    category = "Advanced",
+                    title = R.string.title_checkbox_disable_warnings,
+                    summary = R.string.summary_checkbox_disable_warnings,
+                    default = false
+                ) { /* Handle toggle */ },
+                SettingItem.Toggle(
+                    name = "checkbox_enable_hdr",
+                    category = "Advanced",
+                    title = R.string.title_enable_hdr,
+                    summary = R.string.summary_enable_hdr,
+                    default = false
+                ) { /* Handle toggle */ },
+                SettingItem.Toggle(
+                    name = "checkbox_full_range",
                     category = "Advanced",
                     title = R.string.title_full_range,
                     summary = R.string.summary_full_range,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Show performance stats while streaming",
+                    name = "checkbox_enable_perf_overlay",
                     category = "Advanced",
                     title = R.string.title_enable_perf_overlay,
                     summary = R.string.summary_enable_perf_overlay,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
                 SettingItem.Toggle(
-                    name = "Show latency message after streaming",
+                    name = "checkbox_enable_post_stream_toast",
                     category = "Advanced",
                     title = R.string.title_enable_post_stream_toast,
                     summary = R.string.summary_enable_post_stream_toast,
-                    isEnabled = false
+                    default = false
                 ) { /* Handle toggle */ },
             ),
         )
