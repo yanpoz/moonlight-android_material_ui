@@ -1,20 +1,18 @@
 package com.limelight.ui
 
 import android.os.Parcelable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -27,10 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingItem
@@ -91,26 +86,20 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
 @Parcelize
 data class SettingCategoryItem(val name: String) : Parcelable
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsCategoryList(
     categories: List<SettingCategory>,
     onCategoryClick: (SettingCategory) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(vertical = 16.dp)
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        Text(
-            text = "Settings",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Settings") }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(categories.size) { index ->
                 val category = categories[index]
                 ListItem(
@@ -133,21 +122,20 @@ fun SettingsCategoryList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsCategoryDetail(
     category: SettingCategory,
     onSettingToggled: (String, Boolean) -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(category.categoryTitle),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        )
-        LazyColumn {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(category.categoryTitle)) }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(category.items.size) { index ->
                 when (val item = category.items[index]) {
                     is SettingItem.Toggle -> ToggleSettingListItem(item) {
