@@ -82,6 +82,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
                 title = { Text("Moonlight") },
                 navigationIcon = {
                     IconButton(

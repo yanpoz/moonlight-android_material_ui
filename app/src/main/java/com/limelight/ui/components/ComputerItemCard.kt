@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerSettingsNew
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
@@ -61,6 +63,9 @@ fun ComputerItemCard(
     ItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
     ) {
@@ -76,7 +81,8 @@ fun ComputerItemCard(
             ) {
                 Text(
                     text = computer.details.name,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
 
                 // Status indicator
@@ -92,12 +98,10 @@ fun ComputerItemCard(
             Text(
                 text = getComputerAddressText(computer),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = "${getComputerNetworkStateText(computer)} • ${getComputerPairStatusText(computer)}",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -105,7 +109,6 @@ fun ComputerItemCard(
             Text(
                 text = getRunningGameName(computer),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 

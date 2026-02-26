@@ -53,7 +53,7 @@ fun getComputerNetworkStateText(computer: Computer): String {
 @Composable
 fun getComputerStatusColor(computer: Computer): Color {
     return when (computer.details.state) {
-        ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.primary
+        ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.tertiary
         ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
