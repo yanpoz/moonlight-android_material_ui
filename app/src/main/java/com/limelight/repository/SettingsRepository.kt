@@ -1,8 +1,12 @@
 package com.limelight.repository
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.os.Build
 import android.preference.PreferenceManager
+import android.provider.Settings
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
@@ -35,7 +39,13 @@ sealed class SettingItem {
         val onToggle: (Boolean) -> Unit
     ) : SettingItem()
 
-    // Add more types as needed (e.g., TextInput, Dropdown)
+    data class Action(
+        override val name: String,
+        override val category: String,
+        override val title: Int,
+        override val summary: Int,
+        val onClick: () -> Unit
+    ) : SettingItem()
 }
 
 // Represents a category with its settings and icon
@@ -253,6 +263,24 @@ class SettingsRepository(private val context: Context) {
                         summary = R.string.summary_checkbox_small_icon_mode,
                         default = prefs.getBoolean(PreferenceConfiguration.SMALL_ICONS_PREF_STRING, PreferenceConfiguration.getDefaultSmallMode(context))
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.SMALL_ICONS_PREF_STRING, it) } },
+                    SettingItem.Action(
+                        name = "list_languages",
+                        category = "Appearance",
+                        title = R.string.title_language_list,
+                        summary = R.string.summary_language_list,
+                    ) {
+                        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                        } else {
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    }
                 ),
             ),
             SettingCategory(

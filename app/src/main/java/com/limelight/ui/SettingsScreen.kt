@@ -147,6 +147,9 @@ fun SettingsCategoryDetail(
                             onSettingToggled(item.name, it)
                         }
                     }
+                    is SettingItem.Action -> {
+                        ActionSettingListItem(item)
+                    }
                 }
                 if (index < category.items.size - 1) {
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -176,6 +179,19 @@ fun ToggleSettingListItem(settingItem: SettingItem.Toggle, onToggle: (Boolean) -
                 checked = settingItem.default,
                 onCheckedChange = null
             )
+        }
+    )
+}
+
+@Composable
+fun ActionSettingListItem(item: SettingItem.Action) {
+    ListItem(
+        modifier = Modifier.clickable { item.onClick() },
+        headlineContent = {
+            Text(stringResource(item.title))
+        },
+        supportingContent = {
+            Text(stringResource(item.summary))
         }
     )
 }

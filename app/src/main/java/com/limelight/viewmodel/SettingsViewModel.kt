@@ -28,9 +28,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun onSettingToggled(categoryName: String, settingName: String, isEnabled: Boolean) {
-        val updatedCategories = uiState.value.categories.map {
-            if (it.name == categoryName) {
-                it.copy(items = it.items.map {
+        val updatedCategories = uiState.value.categories.map { settingCategory ->
+            if (settingCategory.name == categoryName) {
+                settingCategory.copy(items = settingCategory.items.map {
                     if (it.name == settingName) {
                         (it as com.limelight.repository.SettingItem.Toggle).copy(default = isEnabled)
                     } else {
@@ -38,7 +38,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     }
                 })
             } else {
-                it
+                settingCategory
             }
         }
 
