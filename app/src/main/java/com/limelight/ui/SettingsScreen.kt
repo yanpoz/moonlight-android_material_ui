@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingItem
@@ -138,9 +140,14 @@ fun SettingsCategoryDetail(
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(category.items.size) { index ->
                 when (val item = category.items[index]) {
-                    is SettingItem.Toggle -> ToggleSettingListItem(item) {
-                        onSettingToggled(item.name, it)
+                    is SettingItem.Toggle -> {
+                        ToggleSettingListItem(item) {
+                            onSettingToggled(item.name, it)
+                        }
                     }
+                }
+                if (index < category.items.size - 1) {
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
             }
         }
