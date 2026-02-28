@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
@@ -25,12 +26,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingItem
 import com.limelight.ui.components.settings.ActionSettingListItem
 import com.limelight.ui.components.settings.SelectionDialog
 import com.limelight.ui.components.settings.SelectionSettingListItem
+import com.limelight.ui.components.settings.SliderDialog
+import com.limelight.ui.components.settings.SliderSettingListItem
 import com.limelight.ui.components.settings.ToggleSettingListItem
 import com.limelight.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -87,6 +91,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                         },
                         onSelectionItemClick = { item ->
                             viewModel.showSelectionDialog(item)
+                        },
+                        onSliderItemClick = { item ->
+                            viewModel.showSliderDialog(item)
                         }
                     )
                 }
@@ -100,6 +107,16 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             onDismiss = { viewModel.dismissSelectionDialog() },
             onSelected = { newValue ->
                 viewModel.onSettingSelected(item.category, item.name, newValue)
+            }
+        )
+    }
+
+    uiState.openSliderDialog?.let { item ->
+        SliderDialog(
+            item = item,
+            onDismiss = { viewModel.dismissSliderDialog() },
+            onValueChange = { newValue ->
+                viewModel.onSliderValueChanged(item.category, item.name, newValue)
             }
         )
     }
@@ -150,7 +167,8 @@ fun SettingsCategoryDetail(
     category: SettingCategory,
     onSettingToggled: (String, Boolean) -> Unit,
     onSettingSelected: (String, String) -> Unit,
-    onSelectionItemClick: (SettingItem.Selection) -> Unit
+    onSelectionItemClick: (SettingItem.Selection) -> Unit,
+    onSliderItemClick: (SettingItem.Slider) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -172,9 +190,17 @@ fun SettingsCategoryDetail(
                             onSelectionItemClick(item)
                         }
                     }
+                    is SettingItem.Slider -> {
+                        SliderSettingListItem(item) {
+                            onSliderItemClick(item)
+                        }
+                    }
                     is SettingItem.Action -> {
                         ActionSettingListItem(item)
                     }
+                }
+                if (index < category.items.size - 1) {
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
             }
         }

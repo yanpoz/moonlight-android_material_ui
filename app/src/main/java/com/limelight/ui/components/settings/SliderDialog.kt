@@ -1,0 +1,142 @@
+package com.limelight.ui.components.settings
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.limelight.R
+import com.limelight.repository.SettingItem
+
+@Composable
+fun SliderDialog(
+    item: SettingItem.Slider,
+    onDismiss: () -> Unit,
+    onValueChange: (Float) -> Unit
+) {
+    var sliderValue by remember { mutableFloatStateOf(item.value) }
+    var textValue by remember { mutableStateOf(item.value.toInt().toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(item.title)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(item.summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = textValue,
+                        onValueChange = { newValue ->
+                            textValue = newValue
+                            newValue.toIntOrNull()?.let { parsed ->
+                                val clamped = parsed.toFloat().coerceIn(item.min, item.max)
+                                sliderValue = clamped
+                            }
+                        },
+                        modifier = Modifier.width(120.dp),
+                        textStyle = MaterialTheme.typography.headlineMedium.copy(textAlign = TextAlign.Center),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true
+                    )
+                    item.unit?.let {
+                        Text(
+                            text = stringResource(it),
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = item.min.toInt().toString(),
+                        modifier = Modifier.padding(end = 8.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Slider(
+                        value = sliderValue,
+                        onValueChange = {
+                            sliderValue = it
+                            textValue = it.toInt().toString()
+                        },
+                        valueRange = item.min..item.max,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = item.max.toInt().toString(),
+                        modifier = Modifier.padding(start = 8.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onValueChange(sliderValue)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun SliderDialogPreview() {
+    MaterialTheme {
+        SliderDialog(
+            item = SettingItem.Slider(
+                name = "bitrate",
+                category = "Video",
+                title = R.string.title_seekbar_bitrate,
+                summary = R.string.summary_seekbar_bitrate,
+                value = 50000f,
+                min = 500f,
+                max = 150000f,
+                unit = R.string.suffix_seekbar_bitrate_mbps,
+                onValueChange = {}
+            ),
+            onDismiss = {},
+            onValueChange = {}
+        )
+    }
+}

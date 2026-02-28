@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 data class SettingsUiState(
     val categories: List<SettingCategory> = emptyList(),
     val selectedCategory: SettingCategory? = null,
-    val openSelectionDialog: SettingItem.Selection? = null
+    val openSelectionDialog: SettingItem.Selection? = null,
+    val openSliderDialog: SettingItem.Slider? = null
 )
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -95,11 +96,50 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
+    fun onSliderValueChanged(categoryName: String, settingName: String, newValue: Float) {
+        val updatedCategories = uiState.value.categories.map { settingCategory ->
+            if (settingCategory.name == categoryName) {
+                settingCategory.copy(items = settingCategory.items.map {
+                    if (it.name == settingName && it is SettingItem.Slider) {
+                        it.copy(value = newValue)
+                    } else {
+                        it
+                    }
+                })
+            } else {
+                settingCategory
+            }
+        }
+
+        val updatedSelectedCategory = updatedCategories.find { it.name == categoryName }
+
+        // Find the specific setting and call its onValueChange lambda
+        updatedSelectedCategory?.items?.find { it.name == settingName }?.let {
+            if (it is SettingItem.Slider) {
+                it.onValueChange(newValue)
+            }
+        }
+
+        _uiState.value = uiState.value.copy(
+            categories = updatedCategories,
+            selectedCategory = updatedSelectedCategory ?: uiState.value.selectedCategory,
+            openSliderDialog = null
+        )
+    }
+
     fun showSelectionDialog(item: SettingItem.Selection) {
         _uiState.value = _uiState.value.copy(openSelectionDialog = item)
     }
 
     fun dismissSelectionDialog() {
         _uiState.value = _uiState.value.copy(openSelectionDialog = null)
+    }
+
+    fun showSliderDialog(item: SettingItem.Slider) {
+        _uiState.value = _uiState.value.copy(openSliderDialog = item)
+    }
+
+    fun dismissSliderDialog() {
+        _uiState.value = _uiState.value.copy(openSliderDialog = null)
     }
 }

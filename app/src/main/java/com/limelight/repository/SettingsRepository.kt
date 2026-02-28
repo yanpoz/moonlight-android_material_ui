@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.DesktopWindows
 import androidx.compose.material.icons.outlined.Mouse
@@ -48,6 +49,18 @@ sealed class SettingItem {
         val entryValues: List<String>,
         val currentValue: String,
         val onSelected: (String) -> Unit
+    ) : SettingItem()
+
+    data class Slider(
+        override val name: String,
+        override val category: String,
+        override val title: Int,
+        override val summary: Int,
+        val value: Float,
+        val min: Float,
+        val max: Float,
+        @get:StringRes val unit: Int? = null,
+        val onValueChange: (Float) -> Unit
     ) : SettingItem()
 
     data class Action(
@@ -98,6 +111,17 @@ class SettingsRepository(private val context: Context) {
                         currentValue = prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS) ?: PreferenceConfiguration.DEFAULT_FPS,
                         onSelected = { prefs.edit { putString(PreferenceConfiguration.FPS_PREF_STRING, it) } }
                     ),
+                    SettingItem.Slider(
+                        name = PreferenceConfiguration.BITRATE_PREF_STRING,
+                        category = "Video",
+                        title = R.string.title_seekbar_bitrate,
+                        summary = R.string.summary_seekbar_bitrate,
+                        value = prefs.getInt(PreferenceConfiguration.BITRATE_PREF_STRING, PreferenceConfiguration.getDefaultBitrate(context)).toFloat(),
+                        min = 500f,
+                        max = 150000f,
+                        unit = R.string.suffix_seekbar_bitrate_mbps,
+                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.BITRATE_PREF_STRING, it.toInt()) } }
+                    ),
                     SettingItem.Selection(
                         name = PreferenceConfiguration.FRAME_PACING_PREF_STRING,
                         category = "Video",
@@ -146,6 +170,17 @@ class SettingsRepository(private val context: Context) {
                 categoryTitle = R.string.category_gamepad_settings,
                 icon = Icons.Outlined.SportsEsports,
                 items = listOf(
+                    SettingItem.Slider(
+                        name = PreferenceConfiguration.DEADZONE_PREF_STRING,
+                        category = "Gamepad",
+                        title = R.string.title_seekbar_deadzone,
+                        summary = R.string.summary_seekbar_deadzone,
+                        value = prefs.getInt(PreferenceConfiguration.DEADZONE_PREF_STRING, PreferenceConfiguration.DEFAULT_DEADZONE).toFloat(),
+                        min = 0f,
+                        max = 20f,
+                        unit = R.string.suffix_seekbar_deadzone,
+                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.DEADZONE_PREF_STRING, it.toInt()) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.MULTI_CONTROLLER_PREF_STRING,
                         category = "Gamepad",
@@ -191,6 +226,17 @@ class SettingsRepository(private val context: Context) {
                         summary = R.string.summary_checkbox_vibrate_fallback,
                         default = prefs.getBoolean(PreferenceConfiguration.VIBRATE_FALLBACK_PREF_STRING, PreferenceConfiguration.DEFAULT_VIBRATE_FALLBACK)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.VIBRATE_FALLBACK_PREF_STRING, it)} },
+                    SettingItem.Slider(
+                        name = PreferenceConfiguration.VIBRATE_FALLBACK_STRENGTH_PREF_STRING,
+                        category = "Gamepad",
+                        title = R.string.title_seekbar_vibrate_fallback_strength,
+                        summary = R.string.summary_seekbar_vibrate_fallback_strength,
+                        value = prefs.getInt(PreferenceConfiguration.VIBRATE_FALLBACK_STRENGTH_PREF_STRING, PreferenceConfiguration.DEFAULT_VIBRATE_FALLBACK_STRENGTH).toFloat(),
+                        min = 0f,
+                        max = 200f,
+                        unit = R.string.suffix_seekbar_vibrate_fallback_strength,
+                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.VIBRATE_FALLBACK_STRENGTH_PREF_STRING, it.toInt()) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.FLIP_FACE_BUTTONS_PREF_STRING,
                         category = "Gamepad",
@@ -282,6 +328,17 @@ class SettingsRepository(private val context: Context) {
                         summary = R.string.summary_show_guide_button,
                         default = prefs.getBoolean(PreferenceConfiguration.SHOW_GUIDE_BUTTON_PREF_STRING, PreferenceConfiguration.SHOW_GUIDE_BUTTON_DEFAULT)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.SHOW_GUIDE_BUTTON_PREF_STRING, it) } },
+                    SettingItem.Slider(
+                        name = PreferenceConfiguration.OSC_OPACITY_PREF_STRING,
+                        category = "On-screen Controls Settings",
+                        title = R.string.dialog_title_osc_opacity,
+                        summary = R.string.summary_osc_opacity,
+                        value = prefs.getInt(PreferenceConfiguration.OSC_OPACITY_PREF_STRING, PreferenceConfiguration.DEFAULT_OPACITY).toFloat(),
+                        min = 0f,
+                        max = 100f,
+                        unit = R.string.suffix_osc_opacity,
+                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.OSC_OPACITY_PREF_STRING, it.toInt()) } }
+                    ),
                 ),
             ),
             SettingCategory(

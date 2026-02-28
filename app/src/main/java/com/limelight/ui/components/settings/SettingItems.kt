@@ -72,6 +72,33 @@ fun SelectionSettingListItem(item: SettingItem.Selection, onClick: () -> Unit) {
 }
 
 @Composable
+fun SliderSettingListItem(item: SettingItem.Slider, onClick: () -> Unit) {
+    val valueText = item.value.toInt().toString()
+    val unitText = item.unit?.let { stringResource(it) } ?: ""
+    val currentValueText = if (unitText.isNotEmpty()) "$valueText $unitText" else valueText
+
+    ListItem(
+        modifier = Modifier
+            .clickable { onClick() }
+            .height(IntrinsicSize.Min),
+        headlineContent = {
+            Text(stringResource(item.title))
+        },
+        supportingContent = {
+            Text(stringResource(item.summary))
+        },
+        trailingContent = {
+            Box(
+                modifier = Modifier.fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(currentValueText)
+            }
+        }
+    )
+}
+
+@Composable
 fun ActionSettingListItem(item: SettingItem.Action) {
     ListItem(
         modifier = Modifier.clickable { item.onClick() },
