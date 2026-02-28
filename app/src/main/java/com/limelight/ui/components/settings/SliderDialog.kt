@@ -1,11 +1,13 @@
 package com.limelight.ui.components.settings
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -47,6 +51,7 @@ fun SliderDialog(
     var sliderValue by remember { mutableFloatStateOf(item.value) }
     var textValue by remember { mutableStateOf(item.value.toInt().toString()) }
     val focusRequester = remember { FocusRequester() }
+    var isSliderFocused by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(200)
@@ -111,8 +116,17 @@ fun SliderDialog(
                         valueRange = item.min..item.max,
                         modifier = Modifier
                             .weight(1f)
+                            .onFocusChanged { isSliderFocused = it.isFocused }
                             .focusRequester(focusRequester)
                             .focusable()
+                            // TODO: should be focused style/state should look like in docs
+                            // https://m3.material.io/components/sliders/specs
+                            .border(
+                                width = if (isSliderFocused) 2.dp else 0.dp,
+                                color = if (isSliderFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp)
                             .onKeyEvent { event ->
                                 if (event.type == KeyEventType.KeyDown) {
                                     val range = item.max - item.min
