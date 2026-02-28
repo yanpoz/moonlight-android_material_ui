@@ -20,6 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -93,7 +98,29 @@ fun SliderDialog(
                             textValue = it.toInt().toString()
                         },
                         valueRange = item.min..item.max,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .onKeyEvent { event ->
+                                if (event.type == KeyEventType.KeyDown) {
+                                    val range = item.max - item.min
+                                    val step = (range / 50f).coerceAtLeast(1f)
+                                    when (event.key) {
+                                        Key.DirectionLeft -> {
+                                            sliderValue = (sliderValue - step).coerceIn(item.min, item.max)
+                                            textValue = sliderValue.toInt().toString()
+                                            true
+                                        }
+                                        Key.DirectionRight -> {
+                                            sliderValue = (sliderValue + step).coerceIn(item.min, item.max)
+                                            textValue = sliderValue.toInt().toString()
+                                            true
+                                        }
+                                        else -> false
+                                    }
+                                } else {
+                                    false
+                                }
+                            }
                     )
                     Text(
                         text = item.max.toInt().toString(),
