@@ -2,9 +2,13 @@ package com.limelight.ui
 
 import android.os.Parcelable
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -201,11 +205,13 @@ fun SettingsCategoryDetail(
 @Composable
 fun ToggleSettingListItem(settingItem: SettingItem.Toggle, onToggle: (Boolean) -> Unit) {
     ListItem(
-        modifier = Modifier.toggleable(
-            value = settingItem.default,
-            onValueChange = onToggle,
-            role = Role.Switch
-        ),
+        modifier = Modifier
+            .toggleable(
+                value = settingItem.default,
+                onValueChange = onToggle,
+                role = Role.Switch
+            )
+            .height(IntrinsicSize.Min),
         headlineContent = {
             Text(stringResource(settingItem.title))
         },
@@ -213,10 +219,15 @@ fun ToggleSettingListItem(settingItem: SettingItem.Toggle, onToggle: (Boolean) -
             Text(stringResource(settingItem.summary))
         },
         trailingContent = {
-            Switch(
-                checked = settingItem.default,
-                onCheckedChange = null
-            )
+            Box(
+                modifier = Modifier.fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                Switch(
+                    checked = settingItem.default,
+                    onCheckedChange = null
+                )
+            }
         }
     )
 }
@@ -226,7 +237,9 @@ fun SelectionSettingListItem(item: SettingItem.Selection, onClick: () -> Unit) {
     val currentEntryLabel = item.entries.getOrNull(item.entryValues.indexOf(item.currentValue)) ?: item.currentValue
 
     ListItem(
-        modifier = Modifier.clickable { onClick() },
+        modifier = Modifier
+            .clickable { onClick() }
+            .height(IntrinsicSize.Min),
         headlineContent = {
             Text(stringResource(item.title))
         },
@@ -234,7 +247,12 @@ fun SelectionSettingListItem(item: SettingItem.Selection, onClick: () -> Unit) {
             Text(stringResource(item.summary))
         },
         trailingContent = {
-            Text(currentEntryLabel)
+            Box(
+                modifier = Modifier.fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(currentEntryLabel)
+            }
         }
     )
 }

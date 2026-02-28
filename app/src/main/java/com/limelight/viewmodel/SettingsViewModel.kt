@@ -8,6 +8,12 @@ import com.limelight.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+data class SettingsUiState(
+    val categories: List<SettingCategory> = emptyList(),
+    val selectedCategory: SettingCategory? = null,
+    val openSelectionDialog: SettingItem.Selection? = null
+)
+
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: SettingsRepository = SettingsRepository(application)
@@ -97,9 +103,3 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _uiState.value = _uiState.value.copy(openSelectionDialog = null)
     }
 }
-
-data class SettingsUiState(
-    val categories: List<SettingCategory> = emptyList(),
-    val selectedCategory: SettingCategory? = null,
-    val openSelectionDialog: SettingItem.Selection? = null
-)
