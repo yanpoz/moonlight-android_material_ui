@@ -39,6 +39,17 @@ sealed class SettingItem {
         val onToggle: (Boolean) -> Unit
     ) : SettingItem()
 
+    data class Selection(
+        override val name: String,
+        override val category: String,
+        override val title: Int,
+        override val summary: Int,
+        val entries: List<String>,
+        val entryValues: List<String>,
+        val currentValue: String,
+        val onSelected: (String) -> Unit
+    ) : SettingItem()
+
     data class Action(
         override val name: String,
         override val category: String,
@@ -81,6 +92,16 @@ class SettingsRepository(private val context: Context) {
                 categoryTitle = R.string.category_audio_settings,
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
                 items = listOf(
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.AUDIO_CONFIG_PREF_STRING,
+                        category = "Audio",
+                        title = R.string.title_audio_config_list,
+                        summary = R.string.summary_audio_config_list,
+                        entries = context.resources.getStringArray(R.array.audio_config_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.audio_config_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.AUDIO_CONFIG_PREF_STRING, PreferenceConfiguration.DEFAULT_AUDIO_CONFIG) ?: PreferenceConfiguration.DEFAULT_AUDIO_CONFIG,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.AUDIO_CONFIG_PREF_STRING, it) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_AUDIO_FX_PREF_STRING,
                         category = "Audio",
