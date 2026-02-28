@@ -1,5 +1,6 @@
 package com.limelight.ui.components.settings
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -32,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
+import kotlinx.coroutines.delay
 
 @Composable
 fun SliderDialog(
@@ -41,6 +46,12 @@ fun SliderDialog(
 ) {
     var sliderValue by remember { mutableFloatStateOf(item.value) }
     var textValue by remember { mutableStateOf(item.value.toInt().toString()) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(200)
+        focusRequester.requestFocus()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -100,6 +111,8 @@ fun SliderDialog(
                         valueRange = item.min..item.max,
                         modifier = Modifier
                             .weight(1f)
+                            .focusRequester(focusRequester)
+                            .focusable()
                             .onKeyEvent { event ->
                                 if (event.type == KeyEventType.KeyDown) {
                                     val range = item.max - item.min
