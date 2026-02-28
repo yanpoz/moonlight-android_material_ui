@@ -78,6 +78,36 @@ class SettingsRepository(private val context: Context) {
                 categoryTitle = R.string.category_basic_settings,
                 icon = Icons.Outlined.Theaters,
                 items = listOf(
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.RESOLUTION_PREF_STRING,
+                        category = "Video",
+                        title = R.string.title_resolution_list,
+                        summary = R.string.summary_resolution_list,
+                        entries = context.resources.getStringArray(R.array.resolution_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.resolution_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.RESOLUTION_PREF_STRING, PreferenceConfiguration.DEFAULT_RESOLUTION) ?: PreferenceConfiguration.DEFAULT_RESOLUTION,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.RESOLUTION_PREF_STRING, it) } }
+                    ),
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.FPS_PREF_STRING,
+                        category = "Video",
+                        title = R.string.title_fps_list,
+                        summary = R.string.summary_fps_list,
+                        entries = context.resources.getStringArray(R.array.fps_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.fps_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS) ?: PreferenceConfiguration.DEFAULT_FPS,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.FPS_PREF_STRING, it) } }
+                    ),
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.FRAME_PACING_PREF_STRING,
+                        category = "Video",
+                        title = R.string.title_frame_pacing,
+                        summary = R.string.summary_frame_pacing,
+                        entries = context.resources.getStringArray(R.array.video_frame_pacing_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.video_frame_pacing_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.FRAME_PACING_PREF_STRING, PreferenceConfiguration.DEFAULT_FRAME_PACING) ?: PreferenceConfiguration.DEFAULT_FRAME_PACING,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.FRAME_PACING_PREF_STRING, it) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.STRETCH_PREF_STRING,
                         category = "Video",
@@ -144,6 +174,16 @@ class SettingsRepository(private val context: Context) {
                         summary = R.string.summary_checkbox_mouse_emulation,
                         default = prefs.getBoolean(PreferenceConfiguration.MOUSE_EMULATION_STRING, PreferenceConfiguration.DEFAULT_MOUSE_EMULATION)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.MOUSE_EMULATION_STRING, it)} },
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.ANALOG_SCROLLING_PREF_STRING,
+                        category = "Gamepad",
+                        title = R.string.title_analog_scrolling,
+                        summary = R.string.summary_analog_scrolling,
+                        entries = context.resources.getStringArray(R.array.analog_scrolling_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.analog_scrolling_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.ANALOG_SCROLLING_PREF_STRING, PreferenceConfiguration.DEFAULT_ANALOG_STICK_FOR_SCROLLING) ?: PreferenceConfiguration.DEFAULT_ANALOG_STICK_FOR_SCROLLING,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.ANALOG_SCROLLING_PREF_STRING, it) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.VIBRATE_FALLBACK_PREF_STRING,
                         category = "Gamepad",
@@ -330,6 +370,16 @@ class SettingsRepository(private val context: Context) {
                         summary = R.string.summary_checkbox_disable_warnings,
                         default = prefs.getBoolean(PreferenceConfiguration.DISABLE_TOASTS_PREF_STRING, PreferenceConfiguration.DEFAULT_DISABLE_TOASTS)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.DISABLE_TOASTS_PREF_STRING, it) } },
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.VIDEO_FORMAT_PREF_STRING,
+                        category = "Advanced",
+                        title = R.string.title_video_format,
+                        summary = R.string.summary_video_format,
+                        entries = context.resources.getStringArray(R.array.video_format_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.video_format_values).toList(),
+                        currentValue = prefs.getString(PreferenceConfiguration.VIDEO_FORMAT_PREF_STRING, PreferenceConfiguration.DEFAULT_VIDEO_FORMAT) ?: PreferenceConfiguration.DEFAULT_VIDEO_FORMAT,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.VIDEO_FORMAT_PREF_STRING, it) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_HDR_PREF_STRING,
                         category = "Advanced",
