@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +56,7 @@ import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
 import com.limelight.ui.components.ManualComputerAddDialog
+import com.limelight.ui.components.QuickSettingsDialog
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.viewmodel.MockMainViewModel
 
@@ -97,6 +99,14 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = { viewModel.onShowQuickSettings() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = "Quick Settings"
+                        )
+                    }
                     IconButton(onClick = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             data = MainViewModel.SETUP_GUIDE_URL.toUri()
@@ -258,6 +268,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                 viewModel.confirmationHandler.dismissDialog()
             },
             onDismiss = { viewModel.confirmationHandler.dismissDialog() }
+        )
+    }
+
+    if (viewModel.quickSettingsUiState.showDialog) {
+        QuickSettingsDialog(
+            onDismiss = { viewModel.onDismissQuickSettings() }
         )
     }
 }

@@ -19,6 +19,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+data class QuickSettingsUiState(
+    val showDialog: Boolean = false,
+)
 
 open class MainViewModel(
     private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
@@ -67,6 +70,17 @@ open class MainViewModel(
             computerRepository.cancelConnection()
         }
     )
+
+    var quickSettingsUiState by mutableStateOf(QuickSettingsUiState())
+        private set
+
+    fun onShowQuickSettings() {
+        quickSettingsUiState = quickSettingsUiState.copy(showDialog = true)
+    }
+
+    fun onDismissQuickSettings() {
+        quickSettingsUiState = QuickSettingsUiState()
+    }
 
     private val _isRefreshing = MutableStateFlow(false)
     open val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
