@@ -13,15 +13,12 @@ import com.limelight.viewmodel.components.ComputerItemHandler
 import com.limelight.viewmodel.components.ConfirmationHandler
 import com.limelight.viewmodel.components.ConnectionHandler
 import com.limelight.viewmodel.components.ManualComputerAddHandler
+import com.limelight.viewmodel.components.QuickSettingsHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-data class QuickSettingsUiState(
-    val showDialog: Boolean = false,
-)
 
 open class MainViewModel(
     private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
@@ -70,17 +67,7 @@ open class MainViewModel(
             computerRepository.cancelConnection()
         }
     )
-
-    var quickSettingsUiState by mutableStateOf(QuickSettingsUiState())
-        private set
-
-    fun onShowQuickSettings() {
-        quickSettingsUiState = quickSettingsUiState.copy(showDialog = true)
-    }
-
-    fun onDismissQuickSettings() {
-        quickSettingsUiState = QuickSettingsUiState()
-    }
+    val quickSettingsHandler = QuickSettingsHandler()
 
     private val _isRefreshing = MutableStateFlow(false)
     open val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()

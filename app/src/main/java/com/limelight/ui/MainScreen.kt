@@ -100,7 +100,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                 },
                 actions = {
                     IconButton(
-                        onClick = { viewModel.onShowQuickSettings() }
+                        onClick = { viewModel.quickSettingsHandler.onShowQuickSettings() }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Tune,
@@ -271,9 +271,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         )
     }
 
-    if (viewModel.quickSettingsUiState.showDialog) {
+    if (viewModel.quickSettingsHandler.uiState.showDialog) {
         QuickSettingsDialog(
-            onDismiss = { viewModel.onDismissQuickSettings() }
+            onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }
 }
