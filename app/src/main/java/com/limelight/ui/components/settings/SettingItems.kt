@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import com.limelight.R
 import com.limelight.repository.SettingItem
 
 @Composable
@@ -73,7 +74,12 @@ fun SelectionSettingListItem(item: SettingItem.Selection, onClick: () -> Unit) {
 
 @Composable
 fun SliderSettingListItem(item: SettingItem.Slider, onClick: () -> Unit) {
-    val valueText = item.value.toInt().toString()
+    val isMbps = item.unit == R.string.suffix_seekbar_bitrate_mbps
+    val valueText = if (isMbps) {
+        "%.1f".format(item.value)
+    } else {
+        item.value.toInt().toString()
+    }
     val unitText = item.unit?.let { stringResource(it) } ?: ""
     val currentValueText = if (unitText.isNotEmpty()) "$valueText $unitText" else valueText
 

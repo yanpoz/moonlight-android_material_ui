@@ -48,8 +48,13 @@ fun SliderDialog(
     onDismiss: () -> Unit,
     onValueChange: (Float) -> Unit
 ) {
+    val isMbps = item.unit == R.string.suffix_seekbar_bitrate_mbps
     var sliderValue by remember { mutableFloatStateOf(item.value) }
-    var textValue by remember { mutableStateOf(item.value.toInt().toString()) }
+    var textValue by remember {
+        mutableStateOf(
+            if (isMbps) "%.1f".format(item.value) else item.value.toInt().toString()
+        )
+    }
     val focusRequester = remember { FocusRequester() }
     var isSliderFocused by remember { mutableStateOf(false) }
 
@@ -79,8 +84,8 @@ fun SliderDialog(
                         value = textValue,
                         onValueChange = { newValue ->
                             textValue = newValue
-                            newValue.toIntOrNull()?.let { parsed ->
-                                val clamped = parsed.toFloat().coerceIn(item.min, item.max)
+                            newValue.toFloatOrNull()?.let { parsed ->
+                                val clamped = parsed.coerceIn(item.min, item.max)
                                 sliderValue = clamped
                             }
                         },
@@ -111,7 +116,7 @@ fun SliderDialog(
                         value = sliderValue,
                         onValueChange = {
                             sliderValue = it
-                            textValue = it.toInt().toString()
+                            textValue = if (isMbps) "%.1f".format(it) else it.toInt().toString()
                         },
                         valueRange = item.min..item.max,
                         modifier = Modifier
@@ -130,16 +135,16 @@ fun SliderDialog(
                             .onKeyEvent { event ->
                                 if (event.type == KeyEventType.KeyDown) {
                                     val range = item.max - item.min
-                                    val step = (range / 50f).coerceAtLeast(1f)
+                                    val step = (range / 50f).coerceAtLeast(0.1f)
                                     when (event.key) {
                                         Key.DirectionLeft -> {
                                             sliderValue = (sliderValue - step).coerceIn(item.min, item.max)
-                                            textValue = sliderValue.toInt().toString()
+                                            textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
                                             true
                                         }
                                         Key.DirectionRight -> {
                                             sliderValue = (sliderValue + step).coerceIn(item.min, item.max)
-                                            textValue = sliderValue.toInt().toString()
+                                            textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
                                             true
                                         }
                                         else -> false
@@ -183,9 +188,9 @@ fun SliderDialogPreview() {
                 category = "Video",
                 title = R.string.title_seekbar_bitrate,
                 summary = R.string.summary_seekbar_bitrate,
-                value = 50000f,
-                min = 500f,
-                max = 150000f,
+                value = 50f,
+                min = 0.5f,
+                max = 150f,
                 unit = R.string.suffix_seekbar_bitrate_mbps,
                 onValueChange = {}
             ),

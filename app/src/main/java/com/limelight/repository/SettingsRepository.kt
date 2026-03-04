@@ -116,11 +116,11 @@ class SettingsRepository(private val context: Context) {
                         category = "Video",
                         title = R.string.title_seekbar_bitrate,
                         summary = R.string.summary_seekbar_bitrate,
-                        value = prefs.getInt(PreferenceConfiguration.BITRATE_PREF_STRING, PreferenceConfiguration.getDefaultBitrate(context)).toFloat(),
-                        min = 500f,
-                        max = 150000f,
+                        value = prefs.getInt(PreferenceConfiguration.BITRATE_PREF_STRING, PreferenceConfiguration.getDefaultBitrate(context)).toFloat() / 1000f,
+                        min = 0.5f,
+                        max = 150f,
                         unit = R.string.suffix_seekbar_bitrate_mbps,
-                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.BITRATE_PREF_STRING, it.toInt()) } }
+                        onValueChange = { prefs.edit { putInt(PreferenceConfiguration.BITRATE_PREF_STRING, (it * 1000).toInt()) } }
                     ),
                     SettingItem.Selection(
                         name = PreferenceConfiguration.FRAME_PACING_PREF_STRING,
