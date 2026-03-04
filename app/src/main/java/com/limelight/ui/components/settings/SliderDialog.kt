@@ -28,11 +28,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +59,7 @@ fun SliderDialog(
     }
     val focusRequester = remember { FocusRequester() }
     var isSliderFocused by remember { mutableStateOf(false) }
+    val inputModeManager = LocalInputModeManager.current
 
     LaunchedEffect(Unit) {
         delay(200)
@@ -112,6 +115,7 @@ fun SliderDialog(
                         modifier = Modifier.padding(end = 8.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
+                    val showFocusedBorder = isSliderFocused && inputModeManager.inputMode == InputMode.Keyboard
                     Slider(
                         value = sliderValue,
                         onValueChange = {
@@ -127,8 +131,8 @@ fun SliderDialog(
                             // TODO: should be focused style/state should look like in docs
                             // https://m3.material.io/components/sliders/specs
                             .border(
-                                width = if (isSliderFocused) 2.dp else 0.dp,
-                                color = if (isSliderFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                width = if (showFocusedBorder) 2.dp else 0.dp,
+                                color = if (showFocusedBorder) MaterialTheme.colorScheme.primary else Color.Transparent,
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .padding(horizontal = 8.dp)
