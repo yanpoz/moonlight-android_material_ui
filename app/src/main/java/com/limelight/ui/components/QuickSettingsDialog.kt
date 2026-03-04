@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
+import com.limelight.ui.theme.MoonlightandroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,4 +61,16 @@ fun QuickSettingsDialog(
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun QuickSettingsDialogPreview() {
+    MoonlightandroidTheme {
+        QuickSettingsDialog(
+            fps = "60",
+            onFpsChanged = {},
+            onDismiss = {}
+        )
+    }
 }
