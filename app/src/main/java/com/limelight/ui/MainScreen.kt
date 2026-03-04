@@ -2,6 +2,7 @@ package com.limelight.ui
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -49,6 +50,7 @@ import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.grid.assets.MemoryAssetLoader
 import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.preferences.PreferenceConfiguration
 import com.limelight.ui.components.AppDetailsDialog
 import com.limelight.ui.components.AppItemCard
 import com.limelight.ui.components.ComputerDetailsDialog
@@ -100,7 +102,11 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                 },
                 actions = {
                     IconButton(
-                        onClick = { viewModel.quickSettingsHandler.onShowQuickSettings() }
+                        onClick = {
+                            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                            val currentFps = prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS) ?: PreferenceConfiguration.DEFAULT_FPS
+                            viewModel.quickSettingsHandler.onShowQuickSettings(currentFps)
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Tune,
@@ -273,6 +279,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
     if (viewModel.quickSettingsHandler.uiState.showDialog) {
         QuickSettingsDialog(
+            fps = viewModel.quickSettingsHandler.uiState.fps,
+            onFpsChanged = { viewModel.quickSettingsHandler.onFpsChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }
