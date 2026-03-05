@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
@@ -78,7 +80,10 @@ fun QuickSettingsDialog(
         onDismissRequest = onDismiss,
         title = { Text("Quick Settings") },
         text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+            ) {
                 Text(
                     text = stringResource(R.string.title_resolution_list),
                     style = MaterialTheme.typography.labelLarge,
