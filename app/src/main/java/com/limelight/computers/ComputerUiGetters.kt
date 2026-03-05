@@ -24,23 +24,6 @@ fun getRunningGameName(computer: Computer): String {
 }
 
 @Composable
-fun getComputerPairResultText(computer: Computer): String {
-    return when (computer.pairResult) {
-        null -> "NULL"
-        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pair_already_in_progress)
-        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
-        PairingManager.PairState.FAILED -> {
-            if (computer.details.runningGameId != 0) {
-                stringResource(R.string.pair_pc_ingame)
-            } else {
-                stringResource(R.string.pair_fail)
-            }
-        }
-        else -> "Pair Result: ${computer.pairResult}"
-    }
-}
-
-@Composable
 fun getComputerNetworkStateText(computer: Computer): String {
     return when (computer.details.state) {
         ComputerDetails.State.ONLINE -> "Online"
@@ -75,6 +58,23 @@ fun getComputerPairStatusText(computer: Computer): String {
         PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
         PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
         null -> "NULL"
+    }
+}
+
+@Composable
+fun getComputerPairResultText(computer: Computer): String {
+    return when (computer.pairResult) {
+        null -> "NULL"
+        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pair_already_in_progress)
+        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
+        PairingManager.PairState.FAILED -> {
+            if (computer.details.runningGameId != 0) {
+                stringResource(R.string.pair_pc_ingame)
+            } else {
+                stringResource(R.string.pair_fail)
+            }
+        }
+        else -> "Pair Result: ${computer.pairResult}"
     }
 }
 

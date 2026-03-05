@@ -34,10 +34,10 @@ fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () ->
             }
         },
         confirmButton = {
-            if (computer.isPaired()) {
+            if (computer.pairResult == PairingManager.PairState.PAIRED) {
                 Row {
                     TextButton(onClick = { onConnect() }) { Text("Connect to Desktop") }
-                    TextButton(onClick = { onDismiss() }) { Text("Display Apps & Games") }
+                    TextButton(onClick = { onDismiss() }) { Text("Back to Apps") }
                 }
             } else {
                 TextButton(

@@ -7,15 +7,12 @@ import com.limelight.nvstream.http.PairingManager
 data class Computer(
     val details: ComputerDetails,
     val apps: List<NvApp> = emptyList(),
-    val pairResult: PairingManager.PairState? = null,
+    val pairResult: PairingManager.PairState? = null, //needed
     val pairPin: String? = null,
     val applistPoller: ComputerManagerService.ApplistPoller? = null
 ) {
     fun getRunningApp(): NvApp? {
         if (details.runningGameId == 0) { return null }
         return apps.find { it.appId == details.runningGameId }
-    }
-    fun isPaired(): Boolean {
-        return pairResult == PairingManager.PairState.PAIRED
     }
 }

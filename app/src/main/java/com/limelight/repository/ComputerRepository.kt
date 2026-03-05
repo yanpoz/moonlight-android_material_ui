@@ -146,7 +146,7 @@ class ComputerRepository {
 
             // App list polling is only done when paired.
             val applistPoller = if (details.pairState == PairState.PAIRED && computerManagerBinder != null) {
-                // If paired and we have a binder, ensure we have an active poller.
+                // If paired, and we have a binder, ensure we have an active poller.
                 oldComputer?.applistPoller
                     ?: computerManagerBinder!!.createAppListPoller(details).also { it.start() }
             } else {
