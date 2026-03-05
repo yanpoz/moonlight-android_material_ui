@@ -112,7 +112,8 @@ fun ComputerItemCard(
             )
         }
 
-        DropdownMenu( // TODO add menu caption
+        // TODO: replace with expressive menu, implement missing items
+        DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
             expanded = isMenuExpanded,
             onDismissRequest = onDismissMenu
@@ -139,7 +140,7 @@ fun ComputerItemCard(
                         onClick()
                     }
                 )
-                HorizontalDivider() // TODO: replace with gap Material expressive
+                HorizontalDivider()
             } else {
                 if (computer.details.runningGameId == 0) {
                     // Start Session
@@ -171,27 +172,27 @@ fun ComputerItemCard(
                         }
                     )
                 }
-                HorizontalDivider() // TODO: replace with gap Material expressive
+                HorizontalDivider()
             }
-            // Move Up TODO: should not be available when on top
+            // Move Up
             DropdownMenuItem(
                 text = { Text(text = "Move Up") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
-            // Move Down TODO: should not be available when on bottom
+            // Move Down
             DropdownMenuItem(
                 text = { Text(text = "Move Down") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
-            HorizontalDivider() // TODO: replace with gap Material expressive
+            HorizontalDivider()
             // Test Network Connection
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
                 // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
             // View Details
             DropdownMenuItem(
@@ -208,7 +209,7 @@ fun ComputerItemCard(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
             // Delete PC
             DropdownMenuItem(
@@ -225,7 +226,7 @@ fun ComputerItemCard(
                         contentDescription = null
                     )
                 },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
         }
     }

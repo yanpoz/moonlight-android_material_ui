@@ -57,6 +57,7 @@ fun AppItemCard(
             }
         }
 
+        // TODO: replace with expressive menu, implement missing items
         DropdownMenu(
             modifier = Modifier.widthIn(min = 220.dp),
             expanded = isMenuExpanded,
@@ -82,30 +83,30 @@ fun AppItemCard(
                             onQuitApp()
                         }
                     )
-                    HorizontalDivider() // TODO: replace with gap Material expressive
+                    HorizontalDivider()
                 } else {
                     // Quit running and Start new session
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.applist_menu_quit_and_start)) },
                         leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, null) },
-                        onClick = { onDismissMenu() /*TODO*/ }
+                        onClick = { onDismissMenu() }
                     )
-                    HorizontalDivider() // TODO: replace with gap Material expressive
+                    HorizontalDivider()
                 }
             }
-            // Move Left TODO: should not be available when on beginning
+            // Move Left
             DropdownMenuItem(
                 text = { Text(text = "Move Left") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
-            // Move Right TODO: should not be available when on bottom
+            // Move Right
             DropdownMenuItem(
                 text = { Text(text = "Move Right") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
-            HorizontalDivider() // TODO: replace with gap Material expressive
+            HorizontalDivider()
             // App Details
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_details)) },
@@ -121,14 +122,14 @@ fun AppItemCard(
                 text = { Text(stringResource(R.string.applist_menu_scut)) },
                 // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
             // Hide App
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.applist_menu_hide_app)) },
                 // leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() /*TODO*/ }
+                onClick = { onDismissMenu() }
             )
         }
     }

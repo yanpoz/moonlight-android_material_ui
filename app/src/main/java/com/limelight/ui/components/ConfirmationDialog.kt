@@ -20,7 +20,7 @@ fun ConfirmationDialog(
         text = { Text(text = text) },
         confirmButton = {
             TextButton(onClick = { onConfirm() }) {
-                Text("Confirm") // TODO should be specific
+                Text("Confirm")
             }
         },
         dismissButton = {
