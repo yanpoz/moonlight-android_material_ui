@@ -15,7 +15,9 @@ data class QuickSettingsUiState(
     val bitrate: Float = 0f,
     val touchscreenTrackpad: Boolean = PreferenceConfiguration.DEFAULT_TOUCHSCREEN_TRACKPAD,
     val onscreenController: Boolean = PreferenceConfiguration.ONSCREEN_CONTROLLER_DEFAULT,
-    val hostAudio: Boolean = PreferenceConfiguration.DEFAULT_HOST_AUDIO
+    val hostAudio: Boolean = PreferenceConfiguration.DEFAULT_HOST_AUDIO,
+    val mouseEmulation: Boolean = PreferenceConfiguration.DEFAULT_MOUSE_EMULATION,
+    val vibrateOsc: Boolean = PreferenceConfiguration.DEFAULT_VIBRATE_OSC
 )
 
 class QuickSettingsHandler {
@@ -28,7 +30,9 @@ class QuickSettingsHandler {
         currentBitrate: Float,
         touchscreenTrackpad: Boolean,
         onscreenController: Boolean,
-        hostAudio: Boolean
+        hostAudio: Boolean,
+        mouseEmulation: Boolean,
+        vibrateOsc: Boolean
     ) {
         uiState = QuickSettingsUiState(
             showDialog = true,
@@ -37,7 +41,9 @@ class QuickSettingsHandler {
             bitrate = currentBitrate,
             touchscreenTrackpad = touchscreenTrackpad,
             onscreenController = onscreenController,
-            hostAudio = hostAudio
+            hostAudio = hostAudio,
+            mouseEmulation = mouseEmulation,
+            vibrateOsc = vibrateOsc
         )
     }
 
@@ -80,6 +86,20 @@ class QuickSettingsHandler {
         uiState = uiState.copy(hostAudio = enabled)
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putBoolean(PreferenceConfiguration.HOST_AUDIO_PREF_STRING, enabled)
+        }
+    }
+
+    fun onMouseEmulationChanged(context: Context, enabled: Boolean) {
+        uiState = uiState.copy(mouseEmulation = enabled)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putBoolean(PreferenceConfiguration.MOUSE_EMULATION_STRING, enabled)
+        }
+    }
+
+    fun onVibrateOscChanged(context: Context, enabled: Boolean) {
+        uiState = uiState.copy(vibrateOsc = enabled)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putBoolean(PreferenceConfiguration.VIBRATE_OSC_PREF_STRING, enabled)
         }
     }
 

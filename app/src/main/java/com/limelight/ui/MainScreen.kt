@@ -128,13 +128,23 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 PreferenceConfiguration.HOST_AUDIO_PREF_STRING,
                                 PreferenceConfiguration.DEFAULT_HOST_AUDIO
                             )
+                            val mouseEmulation = prefs.getBoolean(
+                                PreferenceConfiguration.MOUSE_EMULATION_STRING,
+                                PreferenceConfiguration.DEFAULT_MOUSE_EMULATION
+                            )
+                            val vibrateOsc = prefs.getBoolean(
+                                PreferenceConfiguration.VIBRATE_OSC_PREF_STRING,
+                                PreferenceConfiguration.DEFAULT_VIBRATE_OSC
+                            )
                             viewModel.quickSettingsHandler.onShowQuickSettings(
                                 currentFps,
                                 currentRes,
                                 currentBitrate,
                                 touchscreenTrackpad,
                                 onscreenController,
-                                hostAudio
+                                hostAudio,
+                                mouseEmulation,
+                                vibrateOsc
                             )
                         }
                     ) {
@@ -334,6 +344,10 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             onOnscreenControllerChanged = { viewModel.quickSettingsHandler.onOnscreenControllerChanged(context, it) },
             hostAudio = viewModel.quickSettingsHandler.uiState.hostAudio,
             onHostAudioChanged = { viewModel.quickSettingsHandler.onHostAudioChanged(context, it) },
+            mouseEmulation = viewModel.quickSettingsHandler.uiState.mouseEmulation,
+            onMouseEmulationChanged = { viewModel.quickSettingsHandler.onMouseEmulationChanged(context, it) },
+            vibrateOsc = viewModel.quickSettingsHandler.uiState.vibrateOsc,
+            onVibrateOscChanged = { viewModel.quickSettingsHandler.onVibrateOscChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }

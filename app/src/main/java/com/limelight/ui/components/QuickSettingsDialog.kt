@@ -68,6 +68,10 @@ fun QuickSettingsDialog(
     onOnscreenControllerChanged: (Boolean) -> Unit,
     hostAudio: Boolean,
     onHostAudioChanged: (Boolean) -> Unit,
+    mouseEmulation: Boolean,
+    onMouseEmulationChanged: (Boolean) -> Unit,
+    vibrateOsc: Boolean,
+    onVibrateOscChanged: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val fpsValues = stringArrayResource(R.array.fps_values)
@@ -247,6 +251,38 @@ fun QuickSettingsDialog(
                             null
                         }
                     )
+                    FilterChip(
+                        selected = mouseEmulation,
+                        onClick = { onMouseEmulationChanged(!mouseEmulation) },
+                        label = { Text(stringResource(R.string.title_checkbox_mouse_emulation)) },
+                        leadingIcon = if (mouseEmulation) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    )
+                    FilterChip(
+                        selected = vibrateOsc,
+                        onClick = { onVibrateOscChanged(!vibrateOsc) },
+                        label = { Text(stringResource(R.string.title_checkbox_vibrate_osc)) },
+                        leadingIcon = if (vibrateOsc) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    )
                 }
             }
         },
@@ -275,6 +311,10 @@ fun QuickSettingsDialogPreview() {
             onOnscreenControllerChanged = {},
             hostAudio = false,
             onHostAudioChanged = {},
+            mouseEmulation = true,
+            onMouseEmulationChanged = {},
+            vibrateOsc = true,
+            onVibrateOscChanged = {},
             onDismiss = {}
         )
     }
