@@ -112,8 +112,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 PreferenceConfiguration.RESOLUTION_PREF_STRING,
                                 PreferenceConfiguration.DEFAULT_RESOLUTION
                             ) ?: PreferenceConfiguration.DEFAULT_RESOLUTION
+                            val currentBitrate = prefs.getInt(
+                                PreferenceConfiguration.BITRATE_PREF_STRING,
+                                PreferenceConfiguration.getDefaultBitrate(context)
+                            ).toFloat() / 1000f
                             viewModel.quickSettingsHandler.onShowQuickSettings(
-                                currentFps, currentRes)
+                                currentFps, currentRes, currentBitrate)
                         }
                     ) {
                         Icon(
@@ -299,12 +303,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     if (viewModel.quickSettingsHandler.uiState.showDialog) {
-        val currentRes = viewModel.quickSettingsHandler.uiState.resolution
         QuickSettingsDialog(
             fps = viewModel.quickSettingsHandler.uiState.fps,
             onFpsChanged = { viewModel.quickSettingsHandler.onFpsChanged(context, it) },
-            resolution = currentRes,
+            resolution = viewModel.quickSettingsHandler.uiState.resolution,
             onResolutionChanged = { viewModel.quickSettingsHandler.onResolutionChanged(context, it) },
+            bitrate = viewModel.quickSettingsHandler.uiState.bitrate,
+            onBitrateChanged = { viewModel.quickSettingsHandler.onBitrateChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }
