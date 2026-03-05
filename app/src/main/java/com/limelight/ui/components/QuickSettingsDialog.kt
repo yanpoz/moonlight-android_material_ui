@@ -2,15 +2,24 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -42,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.ui.theme.MoonlightandroidTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun QuickSettingsDialog(
     fps: String,
@@ -51,6 +60,12 @@ fun QuickSettingsDialog(
     onResolutionChanged: (String) -> Unit,
     bitrate: Float,
     onBitrateChanged: (Float) -> Unit,
+    touchscreenTrackpad: Boolean,
+    onTouchscreenTrackpadChanged: (Boolean) -> Unit,
+    onscreenController: Boolean,
+    onOnscreenControllerChanged: (Boolean) -> Unit,
+    hostAudio: Boolean,
+    onHostAudioChanged: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val fpsValues = stringArrayResource(R.array.fps_values)
@@ -172,6 +187,62 @@ fun QuickSettingsDialog(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = touchscreenTrackpad,
+                        onClick = { onTouchscreenTrackpadChanged(!touchscreenTrackpad) },
+                        label = { Text(stringResource(R.string.title_checkbox_touchscreen_trackpad)) },
+                        leadingIcon = if (touchscreenTrackpad) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    )
+                    FilterChip(
+                        selected = onscreenController,
+                        onClick = { onOnscreenControllerChanged(!onscreenController) },
+                        label = { Text(stringResource(R.string.title_checkbox_show_onscreen_controls)) },
+                        leadingIcon = if (onscreenController) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    )
+                    FilterChip(
+                        selected = hostAudio,
+                        onClick = { onHostAudioChanged(!hostAudio) },
+                        label = { Text(stringResource(R.string.title_checkbox_host_audio)) },
+                        leadingIcon = if (hostAudio) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    )
+                }
             }
         },
         confirmButton = {
@@ -193,6 +264,12 @@ fun QuickSettingsDialogPreview() {
             onResolutionChanged = {},
             bitrate = 50f,
             onBitrateChanged = {},
+            touchscreenTrackpad = true,
+            onTouchscreenTrackpadChanged = {},
+            onscreenController = false,
+            onOnscreenControllerChanged = {},
+            hostAudio = false,
+            onHostAudioChanged = {},
             onDismiss = {}
         )
     }

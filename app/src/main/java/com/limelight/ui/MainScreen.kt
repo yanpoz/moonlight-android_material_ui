@@ -116,8 +116,26 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                 PreferenceConfiguration.BITRATE_PREF_STRING,
                                 PreferenceConfiguration.getDefaultBitrate(context)
                             ).toFloat() / 1000f
+                            val touchscreenTrackpad = prefs.getBoolean(
+                                PreferenceConfiguration.TOUCHSCREEN_TRACKPAD_PREF_STRING,
+                                PreferenceConfiguration.DEFAULT_TOUCHSCREEN_TRACKPAD
+                            )
+                            val onscreenController = prefs.getBoolean(
+                                PreferenceConfiguration.ONSCREEN_CONTROLLER_PREF_STRING,
+                                PreferenceConfiguration.ONSCREEN_CONTROLLER_DEFAULT
+                            )
+                            val hostAudio = prefs.getBoolean(
+                                PreferenceConfiguration.HOST_AUDIO_PREF_STRING,
+                                PreferenceConfiguration.DEFAULT_HOST_AUDIO
+                            )
                             viewModel.quickSettingsHandler.onShowQuickSettings(
-                                currentFps, currentRes, currentBitrate)
+                                currentFps,
+                                currentRes,
+                                currentBitrate,
+                                touchscreenTrackpad,
+                                onscreenController,
+                                hostAudio
+                            )
                         }
                     ) {
                         Icon(
@@ -310,6 +328,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             onResolutionChanged = { viewModel.quickSettingsHandler.onResolutionChanged(context, it) },
             bitrate = viewModel.quickSettingsHandler.uiState.bitrate,
             onBitrateChanged = { viewModel.quickSettingsHandler.onBitrateChanged(context, it) },
+            touchscreenTrackpad = viewModel.quickSettingsHandler.uiState.touchscreenTrackpad,
+            onTouchscreenTrackpadChanged = { viewModel.quickSettingsHandler.onTouchscreenTrackpadChanged(context, it) },
+            onscreenController = viewModel.quickSettingsHandler.uiState.onscreenController,
+            onOnscreenControllerChanged = { viewModel.quickSettingsHandler.onOnscreenControllerChanged(context, it) },
+            hostAudio = viewModel.quickSettingsHandler.uiState.hostAudio,
+            onHostAudioChanged = { viewModel.quickSettingsHandler.onHostAudioChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }

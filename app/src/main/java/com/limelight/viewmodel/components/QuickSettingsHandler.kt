@@ -12,19 +12,32 @@ data class QuickSettingsUiState(
     val showDialog: Boolean = false,
     val fps: String = PreferenceConfiguration.DEFAULT_FPS,
     val resolution: String = PreferenceConfiguration.DEFAULT_RESOLUTION,
-    val bitrate: Float = 0f
+    val bitrate: Float = 0f,
+    val touchscreenTrackpad: Boolean = PreferenceConfiguration.DEFAULT_TOUCHSCREEN_TRACKPAD,
+    val onscreenController: Boolean = PreferenceConfiguration.ONSCREEN_CONTROLLER_DEFAULT,
+    val hostAudio: Boolean = PreferenceConfiguration.DEFAULT_HOST_AUDIO
 )
 
 class QuickSettingsHandler {
     var uiState by mutableStateOf(QuickSettingsUiState())
         private set
 
-    fun onShowQuickSettings(currentFps: String, currentResolution: String, currentBitrate: Float) {
+    fun onShowQuickSettings(
+        currentFps: String,
+        currentResolution: String,
+        currentBitrate: Float,
+        touchscreenTrackpad: Boolean,
+        onscreenController: Boolean,
+        hostAudio: Boolean
+    ) {
         uiState = QuickSettingsUiState(
             showDialog = true,
             fps = currentFps,
             resolution = currentResolution,
-            bitrate = currentBitrate
+            bitrate = currentBitrate,
+            touchscreenTrackpad = touchscreenTrackpad,
+            onscreenController = onscreenController,
+            hostAudio = hostAudio
         )
     }
 
@@ -46,6 +59,27 @@ class QuickSettingsHandler {
         uiState = uiState.copy(bitrate = bitrate)
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putInt(PreferenceConfiguration.BITRATE_PREF_STRING, (bitrate * 1000).toInt())
+        }
+    }
+
+    fun onTouchscreenTrackpadChanged(context: Context, enabled: Boolean) {
+        uiState = uiState.copy(touchscreenTrackpad = enabled)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putBoolean(PreferenceConfiguration.TOUCHSCREEN_TRACKPAD_PREF_STRING, enabled)
+        }
+    }
+
+    fun onOnscreenControllerChanged(context: Context, enabled: Boolean) {
+        uiState = uiState.copy(onscreenController = enabled)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putBoolean(PreferenceConfiguration.ONSCREEN_CONTROLLER_PREF_STRING, enabled)
+        }
+    }
+
+    fun onHostAudioChanged(context: Context, enabled: Boolean) {
+        uiState = uiState.copy(hostAudio = enabled)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putBoolean(PreferenceConfiguration.HOST_AUDIO_PREF_STRING, enabled)
         }
     }
 
