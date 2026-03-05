@@ -104,8 +104,16 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                     IconButton(
                         onClick = {
                             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                            val currentFps = prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS) ?: PreferenceConfiguration.DEFAULT_FPS
-                            viewModel.quickSettingsHandler.onShowQuickSettings(currentFps)
+                            val currentFps = prefs.getString(
+                                PreferenceConfiguration.FPS_PREF_STRING,
+                                PreferenceConfiguration.DEFAULT_FPS
+                            ) ?: PreferenceConfiguration.DEFAULT_FPS
+                            val currentRes = prefs.getString(
+                                PreferenceConfiguration.RESOLUTION_PREF_STRING,
+                                PreferenceConfiguration.DEFAULT_RESOLUTION
+                            ) ?: PreferenceConfiguration.DEFAULT_RESOLUTION
+                            viewModel.quickSettingsHandler.onShowQuickSettings(
+                                currentFps, currentRes)
                         }
                     ) {
                         Icon(
@@ -168,7 +176,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                             NetworkAssetLoader(context, uniqueId ?: ""),
                             MemoryAssetLoader(),
                             DiskAssetLoader(context),
-                            BitmapFactory.decodeResource(context.resources, R.drawable.no_app_image)
+                            BitmapFactory.decodeResource(
+                                context.resources, R.drawable.no_app_image)
                         )
                     }
 
@@ -184,17 +193,24 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                         item(key = computer.details.uuid) {
                             ComputerItemCard(
                                 computer = computer,
-                                isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(computer.details.uuid),
+                                isMenuExpanded = viewModel.computerItemHandler.isMenuExpanded(
+                                    computer.details.uuid),
                                 onDismissMenu = { viewModel.computerItemHandler.onDismissMenu() },
-                                onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, computer.details.uuid) },
-                                onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, computer) },
-                                onComputerDetailsClicked = { viewModel.computerItemHandler.onViewDetailsClicked(computer) },
-                                onClick = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
-                                onLongClick = { viewModel.computerItemHandler.onOpenMenu(computer.details.uuid) },
+                                onSendWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(
+                                    context, computer.details.uuid) },
+                                onQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(
+                                    context, computer) },
+                                onComputerDetailsClicked = {
+                                    viewModel.computerItemHandler.onViewDetailsClicked(computer) },
+                                onClick = { viewModel.connectionHandler.onInitiateConnection(
+                                    context, computer.details.uuid) },
+                                onLongClick = { viewModel.computerItemHandler.onOpenMenu(
+                                    computer.details.uuid) },
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(16f / 9f)
-                                    .then(if (computers.first() == computer) Modifier.focusRequester(focusRequester) else Modifier)
+                                    .then(if (computers.first() == computer)
+                                        Modifier.focusRequester(focusRequester) else Modifier)
                             )
                         }
                         // AppItems
@@ -204,12 +220,16 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     app = app,
                                     assetLoader = assetLoader,
                                     runningGameId = computer.details.runningGameId,
-                                    isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(app.appId, computer.details.uuid),
+                                    isMenuExpanded = viewModel.appItemHandler.isMenuExpanded(
+                                        app.appId, computer.details.uuid),
                                     onDismissMenu = { viewModel.appItemHandler.onDismissMenu() },
-                                    onQuitApp = { viewModel.appItemHandler.onQuitApp(context, app, computer.details.uuid) },
+                                    onQuitApp = { viewModel.appItemHandler.onQuitApp(
+                                        context, app, computer.details.uuid) },
                                     onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
-                                    onClick = { viewModel.connectionHandler.onLaunchApp(context, app, computer.details.uuid) },
-                                    onLongClick = { viewModel.appItemHandler.onOpenMenu(app.appId, computer.details.uuid) },
+                                    onClick = { viewModel.connectionHandler.onLaunchApp(
+                                        context, app, computer.details.uuid) },
+                                    onLongClick = { viewModel.appItemHandler.onOpenMenu(
+                                        app.appId, computer.details.uuid) },
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(2f / 3f)
@@ -243,7 +263,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
         if (computer != null) {
             ConnectionDialog(
                 computer,
-                onConnect = { viewModel.connectionHandler.onInitiateConnection(context, computer.details.uuid) },
+                onConnect = { viewModel.connectionHandler.onInitiateConnection(
+                    context, computer.details.uuid) },
                 onDismiss = { viewModel.connectionHandler.onCancelConnection() }
             )
         }
@@ -278,9 +299,12 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     if (viewModel.quickSettingsHandler.uiState.showDialog) {
+        val currentRes = viewModel.quickSettingsHandler.uiState.resolution
         QuickSettingsDialog(
             fps = viewModel.quickSettingsHandler.uiState.fps,
             onFpsChanged = { viewModel.quickSettingsHandler.onFpsChanged(context, it) },
+            resolution = currentRes,
+            onResolutionChanged = { viewModel.quickSettingsHandler.onResolutionChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
         )
     }
