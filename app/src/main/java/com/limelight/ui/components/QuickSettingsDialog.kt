@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -207,80 +208,60 @@ fun QuickSettingsDialog(
                         selected = touchscreenTrackpad,
                         onClick = { onTouchscreenTrackpadChanged(!touchscreenTrackpad) },
                         label = { Text(stringResource(R.string.title_checkbox_touchscreen_trackpad)) },
-                        leadingIcon = if (touchscreenTrackpad) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (touchscreenTrackpad) Icons.Default.Done else Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
                         }
                     )
                     FilterChip(
                         selected = onscreenController,
                         onClick = { onOnscreenControllerChanged(!onscreenController) },
                         label = { Text(stringResource(R.string.title_checkbox_show_onscreen_controls)) },
-                        leadingIcon = if (onscreenController) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (onscreenController) Icons.Default.Done else Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
                         }
                     )
                     FilterChip(
                         selected = hostAudio,
                         onClick = { onHostAudioChanged(!hostAudio) },
                         label = { Text(stringResource(R.string.title_checkbox_host_audio)) },
-                        leadingIcon = if (hostAudio) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (hostAudio) Icons.Default.Done else Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
                         }
                     )
                     FilterChip(
                         selected = mouseEmulation,
                         onClick = { onMouseEmulationChanged(!mouseEmulation) },
                         label = { Text(stringResource(R.string.title_checkbox_mouse_emulation)) },
-                        leadingIcon = if (mouseEmulation) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (mouseEmulation) Icons.Default.Done else Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
                         }
                     )
                     FilterChip(
                         selected = vibrateOsc,
                         onClick = { onVibrateOscChanged(!vibrateOsc) },
                         label = { Text(stringResource(R.string.title_checkbox_vibrate_osc)) },
-                        leadingIcon = if (vibrateOsc) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (vibrateOsc) Icons.Default.Done else Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
                         }
                     )
                 }
