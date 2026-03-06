@@ -158,7 +158,6 @@ class ComputerRepository {
             val newComputer = Computer(
                 details = details,
                 apps = apps,
-                pairResult = oldComputer?.pairResult,
                 pairPin = oldComputer?.pairPin,
                 applistPoller = applistPoller
             )
@@ -226,9 +225,6 @@ class ComputerRepository {
                 PlatformBinding.getCryptoProvider(context)
             )
             if (httpConn.pairState == PairState.PAIRED) {
-                modifyComputer(computer.details.uuid) {
-                    it.copy(pairResult = PairState.PAIRED)
-                }
                 return
             }
             val pairPin = computer.pairPin ?: PairingManager.generatePinString()
@@ -239,8 +235,6 @@ class ComputerRepository {
                 httpConn.getServerInfo(true),
                 pairPin
             )
-
-            modifyComputer(computer.details.uuid) { it.copy(pairResult = pairResult) }
 
             if (pairResult == PairState.PAIRED) {
                 computerManagerBinder?.getComputer(computer.details.uuid)?.serverCert =

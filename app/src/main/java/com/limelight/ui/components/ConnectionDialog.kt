@@ -14,7 +14,6 @@ import androidx.core.net.toUri
 import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.computers.getComputerPairPinText
-import com.limelight.computers.getComputerPairResultText
 import com.limelight.computers.getComputerPairStatusText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
@@ -30,11 +29,10 @@ fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () ->
             Column {
                 Text(text = getComputerPairStatusText(computer))
                 Text(text = getComputerPairPinText(computer))
-                Text(text = getComputerPairResultText(computer))
             }
         },
         confirmButton = {
-            if (computer.pairResult == PairingManager.PairState.PAIRED) {
+            if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                 Row {
                     TextButton(onClick = { onConnect() }) { Text("Connect to Desktop") }
                     TextButton(onClick = { onDismiss() }) { Text("Back to Apps") }
@@ -70,10 +68,7 @@ fun ConnectionDialogPairedPreview() {
     computerDetails.pairState = PairingManager.PairState.PAIRED
 
     ConnectionDialog(
-        computer = Computer(
-            details = computerDetails,
-            pairResult = PairingManager.PairState.PAIRED
-        ),
+        computer = Computer(computerDetails),
         onConnect = {},
         onDismiss = {}
     )
@@ -92,10 +87,7 @@ fun ConnectionDialogUnpairedPreview() {
     computerDetails.pairState = PairingManager.PairState.FAILED
 
     ConnectionDialog(
-        computer = Computer(
-            details = computerDetails,
-            pairResult = PairingManager.PairState.FAILED,
-        ),
+        computer = Computer(computerDetails),
         onConnect = {},
         onDismiss = {}
     )

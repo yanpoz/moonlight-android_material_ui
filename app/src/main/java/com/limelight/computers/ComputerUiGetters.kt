@@ -62,23 +62,6 @@ fun getComputerPairStatusText(computer: Computer): String {
 }
 
 @Composable
-fun getComputerPairResultText(computer: Computer): String {
-    return when (computer.pairResult) {
-        null -> "NULL"
-        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pair_already_in_progress)
-        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
-        PairingManager.PairState.FAILED -> {
-            if (computer.details.runningGameId != 0) {
-                stringResource(R.string.pair_pc_ingame)
-            } else {
-                stringResource(R.string.pair_fail)
-            }
-        }
-        else -> "Pair Result: ${computer.pairResult}"
-    }
-}
-
-@Composable
 fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
     val details = computer.details
     return listOf(
@@ -86,7 +69,6 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         "UUID" to (details.uuid ?: "NULL"),
         "State" to details.state.toString(),
         "PairState" to (details.pairState?.toString() ?: "NULL"),
-        "Pair Result" to getComputerPairResultText(computer),
         "Pair PIN" to getComputerPairPinText(computer),
         "Active Address" to (details.activeAddress?.toString() ?: "NULL"),
         "Local Address" to (details.localAddress?.toString() ?: "NULL"),
