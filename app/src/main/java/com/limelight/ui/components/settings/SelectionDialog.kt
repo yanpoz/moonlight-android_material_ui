@@ -17,8 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.limelight.R
 import com.limelight.repository.SettingItem
+import com.limelight.ui.theme.MoonlightandroidTheme
 
 @Composable
 fun SelectionDialog(
@@ -69,4 +72,25 @@ fun SelectionDialog(
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun SelectionDialogPreview() {
+    MoonlightandroidTheme {
+        SelectionDialog(
+            item = SettingItem.Selection(
+                name = "resolution",
+                category = "basic",
+                title = R.string.title_resolution_list,
+                summary = R.string.summary_resolution_list,
+                entries = listOf("720p", "1080p", "4K"),
+                entryValues = listOf("720", "1080", "2160"),
+                currentValue = "1080",
+                onSelected = {}
+            ),
+            onDismiss = {},
+            onSelected = {}
+        )
+    }
 }
