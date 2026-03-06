@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
@@ -34,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,8 +83,9 @@ fun ComputerItemCard(
             ) {
                 Text(
                     text = computer.details.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Default
                 )
 
                 // Status indicator
@@ -97,11 +100,29 @@ fun ComputerItemCard(
 
             Text(
                 text = getComputerAddressText(computer),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "${getComputerNetworkStateText(computer)} • ${getComputerPairStatusText(computer)}",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = RoundedCornerShape(100.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))

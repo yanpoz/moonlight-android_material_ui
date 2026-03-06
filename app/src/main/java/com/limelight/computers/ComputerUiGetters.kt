@@ -11,11 +11,16 @@ import com.limelight.nvstream.http.PairingManager
 
 @Composable
 fun getComputerAddressText(computer: Computer): String {
-    return computer.details.activeAddress?.toString()
+    val address = computer.details.activeAddress?.toString()
         ?: computer.details.localAddress?.toString()
         ?: computer.details.remoteAddress?.toString()
         ?: computer.details.manualAddress?.toString()
-        ?: stringResource(R.string.error_unknown_host)
+
+    return if (address != null) {
+        "IP: $address"
+    } else {
+        "IP: UNKNOWN"
+    }
 }
 
 @Composable
