@@ -42,10 +42,11 @@ fun getComputerStatusColor(computer: Computer): Color {
     }
 }
 
+@Composable
 fun getComputerPairPinText(computer: Computer): String {
     return when (computer.pairPin) {
-        null -> "Generating PIN..." // TODO: add animation
-        else -> "Pair PIN: ${computer.pairPin}"
+        null -> "XXXX" // TODO: add animation
+        else -> "${computer.pairPin}"
     }
 }
 
@@ -69,7 +70,7 @@ fun getComputerDetailsText(computer: Computer): List<Pair<String, String>> {
         "UUID" to (details.uuid ?: "NULL"),
         "State" to details.state.toString(),
         "PairState" to (details.pairState?.toString() ?: "NULL"),
-        "Pair PIN" to getComputerPairPinText(computer),
+        "Pair PIN" to (computer.pairPin ?: "NULL"),
         "Active Address" to (details.activeAddress?.toString() ?: "NULL"),
         "Local Address" to (details.localAddress?.toString() ?: "NULL"),
         "Remote Address" to (details.remoteAddress?.toString() ?: "NULL"),
