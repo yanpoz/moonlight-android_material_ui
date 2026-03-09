@@ -28,7 +28,18 @@ fun getComputerItemCardActionText(computer: Computer): String {
     return when (computer.details.state) {
         ComputerDetails.State.OFFLINE -> "Send Wake-On-LAN"
         ComputerDetails.State.UNKNOWN -> "Waiting response from PC"
-        else -> computer.getRunningApp()?.let { "Running: ${it.appName}" } ?: "Ready to start"
+        else -> {
+            if (computer.details.pairState != PairingManager.PairState.PAIRED) {
+                "Ready to pair"
+            } else {
+                val runningApp = computer.getRunningApp()
+                if (runningApp != null) {
+                    "Connect to running: ${runningApp.appName}"
+                } else {
+                    "Ready to start"
+                }
+            }
+        }
     }
 }
 
@@ -46,7 +57,7 @@ fun getComputerNetworkStateText(computer: Computer): String {
 fun getComputerPairStatusText(computer: Computer): String {
     return when (computer.details.pairState) {
         PairingManager.PairState.PAIRED -> "Paired"
-        PairingManager.PairState.NOT_PAIRED -> stringResource(R.string.scut_not_paired)
+        PairingManager.PairState.NOT_PAIRED -> "Not paired"
         PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
         PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
         PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
@@ -64,9 +75,10 @@ fun getComputerStatusText(computer: Computer): String {
 
 @Composable
 fun getComputerStatusColor(computer: Computer): Color {
-    return when (computer.details.state) {
-        ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.tertiary
-        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
+    return when {
+        computer.details.state == ComputerDetails.State.ONLINE &&
+                computer.details.pairState == PairingManager.PairState.PAIRED -> MaterialTheme.colorScheme.tertiary
+        computer.details.state == ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 }

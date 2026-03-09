@@ -129,7 +129,6 @@ fun ComputerItemCard(
             Text(
                 text = getComputerStatusText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier
