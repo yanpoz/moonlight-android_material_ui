@@ -25,6 +25,9 @@ fun getComputerAddressText(computer: Computer): String {
 
 @Composable
 fun getRunningGameName(computer: Computer): String {
+    if (computer.details.state == ComputerDetails.State.UNKNOWN) {
+        return "Waiting response from PC"
+    }
     return computer.getRunningApp()?.let { "Running: ${it.appName}" } ?: "Ready to start"
 }
 

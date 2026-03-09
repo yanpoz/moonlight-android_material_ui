@@ -50,6 +50,7 @@ import com.limelight.computers.getComputerStatusColor
 import com.limelight.computers.getRunningGameName
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightandroidTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,6 +66,8 @@ fun ComputerItemCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = LocalIsDarkTheme.current
+
     ItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
@@ -109,7 +112,10 @@ fun ComputerItemCard(
                 ),
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.onPrimaryFixed,
+                        color = if (isDark)
+                            MaterialTheme.colorScheme.onPrimaryFixed
+                        else
+                            MaterialTheme.colorScheme.primary,
                     )
                     .padding(horizontal = 8.dp, vertical = 2.dp)
             )
