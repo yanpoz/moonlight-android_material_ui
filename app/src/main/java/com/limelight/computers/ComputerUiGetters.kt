@@ -24,11 +24,12 @@ fun getComputerAddressText(computer: Computer): String {
 }
 
 @Composable
-fun getRunningGameName(computer: Computer): String {
-    if (computer.details.state == ComputerDetails.State.UNKNOWN) {
-        return "Waiting response from PC"
+fun getComputerItemCardActionText(computer: Computer): String {
+    return when (computer.details.state) {
+        ComputerDetails.State.OFFLINE -> "Send Wake-On-LAN"
+        ComputerDetails.State.UNKNOWN -> "Waiting response from PC"
+        else -> computer.getRunningApp()?.let { "Running: ${it.appName}" } ?: "Ready to start"
     }
-    return computer.getRunningApp()?.let { "Running: ${it.appName}" } ?: "Ready to start"
 }
 
 @Composable
@@ -39,6 +40,26 @@ fun getComputerNetworkStateText(computer: Computer): String {
         ComputerDetails.State.UNKNOWN -> "Unknown"
         else -> "NULL"
     }
+}
+
+@Composable
+fun getComputerPairStatusText(computer: Computer): String {
+    return when (computer.details.pairState) {
+        PairingManager.PairState.PAIRED -> "Paired"
+        PairingManager.PairState.NOT_PAIRED -> stringResource(R.string.scut_not_paired)
+        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
+        PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
+        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
+        null -> "NULL"
+    }
+}
+
+@Composable
+fun getComputerStatusText(computer: Computer): String {
+    if (computer.details.state == ComputerDetails.State.UNKNOWN) {
+        return "Loading..."
+    }
+    return getComputerNetworkStateText(computer) + " • " + getComputerPairStatusText(computer)
 }
 
 @Composable
@@ -55,18 +76,6 @@ fun getComputerPairPinText(computer: Computer): String {
     return when (computer.pairPin) {
         null -> "XXXX" // TODO: add animation
         else -> "${computer.pairPin}"
-    }
-}
-
-@Composable
-fun getComputerPairStatusText(computer: Computer): String {
-    return when (computer.details.pairState) {
-        PairingManager.PairState.PAIRED -> "Paired"
-        PairingManager.PairState.NOT_PAIRED -> stringResource(R.string.scut_not_paired)
-        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
-        PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
-        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
-        null -> "NULL"
     }
 }
 

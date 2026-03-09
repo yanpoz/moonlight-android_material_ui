@@ -44,10 +44,9 @@ import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.computers.getComputerAddressText
-import com.limelight.computers.getComputerNetworkStateText
-import com.limelight.computers.getComputerPairStatusText
 import com.limelight.computers.getComputerStatusColor
-import com.limelight.computers.getRunningGameName
+import com.limelight.computers.getComputerStatusText
+import com.limelight.computers.getComputerItemCardActionText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.LocalIsDarkTheme
@@ -121,7 +120,7 @@ fun ComputerItemCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "${getComputerNetworkStateText(computer)} • ${getComputerPairStatusText(computer)}",
+                text = getComputerStatusText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = FontFamily.Monospace,
                     color = getComputerStatusColor(computer)
@@ -138,7 +137,7 @@ fun ComputerItemCard(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = getRunningGameName(computer),
+                text = getComputerItemCardActionText(computer),
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
