@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -36,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +51,7 @@ import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.ui.theme.VerySunnyShape
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -97,7 +98,8 @@ fun ComputerItemCard(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .background(getComputerStatusColor(computer), CircleShape)
+                        .clip(VerySunnyShape)
+                        .background(getComputerStatusColor(computer))
                 )
             }
 
@@ -107,14 +109,19 @@ fun ComputerItemCard(
                 text = getComputerAddressText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.primaryFixed
+                    color =
+                        if (isDark)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.primaryFixed,
                 ),
                 modifier = Modifier
                     .background(
-                        color = if (isDark)
-                            MaterialTheme.colorScheme.onPrimaryFixed
-                        else
-                            MaterialTheme.colorScheme.primary,
+                        color =
+                            if (isDark)
+                                MaterialTheme.colorScheme.onPrimaryFixed
+                            else
+                                MaterialTheme.colorScheme.primary,
                     )
                     .padding(horizontal = 8.dp, vertical = 2.dp)
             )
@@ -123,12 +130,12 @@ fun ComputerItemCard(
                 text = getComputerStatusText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = FontFamily.Monospace,
-                    color = getComputerStatusColor(computer)
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = getComputerStatusColor(computer),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)

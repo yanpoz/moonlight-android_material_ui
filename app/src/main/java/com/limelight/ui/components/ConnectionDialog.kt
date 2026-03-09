@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -24,42 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.graphics.shapes.CornerRounding
-import androidx.graphics.shapes.RoundedPolygon
-import androidx.graphics.shapes.star
-import androidx.graphics.shapes.toPath
 import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.computers.getComputerPairPinText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.viewmodel.MainViewModel
-
-
-// TODO: replace with real Material expressive VerySunny shape
-private val VerySunnyShape = GenericShape { size, _ ->
-    val polygon = RoundedPolygon.star(
-        numVerticesPerRadius = 8,
-        innerRadius = 0.5f,
-        rounding = CornerRounding(size.width * 0.15f)
-    )
-    val path = polygon.toPath()
-    val matrix = android.graphics.Matrix()
-    val bounds = android.graphics.RectF()
-    @Suppress("DEPRECATION")
-    path.computeBounds(bounds, true)
-    matrix.postTranslate(-bounds.left, -bounds.top)
-    matrix.postScale(size.width / bounds.width(), size.height / bounds.height())
-    path.transform(matrix)
-    addPath(path.asComposePath())
-}
 
 @Composable
 fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
