@@ -117,6 +117,7 @@ fun ComputerItemCard(
                 ),
                 modifier = Modifier
                     .background(
+                        shape = RoundedCornerShape(20.dp),
                         color =
                             if (isDark)
                                 MaterialTheme.colorScheme.onPrimaryFixed
