@@ -2,6 +2,7 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,6 +50,7 @@ import com.limelight.computers.getComputerStatusColor
 import com.limelight.computers.getRunningGameName
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.ui.theme.MoonlightandroidTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -91,7 +94,7 @@ fun ComputerItemCard(
                 // Status indicator
                 Box(
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(40.dp)
                         .background(getComputerStatusColor(computer), CircleShape)
                 )
             }
@@ -102,11 +105,11 @@ fun ComputerItemCard(
                 text = getComputerAddressText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.primaryFixed
                 ),
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onPrimaryFixed,
                     )
                     .padding(horizontal = 8.dp, vertical = 2.dp)
             )
@@ -115,12 +118,13 @@ fun ComputerItemCard(
                 text = "${getComputerNetworkStateText(computer)} • ${getComputerPairStatusText(computer)}",
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = getComputerStatusColor(computer)
                 ),
                 modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
-                        shape = RoundedCornerShape(100.dp)
+                    .border(
+                        width = 1.dp,
+                        color = getComputerStatusColor(computer),
+                        shape = RoundedCornerShape(20.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
             )
@@ -253,12 +257,12 @@ fun ComputerItemCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 700)
 @Composable
-fun ComputerItemCardPreview() {
-    val computer = Computer(
+fun ComputerItemCardGridPreview() {
+    val readyComputer = Computer(
         details = ComputerDetails().apply {
-            name = "My Gaming PC"
+            name = "Gaming PC"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.PAIRED
@@ -266,14 +270,82 @@ fun ComputerItemCardPreview() {
         },
         apps = emptyList()
     )
-    ComputerItemCard(
-        computer = computer,
-        isMenuExpanded = false,
-        onDismissMenu = { },
-        onSendWakeOnLan = { },
-        onQuitRunningApp = { },
-        onComputerDetailsClicked = { },
-        onClick = { },
-        onLongClick = { },
+    val offlineComputer = Computer(
+        details = ComputerDetails().apply {
+            name = "Offline PC"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
+            state = ComputerDetails.State.OFFLINE
+            pairState = PairingManager.PairState.PAIRED
+            runningGameId = 0
+        },
+        apps = emptyList()
     )
+    val unknownComputer = Computer(
+        details = ComputerDetails().apply {
+            name = "Unknown PC"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
+            state = ComputerDetails.State.UNKNOWN
+            pairState = PairingManager.PairState.PAIRED
+            runningGameId = 0
+        },
+        apps = emptyList()
+    )
+
+    val computerStates = listOf(
+        "Ready" to readyComputer,
+        "Offline" to offlineComputer,
+        "Unknown" to unknownComputer
+    )
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        computerStates.forEach { (label, computer) ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Light version
+                MoonlightandroidTheme(darkTheme = false) {
+                    Surface(
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        ComputerItemCard(
+                            computer = computer,
+                            isMenuExpanded = false,
+                            onDismissMenu = { },
+                            onSendWakeOnLan = { },
+                            onQuitRunningApp = { },
+                            onComputerDetailsClicked = { },
+                            onClick = { },
+                            onLongClick = { }
+                        )
+                    }
+                }
+
+                // Dark version
+                MoonlightandroidTheme(darkTheme = true) {
+                    Surface(
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        ComputerItemCard(
+                            computer = computer,
+                            isMenuExpanded = false,
+                            onDismissMenu = { },
+                            onSendWakeOnLan = { },
+                            onQuitRunningApp = { },
+                            onComputerDetailsClicked = { },
+                            onClick = { },
+                            onLongClick = { }
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
