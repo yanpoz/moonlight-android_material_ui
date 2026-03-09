@@ -16,11 +16,7 @@ fun getComputerAddressText(computer: Computer): String {
         ?: computer.details.remoteAddress?.toString()
         ?: computer.details.manualAddress?.toString()
 
-    return if (address != null) {
-        "IP: $address"
-    } else {
-        "IP: UNKNOWN"
-    }
+    return address ?: "UNKNOWN"
 }
 
 @Composable
@@ -30,13 +26,13 @@ fun getComputerItemCardActionText(computer: Computer): String {
         ComputerDetails.State.UNKNOWN -> "Waiting response from PC"
         else -> {
             if (computer.details.pairState != PairingManager.PairState.PAIRED) {
-                "Ready to pair"
+                "Pair to PC"
             } else {
                 val runningApp = computer.getRunningApp()
                 if (runningApp != null) {
                     "Connect to running: ${runningApp.appName}"
                 } else {
-                    "Ready to start"
+                    "Connect to Desktop"
                 }
             }
         }
@@ -68,7 +64,7 @@ fun getComputerPairStatusText(computer: Computer): String {
 @Composable
 fun getComputerStatusText(computer: Computer): String {
     if (computer.details.state == ComputerDetails.State.UNKNOWN) {
-        return "Loading..."
+        return "Connecting..."
     }
     return getComputerNetworkStateText(computer) + " • " + getComputerPairStatusText(computer)
 }
