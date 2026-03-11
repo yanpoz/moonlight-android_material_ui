@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -45,6 +46,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
@@ -141,8 +143,10 @@ fun QuickSettingsDialog(
                 Text(
                     text = "%.1f".format(sliderValue),
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.width(40.dp),
+                    textAlign = TextAlign.End
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 val showFocusedBorder = isSliderFocused && inputModeManager.inputMode == InputMode.Keyboard
                 Slider(
                     value = sliderValue,
