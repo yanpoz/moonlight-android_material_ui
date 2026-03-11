@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,7 +40,7 @@ import com.limelight.viewmodel.MainViewModel
 fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     //  TODO Add container transformation
-    AlertDialog(
+    ScrollableAlertDialog(
         title = {
             Text(
                 text = "${computer.details.name} pairing",
@@ -49,7 +48,7 @@ fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () ->
                 textAlign = TextAlign.Center
             )
         },
-        text = {
+        content = {
             if (computer.details.pairState == PairingManager.PairState.PAIRED) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),

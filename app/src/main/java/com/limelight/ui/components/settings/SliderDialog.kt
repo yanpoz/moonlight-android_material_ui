@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -44,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
+import com.limelight.ui.components.ScrollableAlertDialog
 import kotlinx.coroutines.delay
 
 @Composable
@@ -68,104 +66,102 @@ fun SliderDialog(
         focusRequester.requestFocus()
     }
 
-    AlertDialog(
+    ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(item.title)) },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text(
-                    text = stringResource(item.summary),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
+        content = {
+            Text(
+                text = stringResource(item.summary),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = textValue,
+                    onValueChange = { newValue ->
+                        textValue = newValue
+                        newValue.toFloatOrNull()?.let { parsed ->
+                            val clamped = parsed.coerceIn(item.min, item.max)
+                            sliderValue = clamped
+                        }
+                    },
+                    modifier = Modifier.width(120.dp),
+                    textStyle = MaterialTheme.typography.headlineMedium.copy(textAlign = TextAlign.Center),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true
                 )
-
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        value = textValue,
-                        onValueChange = { newValue ->
-                            textValue = newValue
-                            newValue.toFloatOrNull()?.let { parsed ->
-                                val clamped = parsed.coerceIn(item.min, item.max)
-                                sliderValue = clamped
-                            }
-                        },
-                        modifier = Modifier.width(120.dp),
-                        textStyle = MaterialTheme.typography.headlineMedium.copy(textAlign = TextAlign.Center),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true
-                    )
-                    item.unit?.let {
-                        Text(
-                            text = stringResource(it),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                item.unit?.let {
                     Text(
-                        text = item.min.toInt().toString(),
-                        modifier = Modifier.padding(end = 8.dp),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    val showFocusedBorder = isSliderFocused && inputModeManager.inputMode == InputMode.Keyboard
-                    Slider(
-                        value = sliderValue,
-                        onValueChange = {
-                            sliderValue = it
-                            textValue = if (isMbps) "%.1f".format(it) else it.toInt().toString()
-                        },
-                        valueRange = item.min..item.max,
-                        modifier = Modifier
-                            .weight(1f)
-                            .onFocusChanged { isSliderFocused = it.isFocused }
-                            .focusRequester(focusRequester)
-                            .focusable()
-                            // TODO: should be focused style/state should look like in docs
-                            // https://m3.material.io/components/sliders/specs
-                            .border(
-                                width = if (showFocusedBorder) 2.dp else 0.dp,
-                                color = if (showFocusedBorder) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 8.dp)
-                            .onKeyEvent { event ->
-                                if (event.type == KeyEventType.KeyDown) {
-                                    val range = item.max - item.min
-                                    val step = (range / 50f).coerceAtLeast(0.1f)
-                                    when (event.key) {
-                                        Key.DirectionLeft -> {
-                                            sliderValue = (sliderValue - step).coerceIn(item.min, item.max)
-                                            textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
-                                            true
-                                        }
-                                        Key.DirectionRight -> {
-                                            sliderValue = (sliderValue + step).coerceIn(item.min, item.max)
-                                            textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
-                                            true
-                                        }
-                                        else -> false
-                                    }
-                                } else {
-                                    false
-                                }
-                            }
-                    )
-                    Text(
-                        text = item.max.toInt().toString(),
+                        text = stringResource(it),
                         modifier = Modifier.padding(start = 8.dp),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.min.toInt().toString(),
+                    modifier = Modifier.padding(end = 8.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                val showFocusedBorder = isSliderFocused && inputModeManager.inputMode == InputMode.Keyboard
+                Slider(
+                    value = sliderValue,
+                    onValueChange = {
+                        sliderValue = it
+                        textValue = if (isMbps) "%.1f".format(it) else it.toInt().toString()
+                    },
+                    valueRange = item.min..item.max,
+                    modifier = Modifier
+                        .weight(1f)
+                        .onFocusChanged { isSliderFocused = it.isFocused }
+                        .focusRequester(focusRequester)
+                        .focusable()
+                        // TODO: should be focused style/state should look like in docs
+                        // https://m3.material.io/components/sliders/specs
+                        .border(
+                            width = if (showFocusedBorder) 2.dp else 0.dp,
+                            color = if (showFocusedBorder) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp)
+                        .onKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown) {
+                                val range = item.max - item.min
+                                val step = (range / 50f).coerceAtLeast(0.1f)
+                                when (event.key) {
+                                    Key.DirectionLeft -> {
+                                        sliderValue = (sliderValue - step).coerceIn(item.min, item.max)
+                                        textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
+                                        true
+                                    }
+                                    Key.DirectionRight -> {
+                                        sliderValue = (sliderValue + step).coerceIn(item.min, item.max)
+                                        textValue = if (isMbps) "%.1f".format(sliderValue) else sliderValue.toInt().toString()
+                                        true
+                                    }
+                                    else -> false
+                                }
+                            } else {
+                                false
+                            }
+                        }
+                )
+                Text(
+                    text = item.max.toInt().toString(),
+                    modifier = Modifier.padding(start = 8.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         },
         confirmButton = {

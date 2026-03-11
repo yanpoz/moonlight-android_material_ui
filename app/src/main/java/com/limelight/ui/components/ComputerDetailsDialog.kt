@@ -3,10 +3,7 @@ package com.limelight.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,13 +19,13 @@ import java.util.UUID
 @Composable
 fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
     val computerDetailsText = getComputerDetailsText(computer)
-    AlertDialog(
+    ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = computer.details.name) },
-        text = {
+        content = {
             SelectionContainer {
-                LazyColumn {
-                    itemsIndexed(computerDetailsText) { index, (key, value) ->
+                Column {
+                    computerDetailsText.forEachIndexed { index, (key, value) ->
                         Column {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),

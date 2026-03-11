@@ -2,8 +2,6 @@ package com.limelight.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,10 +31,10 @@ fun ManualComputerAddDialog(
         focusRequester.requestFocus()
     }
 
-    AlertDialog(
+    ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.title_add_pc)) },
-        text = {
+        content = {
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()

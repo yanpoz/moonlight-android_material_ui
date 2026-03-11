@@ -1,13 +1,9 @@
 package com.limelight.ui.components.settings
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -21,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
+import com.limelight.ui.components.ScrollableAlertDialog
 import com.limelight.ui.theme.MoonlightandroidTheme
 
 @Composable
@@ -29,40 +26,38 @@ fun SelectionDialog(
     onDismiss: () -> Unit,
     onSelected: (String) -> Unit
 ) {
-    AlertDialog(
+    ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(item.title)) },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text(
-                    text = stringResource(item.summary),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                item.entries.forEachIndexed { index, entry ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = (item.entryValues[index] == item.currentValue),
-                                onClick = {
-                                    onSelected(item.entryValues[index])
-                                },
-                                role = Role.RadioButton
-                            )
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
+        content = {
+            Text(
+                text = stringResource(item.summary),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            item.entries.forEachIndexed { index, entry ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .selectable(
                             selected = (item.entryValues[index] == item.currentValue),
-                            onClick = null
+                            onClick = {
+                                onSelected(item.entryValues[index])
+                            },
+                            role = Role.RadioButton
                         )
-                        Text(
-                            text = entry,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (item.entryValues[index] == item.currentValue),
+                        onClick = null
+                    )
+                    Text(
+                        text = entry,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
                 }
             }
         },
