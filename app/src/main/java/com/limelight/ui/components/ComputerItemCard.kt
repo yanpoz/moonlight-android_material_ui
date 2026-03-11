@@ -284,12 +284,22 @@ fun ComputerItemCard(
 @Preview(showBackground = true, widthDp = 700)
 @Composable
 fun ComputerItemCardGridPreview() {
-    val readyComputer = Computer(
+    val onlinePairedComputer = Computer(
         details = ComputerDetails().apply {
             name = "Gaming PC"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.PAIRED
+            runningGameId = 0
+        },
+        apps = emptyList()
+    )
+    val onlineUnpairedComputer = Computer(
+        details = ComputerDetails().apply {
+            name = "Gaming PC"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
+            state = ComputerDetails.State.ONLINE
+            pairState = PairingManager.PairState.NOT_PAIRED
             runningGameId = 0
         },
         apps = emptyList()
@@ -316,7 +326,8 @@ fun ComputerItemCardGridPreview() {
     )
 
     val computerStates = listOf(
-        "Ready" to readyComputer,
+        "OnlinePaired" to onlinePairedComputer,
+        "OnlineUnpaired" to onlineUnpairedComputer,
         "Offline" to offlineComputer,
         "Unknown" to unknownComputer
     )

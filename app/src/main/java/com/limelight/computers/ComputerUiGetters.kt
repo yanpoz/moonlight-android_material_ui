@@ -71,11 +71,16 @@ fun getComputerStatusText(computer: Computer): String {
 
 @Composable
 fun getComputerStatusColor(computer: Computer): Color {
-    return when {
-        computer.details.state == ComputerDetails.State.ONLINE &&
-                computer.details.pairState == PairingManager.PairState.PAIRED -> MaterialTheme.colorScheme.tertiary
-        computer.details.state == ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    return when (computer.details.state) {
+        ComputerDetails.State.ONLINE -> {
+            if (computer.details.pairState == PairingManager.PairState.PAIRED) {
+                MaterialTheme.colorScheme.tertiary
+            } else {
+                MaterialTheme.colorScheme.secondary
+            }
+        }
+        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
+        ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 }
 
