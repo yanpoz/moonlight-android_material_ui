@@ -172,6 +172,7 @@ fun ComputerItemCard(
                         onSendWakeOnLan()
                     }
                 )
+                HorizontalDivider()
             } else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
                 // Pair PC
                 DropdownMenuItem(
