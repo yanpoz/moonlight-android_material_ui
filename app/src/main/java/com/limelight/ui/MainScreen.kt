@@ -234,6 +234,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     context, computer) },
                                 onComputerDetailsClicked = {
                                     viewModel.computerItemHandler.onViewDetailsClicked(computer) },
+                                onMoveUp = { viewModel.computerItemHandler.onMoveUp(computer.details.uuid) },
+                                onMoveDown = { viewModel.computerItemHandler.onMoveDown(computer.details.uuid) },
                                 onClick = { viewModel.connectionHandler.onInitiateConnection(
                                     context, computer.details.uuid) },
                                 onLongClick = { viewModel.computerItemHandler.onOpenMenu(

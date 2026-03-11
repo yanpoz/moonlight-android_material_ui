@@ -16,8 +16,11 @@ import com.limelight.viewmodel.components.ManualComputerAddHandler
 import com.limelight.viewmodel.components.QuickSettingsHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 open class MainViewModel(
@@ -31,6 +34,11 @@ open class MainViewModel(
     }
 
     open val computers: StateFlow<List<Computer>> = computerRepository.computers
+        .map { list ->
+            list.sortedWith(
+                compareBy<Computer> { it.position }.thenBy { it.details.name })
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     open val uniqueId: StateFlow<String?> = computerRepository.uniqueId
 
     val confirmationHandler = ConfirmationHandler()
@@ -43,6 +51,12 @@ open class MainViewModel(
         },
         sendWakeOnLan = { context, computerUuid ->
             computerRepository.sendWakeOnLan(context, computerUuid)
+        },
+        moveUp = { computerUuid ->
+            computerRepository.moveComputerUp(computerUuid)
+        },
+        moveDown = { computerUuid ->
+            computerRepository.moveComputerDown(computerUuid)
         }
     )
     val appItemHandler = AppItemHandler(

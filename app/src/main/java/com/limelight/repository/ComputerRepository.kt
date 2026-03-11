@@ -47,6 +47,7 @@ class ComputerRepository {
     private var connectionJob: Job? = null
     private var runningPolling: Boolean = false
     private var context: Context? = null
+    private val prefs by lazy { context?.getSharedPreferences("computer_order", Context.MODE_PRIVATE) }
     // Constants
     private val connectionPollDelayMs = 500L
     val desktopAppId = 881448767
@@ -158,6 +159,7 @@ class ComputerRepository {
             val newComputer = Computer(
                 details = details,
                 apps = apps,
+                position = getSavedComputerPosition(details.uuid),
                 pairPin = oldComputer?.pairPin,
                 applistPoller = applistPoller
             )
@@ -178,6 +180,58 @@ class ComputerRepository {
         // similar to how it would have been in the ViewModel.
         // This might involve using computerManagerBinder.
     }
+
+    private fun getSavedComputerPosition(uuid: String): Int {
+        // Returns the saved position, or a very high number (Int.MAX_VALUE)
+        // so new computers appear at the end by default
+        return prefs?.getInt(uuid, Int.MAX_VALUE) ?: Int.MAX_VALUE
+    }
+    fun updateComputerPosition(uuid: String, newPosition: Int) {
+        prefs?.edit()?.putInt(uuid, newPosition)?.apply()
+
+        // Refresh the list to apply sorting
+        _computers.update { list ->
+            list.map {
+                if (it.details.uuid == uuid) it.copy(position = newPosition) else it
+            }
+        }
+    }
+
+    fun moveComputerUp(uuid: String) {
+        val currentList = _computers.value.sortedWith(
+            compareBy<Computer> { it.position }.thenBy { it.details.name }
+        )
+        val index = currentList.indexOfFirst { it.details.uuid == uuid }
+        if (index > 0) {
+            val computerToMove = currentList[index]
+            val computerAbove = currentList[index - 1]
+
+            // Assign explicit positions based on current sorted order
+            val newPosAbove = index
+            val newPosToMove = index - 1
+
+            updateComputerPosition(computerToMove.details.uuid, newPosToMove)
+            updateComputerPosition(computerAbove.details.uuid, newPosAbove)
+        }
+    }
+
+    fun moveComputerDown(uuid: String) {
+        val currentList = _computers.value.sortedWith(
+            compareBy<Computer> { it.position }.thenBy { it.details.name }
+        )
+        val index = currentList.indexOfFirst { it.details.uuid == uuid }
+        if (index != -1 && index < currentList.size - 1) {
+            val computerToMove = currentList[index]
+            val computerBelow = currentList[index + 1]
+
+            val newPosBelow = index
+            val newPosToMove = index + 1
+
+            updateComputerPosition(computerToMove.details.uuid, newPosToMove)
+            updateComputerPosition(computerBelow.details.uuid, newPosBelow)
+        }
+    }
+
     fun initiateConnection(context: Context, computerUuid: String) {
         connectionJob?.cancel()
         _connectionStatus.value = ConnectionStatus.CONNECTING

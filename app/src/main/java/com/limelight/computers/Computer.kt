@@ -7,6 +7,7 @@ import com.limelight.nvstream.http.PairingManager
 data class Computer(
     val details: ComputerDetails,
     val apps: List<NvApp> = emptyList(),
+    val position: Int = 0,
     val pairResult: PairingManager.PairState? = null, //needed
     val pairPin: String? = null,
     val applistPoller: ComputerManagerService.ApplistPoller? = null

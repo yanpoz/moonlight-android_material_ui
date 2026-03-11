@@ -19,7 +19,10 @@ data class ComputerViewDetailsUiState(
 class ComputerItemHandler(
     private val confirmationHandler: ConfirmationHandler,
     private val quitRunningApp: (Context, Computer) -> Unit,
-    private val sendWakeOnLan: (Context, String) -> Unit,)
+    private val sendWakeOnLan: (Context, String) -> Unit,
+    private val moveUp: (String) -> Unit,
+    private val moveDown: (String) -> Unit,
+)
 {
     var uiState by mutableStateOf(ComputerMenuUiState())
         private set
@@ -51,5 +54,11 @@ class ComputerItemHandler(
     }
     fun onSendWakeOnLan(context: Context, computerUuid: String) {
         sendWakeOnLan(context, computerUuid)
+    }
+    fun onMoveUp(computerUuid: String) {
+        moveUp(computerUuid)
+    }
+    fun onMoveDown(computerUuid: String) {
+        moveDown(computerUuid)
     }
 }

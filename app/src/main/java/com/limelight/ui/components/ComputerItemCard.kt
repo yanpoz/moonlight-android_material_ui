@@ -62,6 +62,8 @@ fun ComputerItemCard(
     onSendWakeOnLan: () -> Unit,
     onQuitRunningApp: () -> Unit,
     onComputerDetailsClicked: () -> Unit,
+    onMoveUp: () -> Unit,
+    onMoveDown: () -> Unit,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -215,13 +217,19 @@ fun ComputerItemCard(
             DropdownMenuItem(
                 text = { Text(text = "Move Up") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onMoveUp()
+                }
             )
             // Move Down
             DropdownMenuItem(
                 text = { Text(text = "Move Down") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onMoveDown()
+                }
             )
             HorizontalDivider()
             // Test Network Connection
@@ -332,6 +340,8 @@ fun ComputerItemCardGridPreview() {
                             onSendWakeOnLan = { },
                             onQuitRunningApp = { },
                             onComputerDetailsClicked = { },
+                            onMoveUp = { },
+                            onMoveDown = { },
                             onClick = { },
                             onLongClick = { }
                         )
@@ -352,6 +362,8 @@ fun ComputerItemCardGridPreview() {
                             onSendWakeOnLan = { },
                             onQuitRunningApp = { },
                             onComputerDetailsClicked = { },
+                            onMoveUp = { },
+                            onMoveDown = { },
                             onClick = { },
                             onLongClick = { }
                         )
