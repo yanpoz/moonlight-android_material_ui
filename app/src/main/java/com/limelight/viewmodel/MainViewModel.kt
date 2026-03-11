@@ -63,6 +63,12 @@ open class MainViewModel(
         confirmationHandler = confirmationHandler,
         quitApp = { context, app, computerUuid ->
             computerRepository.quitApp(context, app, computerUuid)
+        },
+        moveUp = { computerUuid, appId ->
+            computerRepository.moveAppUp(computerUuid, appId)
+        },
+        moveDown = { computerUuid, appId ->
+            computerRepository.moveAppDown(computerUuid, appId)
         }
     )
     val manualComputerAddHandler = ManualComputerAddHandler(

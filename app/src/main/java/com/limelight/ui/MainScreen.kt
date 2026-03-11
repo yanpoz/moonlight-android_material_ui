@@ -262,10 +262,14 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     onQuitApp = { viewModel.appItemHandler.onQuitApp(
                                         context, app, computer.details.uuid) },
                                     onAppDetailsClicked = { viewModel.appItemHandler.onDetailsClicked(app) },
+                                    onMoveLeft = { viewModel.appItemHandler.onMoveUp(computer.details.uuid, app.appId) },
+                                    onMoveRight = { viewModel.appItemHandler.onMoveDown(computer.details.uuid, app.appId) },
                                     onClick = { viewModel.connectionHandler.onLaunchApp(
                                         context, app, computer.details.uuid) },
                                     onLongClick = { viewModel.appItemHandler.onOpenMenu(
                                         app.appId, computer.details.uuid) },
+                                    canMoveLeft = app != computer.apps.first(),
+                                    canMoveRight = app != computer.apps.last(),
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(2f / 3f)

@@ -18,7 +18,10 @@ data class AppViewDetailsUiState(
 
 class AppItemHandler(
     private val confirmationHandler: ConfirmationHandler,
-    private val quitApp: (Context, NvApp, String) -> Unit,)
+    private val quitApp: (Context, NvApp, String) -> Unit,
+    private val moveUp: (String, Int) -> Unit,
+    private val moveDown: (String, Int) -> Unit,
+)
 {
     var uiState by mutableStateOf(AppMenuUiState())
         private set
@@ -33,6 +36,12 @@ class AppItemHandler(
     }
     fun onDismissMenu() {
         uiState = AppMenuUiState()
+    }
+    fun onMoveUp(computerUuid: String, appId: Int) {
+        moveUp(computerUuid, appId)
+    }
+    fun onMoveDown(computerUuid: String, appId: Int) {
+        moveDown(computerUuid, appId)
     }
     fun onDetailsClicked(app: NvApp) {
         viewDetails = AppViewDetailsUiState(true, app)

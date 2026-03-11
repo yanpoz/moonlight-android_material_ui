@@ -48,6 +48,7 @@ class ComputerRepository {
     private var runningPolling: Boolean = false
     private var context: Context? = null
     private val prefs by lazy { context?.getSharedPreferences("computer_order", Context.MODE_PRIVATE) }
+    private val appPrefs by lazy { context?.getSharedPreferences("app_order", Context.MODE_PRIVATE) }
     // Constants
     private val connectionPollDelayMs = 500L
     val desktopAppId = 881448767
@@ -141,8 +142,11 @@ class ComputerRepository {
             val oldComputer = if (index != -1) computers[index] else null
 
             // Always try to parse the app list from details if available.
-            val apps = details.rawAppList?.let { NvHTTP.getAppListByReader(StringReader(it)) }
-                ?: oldComputer?.apps // Preserve the existing list if no new raw data is present
+            val apps = details.rawAppList?.let { raw ->
+                NvHTTP.getAppListByReader(StringReader(raw)).map { app ->
+                    app.apply { position = getSavedAppPosition(details.uuid, app.appId) }
+                }.sortedWith(compareBy<NvApp> { it.position }.thenBy { it.appName })
+            } ?: oldComputer?.apps // Preserve the existing list if no new raw data is present
                 ?: emptyList()
 
             // App list polling is only done when paired.
@@ -229,6 +233,60 @@ class ComputerRepository {
 
             updateComputerPosition(computerToMove.details.uuid, newPosToMove)
             updateComputerPosition(computerBelow.details.uuid, newPosBelow)
+        }
+    }
+
+    private fun getSavedAppPosition(computerUuid: String, appId: Int): Int {
+        return appPrefs?.getInt("${computerUuid}_$appId", Int.MAX_VALUE) ?: Int.MAX_VALUE
+    }
+
+    fun updateAppPosition(computerUuid: String, appId: Int, newPosition: Int) {
+        appPrefs?.edit()?.putInt("${computerUuid}_$appId", newPosition)?.apply()
+
+        // Refresh the list to apply sorting
+        _computers.update { list ->
+            list.map { computer ->
+                if (computer.details.uuid == computerUuid) {
+                    val updatedApps = computer.apps.map { app ->
+                        if (app.appId == appId) {
+                            app.apply { position = newPosition }
+                        } else app
+                    }.sortedWith(compareBy<NvApp> { it.position }.thenBy { it.appName })
+                    computer.copy(apps = updatedApps)
+                } else computer
+            }
+        }
+    }
+
+    fun moveAppUp(computerUuid: String, appId: Int) {
+        val computer = getComputer(computerUuid) ?: return
+        val currentApps = computer.apps
+        val index = currentApps.indexOfFirst { it.appId == appId }
+        if (index > 0) {
+            val appToMove = currentApps[index]
+            val appAbove = currentApps[index - 1]
+
+            val newPosAbove = index
+            val newPosToMove = index - 1
+
+            updateAppPosition(computerUuid, appToMove.appId, newPosToMove)
+            updateAppPosition(computerUuid, appAbove.appId, newPosAbove)
+        }
+    }
+
+    fun moveAppDown(computerUuid: String, appId: Int) {
+        val computer = getComputer(computerUuid) ?: return
+        val currentApps = computer.apps
+        val index = currentApps.indexOfFirst { it.appId == appId }
+        if (index != -1 && index < currentApps.size - 1) {
+            val appToMove = currentApps[index]
+            val appBelow = currentApps[index + 1]
+
+            val newPosBelow = index
+            val newPosToMove = index + 1
+
+            updateAppPosition(computerUuid, appToMove.appId, newPosToMove)
+            updateAppPosition(computerUuid, appBelow.appId, newPosBelow)
         }
     }
 

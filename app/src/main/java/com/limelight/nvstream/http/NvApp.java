@@ -7,6 +7,7 @@ public class NvApp {
     private int appId;
     private boolean initialized;
     private boolean hdrSupported;
+    private int position = 0;
     
     public NvApp() {}
     
@@ -59,12 +60,21 @@ public class NvApp {
         return this.initialized;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("Name: ").append(appName).append("\n");
         str.append("HDR Supported: ").append(hdrSupported ? "Yes" : "Unknown").append("\n");
         str.append("ID: ").append(appId).append("\n");
+        str.append("Position: ").append(position).append("\n");
         return str.toString();
     }
 }

@@ -37,6 +37,10 @@ fun AppItemCard(
     onDismissMenu: () -> Unit,
     onQuitApp: () -> Unit,
     onAppDetailsClicked: () -> Unit,
+    onMoveLeft: () -> Unit,
+    onMoveRight: () -> Unit,
+    canMoveLeft: Boolean,
+    canMoveRight: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -98,13 +102,21 @@ fun AppItemCard(
             DropdownMenuItem(
                 text = { Text(text = "Move Left") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onMoveLeft()
+                },
+                enabled = canMoveLeft
             )
             // Move Right
             DropdownMenuItem(
                 text = { Text(text = "Move Right") },
                 leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onMoveRight()
+                },
+                enabled = canMoveRight
             )
             HorizontalDivider()
             // App Details
@@ -138,10 +150,7 @@ fun AppItemCard(
 @Preview
 @Composable
 fun AppItemCardPreview() {
-    val app = NvApp(
-//        appName = "Steam",
-//        appId = 123
-    )
+    val app = NvApp()
     AppItemCard(
         app = app,
         assetLoader = null,
@@ -150,6 +159,10 @@ fun AppItemCardPreview() {
         onDismissMenu = {},
         onQuitApp = {},
         onAppDetailsClicked = {},
+        onMoveLeft = {},
+        onMoveRight = {},
+        canMoveLeft = true,
+        canMoveRight = true,
         onClick = {},
         onLongClick = {}
     )
