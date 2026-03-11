@@ -240,6 +240,8 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     context, computer.details.uuid) },
                                 onLongClick = { viewModel.computerItemHandler.onOpenMenu(
                                     computer.details.uuid) },
+                                canMoveUp = computer != computers.first(),
+                                canMoveDown = computer != computers.last(),
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(16f / 9f)

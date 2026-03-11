@@ -66,7 +66,9 @@ fun ComputerItemCard(
     onMoveDown: () -> Unit,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canMoveUp: Boolean = true,
+    canMoveDown: Boolean = true
 ) {
     val isDark = LocalIsDarkTheme.current
 
@@ -217,6 +219,7 @@ fun ComputerItemCard(
             DropdownMenuItem(
                 text = { Text(text = "Move Up") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
+                enabled = canMoveUp,
                 onClick = {
                     onDismissMenu()
                     onMoveUp()
@@ -226,6 +229,7 @@ fun ComputerItemCard(
             DropdownMenuItem(
                 text = { Text(text = "Move Down") },
                 leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
+                enabled = canMoveDown,
                 onClick = {
                     onDismissMenu()
                     onMoveDown()
