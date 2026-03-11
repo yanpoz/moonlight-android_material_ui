@@ -22,6 +22,7 @@ class ComputerItemHandler(
     private val sendWakeOnLan: (Context, String) -> Unit,
     private val moveUp: (String) -> Unit,
     private val moveDown: (String) -> Unit,
+    private val deleteComputer: (String) -> Unit,
 )
 {
     var uiState by mutableStateOf(ComputerMenuUiState())
@@ -60,5 +61,12 @@ class ComputerItemHandler(
     }
     fun onMoveDown(computerUuid: String) {
         moveDown(computerUuid)
+    }
+    fun onDeleteComputer(computer: Computer) {
+        confirmationHandler.confirmAction(
+            title = "Delete ${computer.details.name}?",
+            text = "Are you sure you want to delete ${computer.details.name}?",
+            action = { deleteComputer(computer.details.uuid) }
+        )
     }
 }

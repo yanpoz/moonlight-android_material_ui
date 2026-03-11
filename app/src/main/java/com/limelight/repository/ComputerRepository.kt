@@ -12,6 +12,7 @@ import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.Computer
 import com.limelight.computers.ComputerManagerService
+import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.NvHTTP
@@ -407,6 +408,31 @@ class ComputerRepository {
             // but run the actual pollNow() call in the repositoryScope (IO thread).
             val computersToPoll = synchronized(lock = _computers) { _computers.value.toList() }
             computersToPoll.forEach { computer -> computer.applistPoller?.pollNow() }
+        }
+    }
+
+    fun deleteComputer(computerUuid: String) {
+        val computer = getComputer(computerUuid) ?: return
+        val currentContext = context ?: return
+
+        // 1. Remove from service/DB
+        computerManagerBinder?.removeComputer(computer.details)
+
+        // 2. Delete assets
+        DiskAssetLoader(currentContext).deleteAssetsForComputer(computer.details.uuid)
+
+        // 3. Delete hidden apps pref
+        currentContext.getSharedPreferences("HiddenApps", Context.MODE_PRIVATE)
+            .edit()
+            .remove(computer.details.uuid)
+            .apply()
+
+        // 4. Disable shortcuts TODO
+
+
+        // 5. Update local state
+        _computers.update { list ->
+            list.filter { it.details.uuid != computerUuid }
         }
     }
 }

@@ -57,6 +57,9 @@ open class MainViewModel(
         },
         moveDown = { computerUuid ->
             computerRepository.moveComputerDown(computerUuid)
+        },
+        deleteComputer = { computerUuid ->
+            computerRepository.deleteComputer(computerUuid)
         }
     )
     val appItemHandler = AppItemHandler(

@@ -242,6 +242,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     computer.details.uuid) },
                                 canMoveUp = computer != computers.first(),
                                 canMoveDown = computer != computers.last(),
+                                onDeleteComputer = { viewModel.computerItemHandler.onDeleteComputer(computer) },
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(16f / 9f)

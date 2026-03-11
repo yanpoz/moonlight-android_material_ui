@@ -62,6 +62,7 @@ fun ComputerItemCard(
     onSendWakeOnLan: () -> Unit,
     onQuitRunningApp: () -> Unit,
     onComputerDetailsClicked: () -> Unit,
+    onDeleteComputer: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit,
     onClick: () -> Unit,
@@ -275,7 +276,10 @@ fun ComputerItemCard(
                         contentDescription = null
                     )
                 },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onDeleteComputer()
+                }
             )
         }
     }
@@ -355,6 +359,7 @@ fun ComputerItemCardGridPreview() {
                             onSendWakeOnLan = { },
                             onQuitRunningApp = { },
                             onComputerDetailsClicked = { },
+                            onDeleteComputer = { },
                             onMoveUp = { },
                             onMoveDown = { },
                             onClick = { },
@@ -377,6 +382,7 @@ fun ComputerItemCardGridPreview() {
                             onSendWakeOnLan = { },
                             onQuitRunningApp = { },
                             onComputerDetailsClicked = { },
+                            onDeleteComputer = { },
                             onMoveUp = { },
                             onMoveDown = { },
                             onClick = { },
