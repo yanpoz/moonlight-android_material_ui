@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -45,18 +46,16 @@ import kotlinx.parcelize.Parcelize
 @Preview(widthDp = 840, heightDp = 800, showBackground = true)
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator()
+    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<SettingCategoryItem>()
     val scope = rememberCoroutineScope()
 
     // During screen opening, select first category if detailPane is visible (on large screens)
     LaunchedEffect(scaffoldNavigator.scaffoldValue, uiState.categories) {
-        if (uiState.selectedCategory == null && uiState.categories.isNotEmpty())
-        {
+        if (uiState.selectedCategory == null &&
+            uiState.categories.isNotEmpty() &&
+            scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded
+        ) {
             viewModel.selectCategory(uiState.categories.first())
-            scaffoldNavigator.navigateTo(
-                ListDetailPaneScaffoldRole.Detail,
-                SettingCategoryItem(uiState.categories.first().name)
-            )
         }
     }
 
