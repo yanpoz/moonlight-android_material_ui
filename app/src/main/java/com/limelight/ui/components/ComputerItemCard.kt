@@ -65,6 +65,7 @@ fun ComputerItemCard(
     onDeleteComputer: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit,
+    onTestNetwork: () -> Unit,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -243,7 +244,10 @@ fun ComputerItemCard(
                 text = { Text(stringResource(R.string.pcview_menu_test_network)) },
                 // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
                 leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() }
+                onClick = {
+                    onDismissMenu()
+                    onTestNetwork()
+                }
             )
             // View Details
             DropdownMenuItem(
@@ -363,6 +367,7 @@ fun ComputerItemCardGridPreview() {
                             onDeleteComputer = { },
                             onMoveUp = { },
                             onMoveDown = { },
+                            onTestNetwork = { },
                             onClick = { },
                             onLongClick = { }
                         )
@@ -386,6 +391,7 @@ fun ComputerItemCardGridPreview() {
                             onDeleteComputer = { },
                             onMoveUp = { },
                             onMoveDown = { },
+                            onTestNetwork = { },
                             onClick = { },
                             onLongClick = { }
                         )

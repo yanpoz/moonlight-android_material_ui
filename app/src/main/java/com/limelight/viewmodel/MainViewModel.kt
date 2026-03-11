@@ -40,6 +40,8 @@ open class MainViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     open val uniqueId: StateFlow<String?> = computerRepository.uniqueId
+    open val networkTestStatus: StateFlow<ComputerRepository.NetworkTestStatus> =
+        computerRepository.networkTestStatus
 
     val confirmationHandler = ConfirmationHandler()
     val computerItemHandler = ComputerItemHandler(
@@ -60,6 +62,12 @@ open class MainViewModel(
         },
         deleteComputer = { computerUuid ->
             computerRepository.deleteComputer(computerUuid)
+        },
+        testNetwork = { context ->
+            computerRepository.testNetwork(context)
+        },
+        dismissNetworkTest = {
+            computerRepository.dismissNetworkTest()
         }
     )
     val appItemHandler = AppItemHandler(
@@ -135,6 +143,5 @@ open class MainViewModel(
             }
         }
     }
-
     //endregion
 }

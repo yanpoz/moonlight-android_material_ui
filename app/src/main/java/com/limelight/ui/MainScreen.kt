@@ -58,6 +58,7 @@ import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
 import com.limelight.ui.components.ManualComputerAddDialog
+import com.limelight.ui.components.NetworkTestDialog
 import com.limelight.ui.components.QuickSettingsDialog
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.viewmodel.MockMainViewModel
@@ -73,6 +74,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val computers by viewModel.computers.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
+    val networkTestStatus by viewModel.networkTestStatus.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
 
 // TODO: return pull to refresh when 'enabled' property is added to PullToRefreshBox
@@ -236,6 +238,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
                                     viewModel.computerItemHandler.onViewDetailsClicked(computer) },
                                 onMoveUp = { viewModel.computerItemHandler.onMoveUp(computer.details.uuid) },
                                 onMoveDown = { viewModel.computerItemHandler.onMoveDown(computer.details.uuid) },
+                                onTestNetwork = { viewModel.computerItemHandler.onTestNetwork(context) },
                                 onClick = { viewModel.connectionHandler.onInitiateConnection(
                                     context, computer.details.uuid) },
                                 onLongClick = { viewModel.computerItemHandler.onOpenMenu(
@@ -358,6 +361,13 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
             vibrateOsc = viewModel.quickSettingsHandler.uiState.vibrateOsc,
             onVibrateOscChanged = { viewModel.quickSettingsHandler.onVibrateOscChanged(context, it) },
             onDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() }
+        )
+    }
+
+    if (viewModel.computerItemHandler.networkTest.showDialog) {
+        NetworkTestDialog(
+            networkTestStatus = networkTestStatus,
+            onDismiss = { viewModel.computerItemHandler.onDismissNetworkTest() }
         )
     }
 }

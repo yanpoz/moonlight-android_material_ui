@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
+import com.limelight.R
 import com.limelight.binding.PlatformBinding
 import com.limelight.computers.ComposeComputerManagerListener
 import com.limelight.computers.Computer
@@ -18,6 +19,7 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.NvHTTP
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.nvstream.http.PairingManager.PairState
+import com.limelight.nvstream.jni.MoonBridge
 import com.limelight.nvstream.wol.WakeOnLanSender
 import com.limelight.utils.ServerHelper
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +46,16 @@ class ComputerRepository {
     enum class ConnectionStatus { IDLE, CONNECTING, SUCCESS, FAILED, CANCELED }
     private val _connectionStatus = MutableStateFlow(ConnectionStatus.IDLE)
     val connectionStatus = _connectionStatus.asStateFlow()
+
+    // Network Test Status
+    sealed class NetworkTestStatus {
+        data object Idle : NetworkTestStatus()
+        data object Running : NetworkTestStatus()
+        data class Finished(val result: String) : NetworkTestStatus()
+    }
+    private val _networkTestStatus = MutableStateFlow<NetworkTestStatus>(NetworkTestStatus.Idle)
+    val networkTestStatus = _networkTestStatus.asStateFlow()
+
     // Other
     private var connectionJob: Job? = null
     private var runningPolling: Boolean = false
@@ -211,7 +223,6 @@ class ComputerRepository {
             val computerToMove = currentList[index]
             val computerAbove = currentList[index - 1]
 
-            // Assign explicit positions based on current sorted order
             val newPosAbove = index
             val newPosToMove = index - 1
 
@@ -434,5 +445,26 @@ class ComputerRepository {
         _computers.update { list ->
             list.filter { it.details.uuid != computerUuid }
         }
+    }
+
+    fun testNetwork(context: Context) {
+        repositoryScope.launch {
+            _networkTestStatus.value = NetworkTestStatus.Running
+            val ret = MoonBridge.testClientConnectivity(
+                ServerHelper.CONNECTION_TEST_SERVER, 443, MoonBridge.ML_PORT_FLAG_ALL
+            )
+            val resultMessage = when (ret) {
+                MoonBridge.ML_TEST_RESULT_INCONCLUSIVE ->
+                    context.getString(R.string.nettest_text_inconclusive)
+                0 -> context.getString(R.string.nettest_text_success)
+                else -> context.getString(R.string.nettest_text_failure) +
+                        MoonBridge.stringifyPortFlags(ret, "\n")
+            }
+            _networkTestStatus.value = NetworkTestStatus.Finished(resultMessage)
+        }
+    }
+
+    fun dismissNetworkTest() {
+        _networkTestStatus.value = NetworkTestStatus.Idle
     }
 }
