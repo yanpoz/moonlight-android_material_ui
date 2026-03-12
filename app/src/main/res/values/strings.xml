@@ -227,6 +227,8 @@
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="title_checkbox_dynamic_theme">Dynamic theme color</string>
+    <string name="summary_checkbox_dynamic_theme">Use colors from your wallpaper (requires Android 12+)</string>
     <string name="title_checkbox_enable_pip">Enable Picture-in-Picture observer mode</string>
     <string name="summary_checkbox_enable_pip">Allows the stream to be viewed (but not controlled) while multitasking</string>
     <string name="title_language_list">Language</string>

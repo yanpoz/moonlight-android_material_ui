@@ -69,6 +69,7 @@ public class PreferenceConfiguration {
     public static final String GAMEPAD_MOTION_SENSORS_PREF_STRING = "checkbox_gamepad_motion_sensors";
     public static final String GAMEPAD_MOTION_FALLBACK_PREF_STRING = "checkbox_gamepad_motion_fallback";
     public static final String THEME_PREF_STRING = "list_theme";
+    public static final String DYNAMIC_THEME_PREF_STRING = "checkbox_dynamic_theme";
 
     public static final String DEFAULT_RESOLUTION = "1280x720";
     public static final String DEFAULT_FPS = "60";
@@ -110,6 +111,7 @@ public class PreferenceConfiguration {
     public static final boolean DEFAULT_GAMEPAD_MOTION_SENSORS = true;
     public static final boolean DEFAULT_GAMEPAD_MOTION_FALLBACK = false;
     public static final String DEFAULT_THEME = "system";
+    public static final boolean DEFAULT_DYNAMIC_THEME = true;
 
     public static final int FRAME_PACING_MIN_LATENCY = 0;
     public static final int FRAME_PACING_BALANCED = 1;
@@ -158,6 +160,7 @@ public class PreferenceConfiguration {
     public boolean gamepadTouchpadAsMouse;
     public boolean gamepadMotionSensorsFallbackToDevice;
     public String theme;
+    public boolean dynamicTheme;
 
     public static boolean isNativeResolution(int width, int height) {
         // It's not a native resolution if it matches an existing resolution option
@@ -605,6 +608,7 @@ public class PreferenceConfiguration {
         config.gamepadMotionSensors = prefs.getBoolean(GAMEPAD_MOTION_SENSORS_PREF_STRING, DEFAULT_GAMEPAD_MOTION_SENSORS);
         config.gamepadMotionSensorsFallbackToDevice = prefs.getBoolean(GAMEPAD_MOTION_FALLBACK_PREF_STRING, DEFAULT_GAMEPAD_MOTION_FALLBACK);
         config.theme = prefs.getString(THEME_PREF_STRING, DEFAULT_THEME);
+        config.dynamicTheme = prefs.getBoolean(DYNAMIC_THEME_PREF_STRING, DEFAULT_DYNAMIC_THEME);
 
         return config;
     }

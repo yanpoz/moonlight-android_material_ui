@@ -377,6 +377,13 @@ class SettingsRepository(private val context: Context) {
                         onSelected = { prefs.edit { putString(PreferenceConfiguration.THEME_PREF_STRING, it) } }
                     ),
                     SettingItem.Toggle(
+                        name = PreferenceConfiguration.DYNAMIC_THEME_PREF_STRING,
+                        category = "UI Settings",
+                        title = R.string.title_checkbox_dynamic_theme,
+                        summary = R.string.summary_checkbox_dynamic_theme,
+                        default = prefs.getBoolean(PreferenceConfiguration.DYNAMIC_THEME_PREF_STRING, PreferenceConfiguration.DEFAULT_DYNAMIC_THEME)
+                    ) { prefs.edit { putBoolean(PreferenceConfiguration.DYNAMIC_THEME_PREF_STRING, it) } },
+                    SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_PIP_PREF_STRING,
                         category = "UI Settings",
                         title = R.string.title_checkbox_enable_pip,

@@ -27,9 +27,12 @@ class MainActivity : ComponentActivity() {
         if (key == PreferenceConfiguration.THEME_PREF_STRING) {
             themeState = p.getString(key, PreferenceConfiguration.DEFAULT_THEME) ?:
                 PreferenceConfiguration.DEFAULT_THEME
+        } else if (key == PreferenceConfiguration.DYNAMIC_THEME_PREF_STRING) {
+            dynamicThemeState = p.getBoolean(key, PreferenceConfiguration.DEFAULT_DYNAMIC_THEME)
         }
     }
     private var themeState by mutableStateOf(PreferenceConfiguration.DEFAULT_THEME)
+    private var dynamicThemeState by mutableStateOf(PreferenceConfiguration.DEFAULT_DYNAMIC_THEME)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +44,17 @@ class MainActivity : ComponentActivity() {
             PreferenceConfiguration.DEFAULT_THEME
         ) ?:
             PreferenceConfiguration.DEFAULT_THEME
+        dynamicThemeState = prefs.getBoolean(
+            PreferenceConfiguration.DYNAMIC_THEME_PREF_STRING,
+            PreferenceConfiguration.DEFAULT_DYNAMIC_THEME
+        )
         prefs.registerOnSharedPreferenceChangeListener(listener)
 
         setContent {
-            MoonlightAndroidTheme(theme = themeState) {
+            MoonlightAndroidTheme(
+                theme = themeState,
+                dynamicColor = dynamicThemeState
+            ) {
                 mainViewModel = viewModel()
                 val navController = rememberNavController()
 
