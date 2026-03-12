@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.DesktopWindows
 import androidx.compose.material.icons.outlined.Mouse
@@ -370,30 +369,30 @@ class SettingsRepository(private val context: Context) {
                     SettingItem.Selection(
                         name = PreferenceConfiguration.THEME_PREF_STRING,
                         category = "UI Settings",
-                        title = R.string.title_checkbox_enable_pip,
-                        summary = R.string.summary_checkbox_enable_pip,
-                        entries = listOf("Light", "Dark", "System"),
-                        entryValues = listOf("light", "dark", "system"),
+                        title = R.string.title_theme_list,
+                        summary = R.string.summary_theme_list,
+                        entries = context.resources.getStringArray(R.array.theme_names).toList(),
+                        entryValues = context.resources.getStringArray(R.array.theme_values).toList(),
                         currentValue = prefs.getString(PreferenceConfiguration.THEME_PREF_STRING, PreferenceConfiguration.DEFAULT_THEME) ?: PreferenceConfiguration.DEFAULT_THEME,
                         onSelected = { prefs.edit { putString(PreferenceConfiguration.THEME_PREF_STRING, it) } }
                     ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_PIP_PREF_STRING,
-                        category = "Appearance",
+                        category = "UI Settings",
                         title = R.string.title_checkbox_enable_pip,
                         summary = R.string.summary_checkbox_enable_pip,
                         default = prefs.getBoolean(PreferenceConfiguration.ENABLE_PIP_PREF_STRING, PreferenceConfiguration.DEFAULT_ENABLE_PIP)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.ENABLE_PIP_PREF_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.SMALL_ICONS_PREF_STRING,
-                        category = "Appearance",
+                        category = "UI Settings",
                         title = R.string.title_checkbox_small_icon_mode,
                         summary = R.string.summary_checkbox_small_icon_mode,
                         default = prefs.getBoolean(PreferenceConfiguration.SMALL_ICONS_PREF_STRING, PreferenceConfiguration.getDefaultSmallMode(context))
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.SMALL_ICONS_PREF_STRING, it) } },
                     SettingItem.Action(
-                        name = "list_languages",
-                        category = "Appearance",
+                        name = PreferenceConfiguration.LANGUAGE_PREF_STRING,
+                        category = "UI Settings",
                         title = R.string.title_language_list,
                         summary = R.string.summary_language_list,
                     ) {
@@ -418,28 +417,28 @@ class SettingsRepository(private val context: Context) {
                 items = listOf(
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.UNLOCK_FPS_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_unlock_fps,
                         summary = R.string.summary_unlock_fps,
                         default = prefs.getBoolean(PreferenceConfiguration.UNLOCK_FPS_STRING, PreferenceConfiguration.DEFAULT_UNLOCK_FPS)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.UNLOCK_FPS_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.REDUCE_REFRESH_RATE_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_checkbox_reduce_refresh_rate,
                         summary = R.string.summary_checkbox_reduce_refresh_rate,
                         default = prefs.getBoolean(PreferenceConfiguration.REDUCE_REFRESH_RATE_PREF_STRING, PreferenceConfiguration.DEFAULT_REDUCE_REFRESH_RATE)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.REDUCE_REFRESH_RATE_PREF_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.DISABLE_TOASTS_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_checkbox_disable_warnings,
                         summary = R.string.summary_checkbox_disable_warnings,
                         default = prefs.getBoolean(PreferenceConfiguration.DISABLE_TOASTS_PREF_STRING, PreferenceConfiguration.DEFAULT_DISABLE_TOASTS)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.DISABLE_TOASTS_PREF_STRING, it) } },
                     SettingItem.Selection(
                         name = PreferenceConfiguration.VIDEO_FORMAT_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_video_format,
                         summary = R.string.summary_video_format,
                         entries = context.resources.getStringArray(R.array.video_format_names).toList(),
@@ -449,34 +448,34 @@ class SettingsRepository(private val context: Context) {
                     ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_HDR_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_enable_hdr,
                         summary = R.string.summary_enable_hdr,
                         default = prefs.getBoolean(PreferenceConfiguration.ENABLE_HDR_PREF_STRING, PreferenceConfiguration.DEFAULT_ENABLE_HDR)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.ENABLE_HDR_PREF_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.FULL_RANGE_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_full_range,
                         summary = R.string.summary_full_range,
                         default = prefs.getBoolean(PreferenceConfiguration.FULL_RANGE_PREF_STRING, PreferenceConfiguration.DEFAULT_FULL_RANGE)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.FULL_RANGE_PREF_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_PERF_OVERLAY_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_enable_perf_overlay,
                         summary = R.string.summary_enable_perf_overlay,
                         default = prefs.getBoolean(PreferenceConfiguration.ENABLE_PERF_OVERLAY_STRING, PreferenceConfiguration.DEFAULT_ENABLE_PERF_OVERLAY)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.ENABLE_PERF_OVERLAY_STRING, it) } },
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.LATENCY_TOAST_PREF_STRING,
-                        category = "Advanced",
+                        category = "Advanced Settings",
                         title = R.string.title_enable_post_stream_toast,
                         summary = R.string.summary_enable_post_stream_toast,
                         default = prefs.getBoolean(PreferenceConfiguration.LATENCY_TOAST_PREF_STRING, PreferenceConfiguration.DEFAULT_LATENCY_TOAST)
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.LATENCY_TOAST_PREF_STRING, it) } },
                 ),
-            )
+            ),
         )
     }
 }
