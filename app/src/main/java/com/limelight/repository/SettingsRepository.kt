@@ -367,6 +367,16 @@ class SettingsRepository(private val context: Context) {
                 categoryTitle = R.string.category_ui_settings,
                 icon = Icons.Outlined.ColorLens,
                 items = listOf(
+                    SettingItem.Selection(
+                        name = PreferenceConfiguration.THEME_PREF_STRING,
+                        category = "UI Settings",
+                        title = R.string.title_checkbox_enable_pip,
+                        summary = R.string.summary_checkbox_enable_pip,
+                        entries = listOf("Light", "Dark", "System"),
+                        entryValues = listOf("light", "dark", "system"),
+                        currentValue = prefs.getString(PreferenceConfiguration.THEME_PREF_STRING, PreferenceConfiguration.DEFAULT_THEME) ?: PreferenceConfiguration.DEFAULT_THEME,
+                        onSelected = { prefs.edit { putString(PreferenceConfiguration.THEME_PREF_STRING, it) } }
+                    ),
                     SettingItem.Toggle(
                         name = PreferenceConfiguration.ENABLE_PIP_PREF_STRING,
                         category = "Appearance",

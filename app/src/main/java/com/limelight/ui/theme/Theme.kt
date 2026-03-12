@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import com.limelight.preferences.PreferenceConfiguration
 
 val LocalIsDarkTheme = compositionLocalOf { false }
 
@@ -31,11 +32,17 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MoonlightandroidTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: String = PreferenceConfiguration.DEFAULT_THEME,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (theme) {
+        "light" -> false
+        "dark" -> true
+        else -> isSystemInDarkTheme()
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

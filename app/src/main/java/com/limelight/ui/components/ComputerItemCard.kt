@@ -351,7 +351,7 @@ fun ComputerItemCardGridPreview() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Light version
-                MoonlightandroidTheme(darkTheme = false) {
+                MoonlightandroidTheme("light") {
                     Surface(
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.background,
@@ -375,7 +375,7 @@ fun ComputerItemCardGridPreview() {
                 }
 
                 // Dark version
-                MoonlightandroidTheme(darkTheme = true) {
+                MoonlightandroidTheme("dark") {
                     Surface(
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.background,
