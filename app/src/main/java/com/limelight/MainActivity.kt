@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.limelight.preferences.PreferenceConfiguration
 import com.limelight.ui.MainScreen
 import com.limelight.ui.SettingsScreen
-import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.ui.theme.MoonlightAndroidTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         prefs.registerOnSharedPreferenceChangeListener(listener)
 
         setContent {
-            MoonlightandroidTheme(theme = themeState) {
+            MoonlightAndroidTheme(theme = themeState) {
                 mainViewModel = viewModel()
                 val navController = rememberNavController()
 

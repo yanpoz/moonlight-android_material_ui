@@ -31,7 +31,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun MoonlightandroidTheme(
+fun MoonlightAndroidTheme(
     theme: String = PreferenceConfiguration.DEFAULT_THEME,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

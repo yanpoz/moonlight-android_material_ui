@@ -50,7 +50,7 @@ import com.limelight.computers.getComputerItemCardActionText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.LocalIsDarkTheme
-import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -351,7 +351,7 @@ fun ComputerItemCardGridPreview() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Light version
-                MoonlightandroidTheme("light") {
+                MoonlightAndroidTheme("light") {
                     Surface(
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.background,
@@ -375,7 +375,7 @@ fun ComputerItemCardGridPreview() {
                 }
 
                 // Dark version
-                MoonlightandroidTheme("dark") {
+                MoonlightAndroidTheme("dark") {
                     Surface(
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.background,

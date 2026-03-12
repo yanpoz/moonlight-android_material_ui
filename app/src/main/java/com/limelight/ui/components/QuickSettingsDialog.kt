@@ -50,7 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
-import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.ui.theme.MoonlightAndroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -273,7 +273,7 @@ fun QuickSettingsDialog(
 @Preview
 @Composable
 fun QuickSettingsDialogPreview() {
-    MoonlightandroidTheme {
+    MoonlightAndroidTheme {
         QuickSettingsDialog(
             fps = "60",
             onFpsChanged = {},

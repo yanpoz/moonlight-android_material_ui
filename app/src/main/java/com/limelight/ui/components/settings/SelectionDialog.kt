@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
 import com.limelight.ui.components.ScrollableAlertDialog
-import com.limelight.ui.theme.MoonlightandroidTheme
+import com.limelight.ui.theme.MoonlightAndroidTheme
 
 @Composable
 fun SelectionDialog(
@@ -72,7 +72,7 @@ fun SelectionDialog(
 @Preview
 @Composable
 fun SelectionDialogPreview() {
-    MoonlightandroidTheme {
+    MoonlightAndroidTheme {
         SelectionDialog(
             item = SettingItem.Selection(
                 name = "resolution",
