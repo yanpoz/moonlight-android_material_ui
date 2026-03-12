@@ -129,6 +129,7 @@ fun SliderDialog(
                         .focusable()
                         // TODO: should be focused style/state should look like in docs
                         // https://m3.material.io/components/sliders/specs
+                        // https://issuetracker.google.com/issues/460960020
                         .border(
                             width = if (showFocusedBorder) 2.dp else 0.dp,
                             color = if (showFocusedBorder) MaterialTheme.colorScheme.primary else Color.Transparent,

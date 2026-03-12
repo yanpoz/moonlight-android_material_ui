@@ -68,7 +68,6 @@ fun MoonlightAndroidTheme(
     CompositionLocalProvider(LocalIsDarkTheme provides darkTheme) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
             content = content
         )
     }

@@ -27,13 +27,6 @@ fun ItemCard(
         modifier = modifier
             .clip(CardDefaults.shape)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .onKeyEvent {
-                if (it.key == Key.DirectionCenter) {
-                    onLongClick()
-                    return@onKeyEvent true
-                }
-                false
-            }
             .focusable(),
         colors = colors,
         content = content
