@@ -117,31 +117,40 @@ fun ComputerItemCard(
                     fontFamily = FontFamily.Monospace,
                     color =
                         if (isDark)
-                            MaterialTheme.colorScheme.primary
+                            MaterialTheme.colorScheme.secondary
                         else
-                            MaterialTheme.colorScheme.primaryFixed,
+                            MaterialTheme.colorScheme.secondaryFixed,
                 ),
                 modifier = Modifier
                     .background(
                         shape = RoundedCornerShape(20.dp),
                         color =
                             if (isDark)
-                                MaterialTheme.colorScheme.onPrimaryFixed
+                                MaterialTheme.colorScheme.onSecondaryFixed
                             else
-                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary,
                     )
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                    .border(
+                        width = 1.dp,
+                        color =
+                            if (isDark)
+                                MaterialTheme.colorScheme.onSecondaryFixed
+                            else
+                                MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = getComputerStatusText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.primary
+                    color = getComputerStatusColor(computer)
                 ),
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = getComputerStatusColor(computer),
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
