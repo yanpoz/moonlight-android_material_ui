@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.computers.Computer
+import com.limelight.computers.getComputerActionTextColor
 import com.limelight.computers.getComputerAddressText
 import com.limelight.computers.getComputerStatusColor
 import com.limelight.computers.getComputerStatusText
@@ -145,12 +146,12 @@ fun ComputerItemCard(
             Text(
                 text = getComputerStatusText(computer),
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = getComputerStatusColor(computer)
+                    color = MaterialTheme.colorScheme.secondary
                 ),
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = getComputerStatusColor(computer),
+                        color = MaterialTheme.colorScheme.secondary,
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
@@ -160,7 +161,9 @@ fun ComputerItemCard(
 
             Text(
                 text = getComputerItemCardActionText(computer),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = getComputerActionTextColor(computer)
+                ),
             )
         }
 

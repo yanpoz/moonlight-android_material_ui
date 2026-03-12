@@ -79,8 +79,17 @@ fun getComputerStatusColor(computer: Computer): Color {
                 MaterialTheme.colorScheme.secondary
             }
         }
-        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.error
+        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.secondary
         ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+}
+
+@Composable
+fun getComputerActionTextColor(computer: Computer): Color {
+    return when (computer.details.state) {
+        ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.tertiary
+        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.tertiary
+        ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.secondary
     }
 }
 
