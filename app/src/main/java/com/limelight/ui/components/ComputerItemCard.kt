@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -123,6 +124,7 @@ fun ComputerItemCard(
                             MaterialTheme.colorScheme.secondaryFixed,
                 ),
                 modifier = Modifier
+                    .offset(x = (-6).dp)
                     .background(
                         shape = RoundedCornerShape(20.dp),
                         color =
@@ -149,6 +151,7 @@ fun ComputerItemCard(
                     color = MaterialTheme.colorScheme.secondary
                 ),
                 modifier = Modifier
+                    .offset(x = (-6).dp)
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.secondary,
