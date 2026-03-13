@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.outlined.Theaters
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,9 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.limelight.R
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingItem
 import com.limelight.ui.components.settings.ActionSettingListItem
@@ -37,15 +41,46 @@ import com.limelight.ui.components.settings.SelectionSettingListItem
 import com.limelight.ui.components.settings.SliderDialog
 import com.limelight.ui.components.settings.SliderSettingListItem
 import com.limelight.ui.components.settings.ToggleSettingListItem
+import com.limelight.viewmodel.SettingsUiState
 import com.limelight.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-@Preview(widthDp = 840, heightDp = 800, showBackground = true)
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    SettingsScreenContent(
+        uiState = uiState,
+        onCategorySelected = { viewModel.selectCategory(it) },
+        onSettingToggled = { categoryName, settingName, isEnabled ->
+            viewModel.onSettingToggled(categoryName, settingName, isEnabled)
+        },
+        onSettingSelected = { categoryName, settingName, newValue ->
+            viewModel.onSettingSelected(categoryName, settingName, newValue)
+        },
+        onSelectionItemClick = { viewModel.showSelectionDialog(it) },
+        onSliderItemClick = { viewModel.showSliderDialog(it) },
+        onDismissSelectionDialog = { viewModel.dismissSelectionDialog() },
+        onDismissSliderDialog = { viewModel.dismissSliderDialog() },
+        onSliderValueChanged = { categoryName, settingName, newValue ->
+            viewModel.onSliderValueChanged(categoryName, settingName, newValue)
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun SettingsScreenContent(
+    uiState: SettingsUiState,
+    onCategorySelected: (SettingCategory) -> Unit,
+    onSettingToggled: (String, String, Boolean) -> Unit,
+    onSettingSelected: (String, String, String) -> Unit,
+    onSelectionItemClick: (SettingItem.Selection) -> Unit,
+    onSliderItemClick: (SettingItem.Slider) -> Unit,
+    onDismissSelectionDialog: () -> Unit,
+    onDismissSliderDialog: () -> Unit,
+    onSliderValueChanged: (String, String, Float) -> Unit,
+) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<SettingCategoryItem>()
     val scope = rememberCoroutineScope()
 
@@ -55,7 +90,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
             uiState.categories.isNotEmpty() &&
             scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded
         ) {
-            viewModel.selectCategory(uiState.categories.first())
+            onCategorySelected(uiState.categories.first())
         }
     }
 
@@ -66,7 +101,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 SettingsCategoryList(
                     categories = uiState.categories,
                     onCategoryClick = { category ->
-                        viewModel.selectCategory(category)
+                        onCategorySelected(category)
                         scope.launch {
                             scaffoldNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
@@ -83,16 +118,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     SettingsCategoryDetail(
                         category = category,
                         onSettingToggled = { settingName, isEnabled ->
-                            viewModel.onSettingToggled(category.name, settingName, isEnabled)
-                        },
-                        onSettingSelected = { settingName, newValue ->
-                            viewModel.onSettingSelected(category.name, settingName, newValue)
+                            onSettingToggled(category.name, settingName, isEnabled)
                         },
                         onSelectionItemClick = { item ->
-                            viewModel.showSelectionDialog(item)
+                            onSelectionItemClick(item)
                         },
                         onSliderItemClick = { item ->
-                            viewModel.showSliderDialog(item)
+                            onSliderItemClick(item)
                         }
                     )
                 }
@@ -103,9 +135,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     uiState.openSelectionDialog?.let { item ->
         SelectionDialog(
             item = item,
-            onDismiss = { viewModel.dismissSelectionDialog() },
+            onDismiss = { onDismissSelectionDialog() },
             onSelected = { newValue ->
-                viewModel.onSettingSelected(item.category, item.name, newValue)
+                onSettingSelected(item.category, item.name, newValue)
             }
         )
     }
@@ -113,9 +145,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     uiState.openSliderDialog?.let { item ->
         SliderDialog(
             item = item,
-            onDismiss = { viewModel.dismissSliderDialog() },
+            onDismiss = { onDismissSliderDialog() },
             onValueChange = { newValue ->
-                viewModel.onSliderValueChanged(item.category, item.name, newValue)
+                onSliderValueChanged(item.category, item.name, newValue)
             }
         )
     }
@@ -165,7 +197,6 @@ fun SettingsCategoryList(
 fun SettingsCategoryDetail(
     category: SettingCategory,
     onSettingToggled: (String, Boolean) -> Unit,
-    onSettingSelected: (String, String) -> Unit,
     onSelectionItemClick: (SettingItem.Selection) -> Unit,
     onSliderItemClick: (SettingItem.Slider) -> Unit
 ) {
@@ -204,4 +235,57 @@ fun SettingsCategoryDetail(
             }
         }
     }
+}
+
+@Preview(showBackground = true, device = Devices.TABLET)
+@Composable
+fun SettingsScreenPreview() {
+    val mockCategories = listOf(
+        SettingCategory(
+            categoryTitle = R.string.category_basic_settings,
+            name = "Video",
+            icon = Icons.Outlined.Theaters,
+            items = listOf(
+                SettingItem.Toggle(
+                    name = "Stretch",
+                    category = "Video",
+                    title = R.string.title_checkbox_stretch_video,
+                    summary = R.string.title_checkbox_stretch_video,
+                    default = true,
+                    onToggle = {}
+                ),
+                SettingItem.Selection(
+                    name = "Resolution",
+                    category = "Video",
+                    title = R.string.title_resolution_list,
+                    summary = R.string.summary_resolution_list,
+                    entries = listOf("1080p", "720p"),
+                    entryValues = listOf("1080", "720"),
+                    currentValue = "1080",
+                    onSelected = {}
+                )
+            )
+        ),
+        SettingCategory(
+            categoryTitle = R.string.category_audio_settings,
+            name = "Audio",
+            icon = Icons.AutoMirrored.Outlined.VolumeUp,
+            items = emptyList()
+        )
+    )
+
+    SettingsScreenContent(
+        uiState = SettingsUiState(
+            categories = mockCategories,
+            selectedCategory = mockCategories.first()
+        ),
+        onCategorySelected = {},
+        onSettingToggled = { _, _, _ -> },
+        onSettingSelected = { _, _, _ -> },
+        onSelectionItemClick = {},
+        onSliderItemClick = {},
+        onDismissSelectionDialog = {},
+        onDismissSliderDialog = {},
+        onSliderValueChanged = { _, _, _ -> }
+    )
 }
