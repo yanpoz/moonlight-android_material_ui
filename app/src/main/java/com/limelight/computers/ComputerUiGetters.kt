@@ -66,7 +66,11 @@ fun getComputerStatusText(computer: Computer): String {
     if (computer.details.state == ComputerDetails.State.UNKNOWN) {
         return "Connecting..."
     }
-    return getComputerNetworkStateText(computer) + " • " + getComputerPairStatusText(computer)
+    val networkState = getComputerNetworkStateText(computer)
+    if (computer.details.pairState == null) {
+        return networkState
+    }
+    return networkState + " • " + getComputerPairStatusText(computer)
 }
 
 @Composable
