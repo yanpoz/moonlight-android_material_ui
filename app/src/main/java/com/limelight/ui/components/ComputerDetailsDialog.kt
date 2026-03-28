@@ -11,14 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.limelight.computers.Computer
-import com.limelight.computers.getComputerDetailsText
+import com.limelight.computers.detailsList
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import java.util.UUID
 
 @Composable
 fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
-    val computerDetailsText = getComputerDetailsText(computer)
+    val computerDetailsText = computer.detailsList
     ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = computer.details.name) },

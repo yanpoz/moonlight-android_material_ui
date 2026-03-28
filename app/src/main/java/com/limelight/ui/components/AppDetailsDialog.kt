@@ -10,12 +10,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.limelight.computers.getAppDetails
+import com.limelight.computers.detailsList
 import com.limelight.nvstream.http.NvApp
 
 @Composable
 fun AppDetailsDialog(app: NvApp, onDismiss: () -> Unit) {
-    val appDetails = getAppDetails(app)
+    val appDetails = app.detailsList
     ScrollableAlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = app.appName) },

@@ -44,11 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.computers.Computer
-import com.limelight.computers.getComputerActionTextColor
-import com.limelight.computers.getComputerAddressText
-import com.limelight.computers.getComputerStatusColor
-import com.limelight.computers.getComputerStatusText
-import com.limelight.computers.getComputerItemCardActionText
+import com.limelight.computers.actionTextColor
+import com.limelight.computers.addressText
+import com.limelight.computers.itemCardActionText
+import com.limelight.computers.statusColor
+import com.limelight.computers.statusText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.LocalIsDarkTheme
@@ -74,8 +74,6 @@ fun ComputerItemCard(
     canMoveUp: Boolean = true,
     canMoveDown: Boolean = true
 ) {
-    val isDark = LocalIsDarkTheme.current
-
     ItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
@@ -95,79 +93,21 @@ fun ComputerItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = computer.details.name,
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default
-                )
-
-                // Status indicator
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(VerySunnyShape)
-                        .background(getComputerStatusColor(computer))
-                )
+                Title(computer)
+                Indicator(computer)
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = getComputerAddressText(computer),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = FontFamily.Monospace,
-                    color =
-                        if (isDark)
-                            MaterialTheme.colorScheme.secondary
-                        else
-                            MaterialTheme.colorScheme.secondaryFixed,
-                ),
-                modifier = Modifier
-                    .offset(x = (-6).dp)
-                    .background(
-                        shape = RoundedCornerShape(20.dp),
-                        color =
-                            if (isDark)
-                                MaterialTheme.colorScheme.onSecondaryFixed
-                            else
-                                MaterialTheme.colorScheme.secondary,
-                    )
-                    .border(
-                        width = 1.dp,
-                        color =
-                            if (isDark)
-                                MaterialTheme.colorScheme.onSecondaryFixed
-                            else
-                                MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            )
+            ComputerAddressBadge(computer)
+
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = getComputerStatusText(computer),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.secondary
-                ),
-                modifier = Modifier
-                    .offset(x = (-6).dp)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            )
+
+            ComputerStatusBadge(computer)
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = getComputerItemCardActionText(computer),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = getComputerActionTextColor(computer)
-                ),
-            )
+            ComputerActionLabel(computer)
         }
 
         // TODO: replace with expressive menu, implement missing items
@@ -303,6 +243,89 @@ fun ComputerItemCard(
             )
         }
     }
+}
+
+@Composable
+private fun Title(computer: Computer, modifier: Modifier = Modifier) {
+    Text(
+        text = computer.details.name,
+        style = MaterialTheme.typography.headlineLarge,
+        fontWeight = FontWeight.Bold,
+        fontFamily = FontFamily.Default,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun Indicator(computer: Computer, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clip(VerySunnyShape)
+            .background(computer.statusColor)
+    )
+}
+
+@Composable
+private fun ComputerAddressBadge(computer: Computer, modifier: Modifier = Modifier) {
+    val isDark = LocalIsDarkTheme.current
+    Text(
+        text = computer.addressText,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            fontFamily = FontFamily.Monospace,
+            color = if (isDark)
+                MaterialTheme.colorScheme.secondary
+            else
+                MaterialTheme.colorScheme.secondaryFixed,
+        ),
+        modifier = modifier
+            .offset(x = (-6).dp)
+            .background(
+                shape = RoundedCornerShape(20.dp),
+                color = if (isDark)
+                    MaterialTheme.colorScheme.onSecondaryFixed
+                else
+                    MaterialTheme.colorScheme.secondary,
+            )
+            .border(
+                width = 1.dp,
+                color = if (isDark)
+                    MaterialTheme.colorScheme.onSecondaryFixed
+                else
+                    MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun ComputerStatusBadge(computer: Computer, modifier: Modifier = Modifier) {
+    Text(
+        text = computer.statusText,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.secondary
+        ),
+        modifier = modifier
+            .offset(x = (-6).dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun ComputerActionLabel(computer: Computer, modifier: Modifier = Modifier) {
+    Text(
+        text = computer.itemCardActionText,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = computer.actionTextColor
+        ),
+        modifier = modifier
+    )
 }
 
 @Preview(showBackground = true, widthDp = 700)

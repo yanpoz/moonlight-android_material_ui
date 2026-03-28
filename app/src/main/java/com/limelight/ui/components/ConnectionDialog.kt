@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.limelight.R
 import com.limelight.computers.Computer
-import com.limelight.computers.getComputerPairPinText
+import com.limelight.computers.pairPinText
+import com.limelight.computers.statusText
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.VerySunnyShape
@@ -93,7 +94,7 @@ fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () ->
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = getComputerPairPinText(computer),
+                            text = computer.pairPinText,
                             style = MaterialTheme.typography.displayMedium,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
