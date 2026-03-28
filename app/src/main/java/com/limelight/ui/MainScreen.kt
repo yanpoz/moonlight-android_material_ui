@@ -14,16 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -61,6 +53,7 @@ import com.limelight.ui.components.ComputerDetailsDialog
 import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.ConfirmationDialog
 import com.limelight.ui.components.ConnectionDialog
+import com.limelight.ui.components.MainTopAppBar
 import com.limelight.ui.components.ManualComputerAddDialog
 import com.limelight.ui.components.NetworkTestDialog
 import com.limelight.ui.components.QuickSettingsDialog
@@ -289,40 +282,12 @@ fun MainScreenContent(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            MediumTopAppBar(
+            MainTopAppBar(
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("Moonlight") },
-                navigationIcon = {
-                    IconButton(onClick = onShowManualAddDialog) {
-                        Icon(
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = stringResource(R.string.title_add_pc)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onShowQuickSettings) {
-                        Icon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = "Quick Settings"
-                        )
-                    }
-                    IconButton(onClick = onHelpClick) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = stringResource(R.string.help)
-                        )
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                },
+                onShowManualAddDialog = onShowManualAddDialog,
+                onShowQuickSettings = onShowQuickSettings,
+                onHelpClick = onHelpClick,
+                onSettingsClick = onSettingsClick
             )
         },
     ) { paddingValues ->
