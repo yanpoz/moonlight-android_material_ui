@@ -15,21 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Handshake
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,12 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.limelight.R
 import com.limelight.computers.Computer
 import com.limelight.computers.actionTextColor
 import com.limelight.computers.addressText
@@ -110,138 +95,21 @@ fun ComputerItemCard(
             ComputerActionLabel(computer)
         }
 
-        // TODO: replace with expressive menu, implement missing items
-        DropdownMenu(
-            modifier = Modifier.widthIn(min = 220.dp),
-            expanded = isMenuExpanded,
-            onDismissRequest = onDismissMenu
-        ) {
-            if (computer.details.state == ComputerDetails.State.OFFLINE ||
-                computer.details.state == ComputerDetails.State.UNKNOWN
-            ) {
-                // Send Wake-On-LAN
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
-                    leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
-                    onClick = {
-                        onDismissMenu()
-                        onSendWakeOnLan()
-                    }
-                )
-                HorizontalDivider()
-            } else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
-                // Pair PC
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.pcview_menu_pair_pc)) },
-                    leadingIcon = { Icon(Icons.Outlined.Handshake, null) },
-                    onClick = {
-                        onDismissMenu()
-                        onClick()
-                    }
-                )
-                HorizontalDivider()
-            } else {
-                if (computer.details.runningGameId == 0) {
-                    // Start Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
-                        onClick = {
-                            onDismissMenu()
-                            onClick()
-                        }
-                    )
-                } else {
-                    // Resume Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_resume)) },
-                        leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
-                        onClick = {
-                            onDismissMenu()
-                            onClick()
-                        }
-                    )
-                    // Quit Session
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.applist_menu_quit)) },
-                        leadingIcon = { Icon(Icons.Outlined.Close, null) },
-                        onClick = {
-                            onDismissMenu()
-                            onQuitRunningApp()
-                        }
-                    )
-                }
-                HorizontalDivider()
-            }
-            // Move Up
-            DropdownMenuItem(
-                text = { Text(text = "Move Up") },
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
-                enabled = canMoveUp,
-                onClick = {
-                    onDismissMenu()
-                    onMoveUp()
-                }
-            )
-            // Move Down
-            DropdownMenuItem(
-                text = { Text(text = "Move Down") },
-                leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
-                enabled = canMoveDown,
-                onClick = {
-                    onDismissMenu()
-                    onMoveDown()
-                }
-            )
-            HorizontalDivider()
-            // Test Network Connection
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_test_network)) },
-                // leadingIcon = { Icon(Icons.Outlined.Speed, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = {
-                    onDismissMenu()
-                    onTestNetwork()
-                }
-            )
-            // View Details
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.pcview_menu_details)) },
-                // leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ListAlt, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = {
-                    onDismissMenu()
-                    onComputerDetailsClicked()
-                }
-            )
-            // Create shortcut
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.applist_menu_scut)) },
-                // leadingIcon = { Icon(Icons.Outlined.StarOutline, null) },
-                leadingIcon = { Spacer(modifier = Modifier.size(24.dp)) },
-                onClick = { onDismissMenu() }
-            )
-            // Delete PC
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(R.string.pcview_menu_delete_pc),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        tint = MaterialTheme.colorScheme.error,
-                        contentDescription = null
-                    )
-                },
-                onClick = {
-                    onDismissMenu()
-                    onDeleteComputer()
-                }
-            )
-        }
+        ComputerItemMenu(
+            computer = computer,
+            isExpanded = isMenuExpanded,
+            onDismissRequest = onDismissMenu,
+            onSendWakeOnLan = onSendWakeOnLan,
+            onQuitRunningApp = onQuitRunningApp,
+            onComputerDetailsClicked = onComputerDetailsClicked,
+            onDeleteComputer = onDeleteComputer,
+            onMoveUp = onMoveUp,
+            onMoveDown = onMoveDown,
+            onTestNetwork = onTestNetwork,
+            onPairOrStart = onClick,
+            canMoveUp = canMoveUp,
+            canMoveDown = canMoveDown
+        )
     }
 }
 
