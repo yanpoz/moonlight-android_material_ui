@@ -12,38 +12,14 @@ import com.limelight.ui.components.dialogs.QuickSettingsDialog
 @Composable
 fun MainScreenDialogs(
     state: MainScreenUiState,
-    // Manual Computer Add
-    onManualComputerAddInputChanged: (String) -> Unit,
-    onManualComputerAddConfirm: () -> Unit,
-    onManualComputerAddDismiss: () -> Unit,
-    // Quick Settings
-    onQuickSettingsFpsChanged: (String) -> Unit,
-    onQuickSettingsResolutionChanged: (String) -> Unit,
-    onQuickSettingsBitrateChanged: (Float) -> Unit,
-    onQuickSettingsTouchscreenTrackpadChanged: (Boolean) -> Unit,
-    onQuickSettingsOnscreenControllerChanged: (Boolean) -> Unit,
-    onQuickSettingsHostAudioChanged: (Boolean) -> Unit,
-    onQuickSettingsMouseEmulationChanged: (Boolean) -> Unit,
-    onQuickSettingsVibrateOscChanged: (Boolean) -> Unit,
-    onQuickSettingsDismiss: () -> Unit,
-    // Connection
-    onConnectionInitiate: (String) -> Unit,
-    onConnectionCancel: () -> Unit,
-    // Details
-    onAppDetailsDismiss: () -> Unit,
-    onComputerDetailsDismiss: () -> Unit,
-    // Network Test
-    onComputerDismissNetworkTest: () -> Unit,
-    // Confirmation
-    onConfirmationConfirm: () -> Unit,
-    onConfirmationDismiss: () -> Unit,
+    actions: MainScreenActions
 ) {
     if (state.manualComputerAddUiState.showDialog) {
         ManualComputerAddDialog(
             inputIp = state.manualComputerAddUiState.inputIp,
-            onInputIpChange = onManualComputerAddInputChanged,
-            onAddComputer = onManualComputerAddConfirm,
-            onDismiss = onManualComputerAddDismiss,
+            onInputIpChange = actions.onManualComputerAddInputChanged,
+            onAddComputer = actions.onManualComputerAddConfirm,
+            onDismiss = actions.onManualComputerAddDismiss,
         )
     }
 
@@ -52,8 +28,8 @@ fun MainScreenDialogs(
         if (computer != null) {
             ConnectionDialog(
                 computer,
-                onConnect = { onConnectionInitiate(computer.details.uuid) },
-                onDismiss = onConnectionCancel
+                onConnect = { actions.onConnectionInitiate(computer.details.uuid) },
+                onDismiss = actions.onConnectionCancel
             )
         }
     }
@@ -62,7 +38,7 @@ fun MainScreenDialogs(
         state.appViewDetailsUiState.app?.let { app ->
             AppDetailsDialog(
                 app = app,
-                onDismiss = onAppDetailsDismiss,
+                onDismiss = actions.onAppDetailsDismiss,
             )
         }
     }
@@ -71,7 +47,7 @@ fun MainScreenDialogs(
         state.computerViewDetailsUiState.computer?.let { computer ->
             ComputerDetailsDialog(
                 computer = computer,
-                onDismiss = onComputerDetailsDismiss,
+                onDismiss = actions.onComputerDetailsDismiss,
             )
         }
     }
@@ -80,37 +56,37 @@ fun MainScreenDialogs(
         ConfirmationDialog(
             title = state.confirmationUiState.title,
             text = state.confirmationUiState.text,
-            onConfirm = onConfirmationConfirm,
-            onDismiss = onConfirmationDismiss
+            onConfirm = actions.onConfirmationConfirm,
+            onDismiss = actions.onConfirmationDismiss
         )
     }
 
     if (state.quickSettingsUiState.showDialog) {
         QuickSettingsDialog(
             fps = state.quickSettingsUiState.fps,
-            onFpsChanged = onQuickSettingsFpsChanged,
+            onFpsChanged = actions.onQuickSettingsFpsChanged,
             resolution = state.quickSettingsUiState.resolution,
-            onResolutionChanged = onQuickSettingsResolutionChanged,
+            onResolutionChanged = actions.onQuickSettingsResolutionChanged,
             bitrate = state.quickSettingsUiState.bitrate,
-            onBitrateChanged = onQuickSettingsBitrateChanged,
+            onBitrateChanged = actions.onQuickSettingsBitrateChanged,
             touchscreenTrackpad = state.quickSettingsUiState.touchscreenTrackpad,
-            onTouchscreenTrackpadChanged = onQuickSettingsTouchscreenTrackpadChanged,
+            onTouchscreenTrackpadChanged = actions.onQuickSettingsTouchscreenTrackpadChanged,
             onscreenController = state.quickSettingsUiState.onscreenController,
-            onOnscreenControllerChanged = onQuickSettingsOnscreenControllerChanged,
+            onOnscreenControllerChanged = actions.onQuickSettingsOnscreenControllerChanged,
             hostAudio = state.quickSettingsUiState.hostAudio,
-            onHostAudioChanged = onQuickSettingsHostAudioChanged,
+            onHostAudioChanged = actions.onQuickSettingsHostAudioChanged,
             mouseEmulation = state.quickSettingsUiState.mouseEmulation,
-            onMouseEmulationChanged = onQuickSettingsMouseEmulationChanged,
+            onMouseEmulationChanged = actions.onQuickSettingsMouseEmulationChanged,
             vibrateOsc = state.quickSettingsUiState.vibrateOsc,
-            onVibrateOscChanged = onQuickSettingsVibrateOscChanged,
-            onDismiss = onQuickSettingsDismiss
+            onVibrateOscChanged = actions.onQuickSettingsVibrateOscChanged,
+            onDismiss = actions.onQuickSettingsDismiss
         )
     }
 
     if (state.networkTestUiState.showDialog) {
         NetworkTestDialog(
             networkTestStatus = state.networkTestStatus,
-            onDismiss = onComputerDismissNetworkTest
+            onDismiss = actions.onComputerDismissNetworkTest
         )
     }
 }
