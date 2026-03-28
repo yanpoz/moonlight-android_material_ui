@@ -22,6 +22,7 @@ class MockMainViewModel : MainViewModel() {
         )
 
         val details1 = ComputerDetails()
+        details1.state = ComputerDetails.State.ONLINE
         details1.uuid = UUID.randomUUID().toString()
         details1.pairState = PairingManager.PairState.PAIRED
         details1.activeAddress = ComputerDetails.AddressTuple("192.168.1.100", 47989)
