@@ -50,6 +50,7 @@ import com.limelight.grid.assets.CachedAppAssetLoader
 import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.grid.assets.MemoryAssetLoader
 import com.limelight.grid.assets.NetworkAssetLoader
+import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.preferences.PreferenceConfiguration
@@ -64,7 +65,6 @@ import com.limelight.ui.components.ManualComputerAddDialog
 import com.limelight.ui.components.NetworkTestDialog
 import com.limelight.ui.components.QuickSettingsDialog
 import com.limelight.viewmodel.MainViewModel
-import com.limelight.viewmodel.MockMainViewModel
 import com.limelight.viewmodel.components.AppMenuUiState
 import com.limelight.viewmodel.components.AppViewDetailsUiState
 import com.limelight.viewmodel.components.ComputerMenuUiState
@@ -74,6 +74,7 @@ import com.limelight.viewmodel.components.ConnectionDialogUiState
 import com.limelight.viewmodel.components.ManualComputerAddingUiState
 import com.limelight.viewmodel.components.NetworkTestUiState
 import com.limelight.viewmodel.components.QuickSettingsUiState
+import java.util.UUID
 
 /**
  * UI State for the Main Screen.
@@ -514,8 +515,33 @@ fun MainScreenContent(
 @Preview
 @Composable
 fun MainScreenPreview() {
-    val mockViewModel = MockMainViewModel()
-    val computers = mockViewModel.computers.collectAsState().value
+    val computers = remember {
+        val apps = listOf(
+            NvApp("App 1", 1, false),
+            NvApp("App 2", 2, true)
+        )
+
+        val details1 = ComputerDetails().apply {
+            state = ComputerDetails.State.ONLINE
+            uuid = UUID.randomUUID().toString()
+            pairState = PairingManager.PairState.PAIRED
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.100", 47989)
+            name = "Gaming PC"
+            runningGameId = 2
+        }
+
+        val details2 = ComputerDetails().apply {
+            uuid = UUID.randomUUID().toString()
+            pairState = PairingManager.PairState.NOT_PAIRED
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.101", 47989)
+            name = "Workstation"
+        }
+
+        listOf(
+            Computer(details = details1, apps = apps),
+            Computer(details = details2, apps = emptyList())
+        )
+    }
 
     MainScreenContent(
         state = MainScreenUiState(
