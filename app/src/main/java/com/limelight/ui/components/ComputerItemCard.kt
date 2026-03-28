@@ -34,11 +34,10 @@ import com.limelight.computers.addressText
 import com.limelight.computers.itemCardActionText
 import com.limelight.computers.statusColor
 import com.limelight.computers.statusText
-import com.limelight.nvstream.http.ComputerDetails
-import com.limelight.nvstream.http.PairingManager
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
+import com.limelight.ui.utils.SampleData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -199,52 +198,11 @@ private fun ComputerActionLabel(computer: Computer, modifier: Modifier = Modifie
 @Preview(showBackground = true, widthDp = 700)
 @Composable
 fun ComputerItemCardGridPreview() {
-    val onlinePairedComputer = Computer(
-        details = ComputerDetails().apply {
-            name = "Gaming PC"
-            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
-            state = ComputerDetails.State.ONLINE
-            pairState = PairingManager.PairState.PAIRED
-            runningGameId = 0
-        },
-        apps = emptyList()
-    )
-    val onlineUnpairedComputer = Computer(
-        details = ComputerDetails().apply {
-            name = "Gaming PC"
-            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
-            state = ComputerDetails.State.ONLINE
-            pairState = PairingManager.PairState.NOT_PAIRED
-            runningGameId = 0
-        },
-        apps = emptyList()
-    )
-    val offlineComputer = Computer(
-        details = ComputerDetails().apply {
-            name = "Offline PC"
-            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
-            state = ComputerDetails.State.OFFLINE
-            pairState = PairingManager.PairState.PAIRED
-            runningGameId = 0
-        },
-        apps = emptyList()
-    )
-    val unknownComputer = Computer(
-        details = ComputerDetails().apply {
-            name = "Unknown PC"
-            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
-            state = ComputerDetails.State.UNKNOWN
-            pairState = PairingManager.PairState.PAIRED
-            runningGameId = 0
-        },
-        apps = emptyList()
-    )
-
     val computerStates = listOf(
-        "OnlinePaired" to onlinePairedComputer,
-        "OnlineUnpaired" to onlineUnpairedComputer,
-        "Offline" to offlineComputer,
-        "Unknown" to unknownComputer
+        "OnlinePaired" to SampleData.OnlinePairedComputer,
+        "OnlineUnpaired" to SampleData.OnlineUnpairedComputer,
+        "Offline" to SampleData.OfflineComputer,
+        "Unknown" to SampleData.UnknownComputer
     )
 
     Column(
