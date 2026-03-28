@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.dialogs
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton

@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
-import com.limelight.ui.components.ScrollableAlertDialog
+import com.limelight.ui.components.dialogs.ScrollableAlertDialog
 import com.limelight.ui.theme.MoonlightAndroidTheme
 
 @Composable

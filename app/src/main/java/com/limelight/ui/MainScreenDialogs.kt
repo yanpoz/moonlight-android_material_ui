@@ -1,13 +1,13 @@
 package com.limelight.ui
 
 import androidx.compose.runtime.Composable
-import com.limelight.ui.components.AppDetailsDialog
-import com.limelight.ui.components.ComputerDetailsDialog
-import com.limelight.ui.components.ConfirmationDialog
-import com.limelight.ui.components.ConnectionDialog
-import com.limelight.ui.components.ManualComputerAddDialog
-import com.limelight.ui.components.NetworkTestDialog
-import com.limelight.ui.components.QuickSettingsDialog
+import com.limelight.ui.components.dialogs.AppDetailsDialog
+import com.limelight.ui.components.dialogs.ComputerDetailsDialog
+import com.limelight.ui.components.dialogs.ConfirmationDialog
+import com.limelight.ui.components.dialogs.ConnectionDialog
+import com.limelight.ui.components.dialogs.ManualComputerAddDialog
+import com.limelight.ui.components.dialogs.NetworkTestDialog
+import com.limelight.ui.components.dialogs.QuickSettingsDialog
 
 @Composable
 fun MainScreenDialogs(

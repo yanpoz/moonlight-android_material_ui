@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.dialogs
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box

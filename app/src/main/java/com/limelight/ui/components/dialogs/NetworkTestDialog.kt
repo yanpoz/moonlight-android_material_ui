@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.dialogs
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

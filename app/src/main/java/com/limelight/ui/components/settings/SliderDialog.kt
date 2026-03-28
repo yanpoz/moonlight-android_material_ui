@@ -2,7 +2,6 @@ package com.limelight.ui.components.settings
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.repository.SettingItem
-import com.limelight.ui.components.ScrollableAlertDialog
+import com.limelight.ui.components.dialogs.ScrollableAlertDialog
 import kotlinx.coroutines.delay
 
 @Composable

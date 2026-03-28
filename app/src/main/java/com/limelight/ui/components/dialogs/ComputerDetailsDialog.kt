@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,19 +10,22 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.limelight.computers.Computer
 import com.limelight.computers.detailsList
-import com.limelight.nvstream.http.NvApp
+import com.limelight.nvstream.http.ComputerDetails
+import com.limelight.nvstream.http.PairingManager
+import java.util.UUID
 
 @Composable
-fun AppDetailsDialog(app: NvApp, onDismiss: () -> Unit) {
-    val appDetails = app.detailsList
+fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
+    val computerDetailsText = computer.detailsList
     ScrollableAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = app.appName) },
+        title = { Text(text = computer.details.name) },
         content = {
             SelectionContainer {
                 Column {
-                    appDetails.forEachIndexed { index, (key, value) ->
+                    computerDetailsText.forEachIndexed { index, (key, value) ->
                         Column {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -33,10 +36,10 @@ fun AppDetailsDialog(app: NvApp, onDismiss: () -> Unit) {
                                 )
                                 Text(
                                     text = value,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1.7f)
                                 )
                             }
-                            if (index < appDetails.lastIndex) {
+                            if (index < computerDetailsText.lastIndex) {
                                 HorizontalDivider()
                             }
                         }
@@ -53,11 +56,16 @@ fun AppDetailsDialog(app: NvApp, onDismiss: () -> Unit) {
 
 @Preview
 @Composable
-fun AppDetailsDialogPreview() {
-    val app = NvApp().apply {
-        appName = "My Awesome Game"
-        appId = 12345
-        isHdrSupported = true
+fun ComputerDetailsDialogPreview() {
+    val computerDetails = ComputerDetails().apply {
+        name = "My Gaming PC"
+        state = ComputerDetails.State.ONLINE
+        pairState = PairingManager.PairState.PAIRED
+        macAddress = "00:11:22:33:44:55"
+        localAddress = ComputerDetails.AddressTuple("192.168.1.100", 47989)
+        remoteAddress = ComputerDetails.AddressTuple("123.45.67.89", 47989)
+        uuid = UUID.randomUUID().toString()
     }
-    AppDetailsDialog(app = app, onDismiss = {})
+    val computer = Computer(details = computerDetails)
+    ComputerDetailsDialog(computer = computer, onDismiss = {})
 }
