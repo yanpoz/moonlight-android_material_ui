@@ -37,7 +37,7 @@ import com.limelight.computers.statusText
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
-import com.limelight.ui.utils.SampleData
+import com.limelight.ui.utils.SampleComputers
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -199,10 +199,10 @@ private fun ComputerActionLabel(computer: Computer, modifier: Modifier = Modifie
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
-        "OnlinePaired" to SampleData.OnlinePairedComputer,
-        "OnlineUnpaired" to SampleData.OnlineUnpairedComputer,
-        "Offline" to SampleData.OfflineComputer,
-        "Unknown" to SampleData.UnknownComputer
+        "OnlinePaired" to SampleComputers.OnlinePairedComputer,
+        "OnlineUnpaired" to SampleComputers.OnlineUnpairedComputer,
+        "Offline" to SampleComputers.OfflineComputer,
+        "Unknown" to SampleComputers.UnknownComputer
     )
 
     Column(

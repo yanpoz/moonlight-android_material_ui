@@ -4,7 +4,7 @@ import com.limelight.computers.Computer
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 
-object SampleData {
+object SampleComputers {
     val OnlinePairedComputer = Computer(
         details = ComputerDetails().apply {
             name = "Gaming PC"
