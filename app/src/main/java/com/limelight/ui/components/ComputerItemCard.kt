@@ -193,7 +193,7 @@ private fun ComputerActionLabel(actionText: String, actionTextColor: Color, modi
     )
 }
 
-@Preview(showBackground = true, widthDp = 600)
+@Preview(showBackground = true, widthDp = 700, heightDp = 1000)
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
