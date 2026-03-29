@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -10,9 +10,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

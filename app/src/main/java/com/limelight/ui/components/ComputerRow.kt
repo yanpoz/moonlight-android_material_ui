@@ -25,6 +25,8 @@ import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.grid.assets.MemoryAssetLoader
 import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.PairingManager
+import com.limelight.ui.components.cards.AppItemCard
+import com.limelight.ui.components.cards.ComputerItemCard
 import com.limelight.viewmodel.MainScreenActions
 import com.limelight.viewmodel.components.AppMenuUiState
 import com.limelight.viewmodel.components.ComputerMenuUiState
@@ -92,8 +94,10 @@ fun ComputerRow(
                 modifier = Modifier
                     .fillMaxHeight()
                     .aspectRatio(16f / 9f)
-                    .then(if (isFirstComputer)
-                        Modifier.focusRequester(focusRequester) else Modifier)
+                    .then(
+                        if (isFirstComputer)
+                            Modifier.focusRequester(focusRequester) else Modifier
+                    )
             )
         }
         // AppItems

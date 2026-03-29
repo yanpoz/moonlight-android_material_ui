@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.computers.Computer
 import com.limelight.computers.toUiState
+import com.limelight.ui.components.menus.ComputerItemMenu
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape

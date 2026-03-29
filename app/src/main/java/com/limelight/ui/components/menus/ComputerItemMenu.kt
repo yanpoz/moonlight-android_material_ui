@@ -1,4 +1,4 @@
-package com.limelight.ui.components
+package com.limelight.ui.components.menus
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
