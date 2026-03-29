@@ -1,4 +1,4 @@
-package com.limelight.ui
+package com.limelight.ui.components
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +25,6 @@ import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.grid.assets.MemoryAssetLoader
 import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.PairingManager
-import com.limelight.ui.components.AppItemCard
-import com.limelight.ui.components.ComputerItemCard
 import com.limelight.viewmodel.MainScreenActions
 import com.limelight.viewmodel.components.AppMenuUiState
 import com.limelight.viewmodel.components.ComputerMenuUiState
