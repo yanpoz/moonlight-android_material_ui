@@ -169,6 +169,12 @@ fun MainScreenContent(
     )
     val focusRequester = remember { FocusRequester() }
 
+    LaunchedEffect(uiState.computers) {
+        if (uiState.computers.isNotEmpty()) {
+            focusRequester.requestFocus()
+        }
+    }
+
 // TODO: return pull to refresh when 'enabled' property is added to PullToRefreshBox
 // https://issuetracker.google.com/issues/369044003
 //    PullToRefreshBox(
@@ -215,12 +221,6 @@ fun MainScreenContent(
                         isLastComputer = computer == uiState.computers.last(),
                         focusRequester = focusRequester
                     )
-                }
-            }
-
-            LaunchedEffect(uiState.computers) {
-                if (uiState.computers.isNotEmpty()) {
-                    focusRequester.requestFocus()
                 }
             }
         }

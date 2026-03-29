@@ -26,6 +26,7 @@ data class SettingsActions(
     val onSliderValueChanged: (String, String, Float) -> Unit = { _, _, _ -> }
 )
 
+
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: SettingsRepository = SettingsRepository(application)

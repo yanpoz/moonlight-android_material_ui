@@ -32,10 +32,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * UI State for the Main Screen.
- * Contains all the data required to render the MainScreenContent.
- */
 data class MainScreenUiState(
     val computers: List<Computer> = emptyList(),
     val isRefreshing: Boolean = false,
@@ -52,10 +48,7 @@ data class MainScreenUiState(
     val quickSettingsUiState: QuickSettingsUiState = QuickSettingsUiState()
 )
 
-/**
- * Actions for the Main Screen.
- * Holds all event handlers to keep the screen composable clean.
- */
+
 data class MainScreenActions(
     val onSettingsClick: () -> Unit = {},
     val onHelpClick: () -> Unit = {},
