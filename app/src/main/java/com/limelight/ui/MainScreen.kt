@@ -1,20 +1,12 @@
 package com.limelight.ui
 
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.preference.PreferenceManager
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,33 +22,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.limelight.R
 import com.limelight.computers.Computer
-import com.limelight.computers.toUiState
-import com.limelight.grid.assets.CachedAppAssetLoader
-import com.limelight.grid.assets.DiskAssetLoader
-import com.limelight.grid.assets.MemoryAssetLoader
-import com.limelight.grid.assets.NetworkAssetLoader
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.preferences.PreferenceConfiguration
-import com.limelight.ui.components.AppItemCard
-import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.MainTopAppBar
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.viewmodel.MainScreenActions
 import com.limelight.viewmodel.MainScreenUiState
 import com.limelight.viewmodel.MainViewModel
 import java.util.UUID
+import android.preference.PreferenceManager
 
 
 /**
@@ -198,7 +182,6 @@ fun MainScreenContent(
     uiState: MainScreenUiState,
     actions: MainScreenActions,
 ) {
-    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
@@ -240,85 +223,16 @@ fun MainScreenContent(
                     .padding(paddingValues)
             ) {
                 items(uiState.computers, key = { it.details.uuid }) { computer ->
-                    val assetLoader = remember(computer.details, uiState.uniqueId) {
-                        val ART_WIDTH_PX = 300
-                        val LARGE_WIDTH_DP = 150
-                        val dpi = context.resources.displayMetrics.densityDpi
-                        val dp = LARGE_WIDTH_DP
-                        var scalingDivisor = ART_WIDTH_PX / (dp * (dpi / 160.0))
-                        if (scalingDivisor < 1.0) {
-                            scalingDivisor = 1.0
-                        }
-
-                        CachedAppAssetLoader(
-                            computer.details,
-                            scalingDivisor,
-                            NetworkAssetLoader(context, uiState.uniqueId ?: ""),
-                            MemoryAssetLoader(),
-                            DiskAssetLoader(context),
-                            BitmapFactory.decodeResource(
-                                context.resources, R.drawable.no_app_image)
-                        )
-                    }
-
-                    LazyRow(
-                        modifier = Modifier
-                            .height(200.dp) // Fixed height for the row of items
-                            .padding(vertical = 16.dp),
-                        contentPadding = PaddingValues(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // ComputerItem as the first item
-                        item(key = computer.details.uuid) {
-                            ComputerItemCard(
-                                uiState = computer.toUiState(),
-                                computer = computer,
-                                isMenuExpanded = uiState.computerMenuUiState.computerUuid == computer.details.uuid,
-                                onDismissMenu = actions.onComputerMenuDismiss,
-                                onSendWakeOnLan = { actions.onComputerWakeOnLan(computer.details.uuid) },
-                                onQuitRunningApp = { actions.onComputerQuitRunningApp(computer) },
-                                onComputerDetailsClicked = { actions.onComputerDetailsClick(computer) },
-                                onMoveUp = { actions.onComputerMoveUp(computer.details.uuid) },
-                                onMoveDown = { actions.onComputerMoveDown(computer.details.uuid) },
-                                onTestNetwork = actions.onComputerTestNetwork,
-                                onClick = { actions.onConnectionInitiate(computer.details.uuid) },
-                                onLongClick = { actions.onComputerMenuOpen(computer.details.uuid) },
-                                canMoveUp = computer != uiState.computers.first(),
-                                canMoveDown = computer != uiState.computers.last(),
-                                onDeleteComputer = { actions.onComputerDelete(computer) },
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(16f / 9f)
-                                    .then(if (uiState.computers.first() == computer)
-                                        Modifier.focusRequester(focusRequester) else Modifier)
-                            )
-                        }
-                        // AppItems
-                        if (computer.details.pairState == PairingManager.PairState.PAIRED) {
-                            items(computer.apps, key = { it.appId }) { app ->
-                                AppItemCard(
-                                    app = app,
-                                    assetLoader = assetLoader,
-                                    runningGameId = computer.details.runningGameId,
-                                    isMenuExpanded = uiState.appMenuUiState.appId == app.appId &&
-                                            uiState.appMenuUiState.computerUuid == computer.details.uuid,
-                                    onDismissMenu = actions.onAppMenuDismiss,
-                                    onQuitApp = { actions.onAppQuit(app, computer.details.uuid) },
-                                    onAppDetailsClicked = { actions.onAppDetailsClick(app) },
-                                    onMoveLeft = { actions.onAppMoveUp(computer.details.uuid, app.appId) },
-                                    onMoveRight = { actions.onAppMoveDown(computer.details.uuid, app.appId) },
-                                    onClick = { actions.onLaunchApp(app, computer.details.uuid) },
-                                    onLongClick = { actions.onAppMenuOpen(app.appId, computer.details.uuid) },
-                                    canMoveLeft = app != computer.apps.first(),
-                                    canMoveRight = app != computer.apps.last(),
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .aspectRatio(2f / 3f)
-                                )
-                            }
-                        }
-                    }
+                    ComputerRow(
+                        computer = computer,
+                        uniqueId = uiState.uniqueId,
+                        computerMenuUiState = uiState.computerMenuUiState,
+                        appMenuUiState = uiState.appMenuUiState,
+                        actions = actions,
+                        isFirstComputer = computer == uiState.computers.first(),
+                        isLastComputer = computer == uiState.computers.last(),
+                        focusRequester = focusRequester
+                    )
                 }
             }
 
