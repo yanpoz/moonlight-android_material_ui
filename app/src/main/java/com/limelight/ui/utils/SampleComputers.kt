@@ -5,6 +5,17 @@ import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 
 object SampleComputers {
+    val RunningGameComputer = Computer(
+        details = ComputerDetails().apply {
+            name = "Running DOOM"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
+            state = ComputerDetails.State.ONLINE
+            pairState = PairingManager.PairState.PAIRED
+            runningGameId = 456
+        },
+        apps = emptyList()
+    )
+
     val OnlinePairedComputer = Computer(
         details = ComputerDetails().apply {
             name = "Online Paired"

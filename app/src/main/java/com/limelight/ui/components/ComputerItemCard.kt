@@ -78,17 +78,11 @@ fun ComputerItemCard(
                 Title(uiState.name)
                 Indicator(uiState.statusColor)
             }
-
             Spacer(modifier = Modifier.height(4.dp))
-
             ComputerAddressBadge(uiState.address)
-
             Spacer(modifier = Modifier.height(4.dp))
-
             ComputerStatusBadge(uiState.statusText)
-
             Spacer(modifier = Modifier.weight(1f))
-
             ComputerActionLabel(uiState.actionText, uiState.actionTextColor)
         }
 
@@ -193,10 +187,11 @@ private fun ComputerActionLabel(actionText: String, actionTextColor: Color, modi
     )
 }
 
-@Preview(showBackground = true, widthDp = 700, heightDp = 1000)
+@Preview(showBackground = true, widthDp = 700, heightDp = 1200)
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
+        "Running game" to SampleComputers.RunningGameComputer,
         "Online Paired" to SampleComputers.OnlinePairedComputer,
         "Online Unpaired" to SampleComputers.OnlineUnpairedComputer,
         "Offline" to SampleComputers.OfflineComputer,
