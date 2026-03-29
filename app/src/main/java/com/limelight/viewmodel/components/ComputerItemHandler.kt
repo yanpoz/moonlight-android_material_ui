@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import com.limelight.computers.Computer
 
 data class ComputerItemUiState(
-    val uuid: String,
     val name: String,
     val address: String,
     val statusText: String,

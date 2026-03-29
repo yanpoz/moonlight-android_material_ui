@@ -78,7 +78,6 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     return ComputerItemUiState(
-        uuid = details.uuid,
         name = details.name ?: "Unknown",
         address = address,
         statusText = statusText,
