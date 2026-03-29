@@ -6,9 +6,11 @@ import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,6 +52,7 @@ import com.limelight.repository.ComputerRepository
 import com.limelight.ui.components.AppItemCard
 import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.MainTopAppBar
+import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.viewmodel.MainViewModel
 import com.limelight.viewmodel.components.AppMenuUiState
 import com.limelight.viewmodel.components.AppViewDetailsUiState
@@ -414,9 +417,9 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
 
 
 /**
- * Preview for the Main Screen using mock data.
+ * Preview for the Main Screen showing both Light and Dark themes side-by-side.
  */
-@Preview
+@Preview(showBackground = true, widthDp = 680)
 @Composable
 fun MainScreenPreview() {
     val computers = remember {
@@ -447,10 +450,18 @@ fun MainScreenPreview() {
         )
     }
 
-    MainScreenContent(
-        state = MainScreenUiState(
-            computers = computers,
-        ),
-        actions = MainScreenActions()
-    )
+    Row(modifier = Modifier.fillMaxWidth()) {
+        listOf("light", "dark").forEach { theme ->
+            Box(modifier = Modifier.weight(1f)) {
+                MoonlightAndroidTheme(theme = theme, dynamicColor = false) {
+                    MainScreenContent(
+                        state = MainScreenUiState(
+                            computers = computers,
+                        ),
+                        actions = MainScreenActions()
+                    )
+                }
+            }
+        }
+    }
 }
