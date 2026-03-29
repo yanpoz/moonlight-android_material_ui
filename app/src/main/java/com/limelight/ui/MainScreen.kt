@@ -146,7 +146,7 @@ data class MainScreenActions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenContent(
-    state: MainScreenUiState,
+    uiState: MainScreenUiState,
     actions: MainScreenActions,
 ) {
     val context = LocalContext.current
@@ -173,7 +173,7 @@ fun MainScreenContent(
             )
         },
     ) { paddingValues ->
-        if (state.computers.isEmpty()) {
+        if (uiState.computers.isEmpty()) {
             // Show empty state
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -190,8 +190,8 @@ fun MainScreenContent(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                items(state.computers, key = { it.details.uuid }) { computer ->
-                    val assetLoader = remember(computer.details, state.uniqueId) {
+                items(uiState.computers, key = { it.details.uuid }) { computer ->
+                    val assetLoader = remember(computer.details, uiState.uniqueId) {
                         val ART_WIDTH_PX = 300
                         val LARGE_WIDTH_DP = 150
                         val dpi = context.resources.displayMetrics.densityDpi
@@ -204,7 +204,7 @@ fun MainScreenContent(
                         CachedAppAssetLoader(
                             computer.details,
                             scalingDivisor,
-                            NetworkAssetLoader(context, state.uniqueId ?: ""),
+                            NetworkAssetLoader(context, uiState.uniqueId ?: ""),
                             MemoryAssetLoader(),
                             DiskAssetLoader(context),
                             BitmapFactory.decodeResource(
@@ -225,7 +225,7 @@ fun MainScreenContent(
                             ComputerItemCard(
                                 uiState = computer.toUiState(),
                                 computer = computer,
-                                isMenuExpanded = state.computerMenuUiState.computerUuid == computer.details.uuid,
+                                isMenuExpanded = uiState.computerMenuUiState.computerUuid == computer.details.uuid,
                                 onDismissMenu = actions.onComputerMenuDismiss,
                                 onSendWakeOnLan = { actions.onComputerWakeOnLan(computer.details.uuid) },
                                 onQuitRunningApp = { actions.onComputerQuitRunningApp(computer) },
@@ -235,13 +235,13 @@ fun MainScreenContent(
                                 onTestNetwork = actions.onComputerTestNetwork,
                                 onClick = { actions.onConnectionInitiate(computer.details.uuid) },
                                 onLongClick = { actions.onComputerMenuOpen(computer.details.uuid) },
-                                canMoveUp = computer != state.computers.first(),
-                                canMoveDown = computer != state.computers.last(),
+                                canMoveUp = computer != uiState.computers.first(),
+                                canMoveDown = computer != uiState.computers.last(),
                                 onDeleteComputer = { actions.onComputerDelete(computer) },
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(16f / 9f)
-                                    .then(if (state.computers.first() == computer)
+                                    .then(if (uiState.computers.first() == computer)
                                         Modifier.focusRequester(focusRequester) else Modifier)
                             )
                         }
@@ -252,8 +252,8 @@ fun MainScreenContent(
                                     app = app,
                                     assetLoader = assetLoader,
                                     runningGameId = computer.details.runningGameId,
-                                    isMenuExpanded = state.appMenuUiState.appId == app.appId &&
-                                            state.appMenuUiState.computerUuid == computer.details.uuid,
+                                    isMenuExpanded = uiState.appMenuUiState.appId == app.appId &&
+                                            uiState.appMenuUiState.computerUuid == computer.details.uuid,
                                     onDismissMenu = actions.onAppMenuDismiss,
                                     onQuitApp = { actions.onAppQuit(app, computer.details.uuid) },
                                     onAppDetailsClicked = { actions.onAppDetailsClick(app) },
@@ -273,8 +273,8 @@ fun MainScreenContent(
                 }
             }
 
-            LaunchedEffect(state.computers) {
-                if (state.computers.isNotEmpty()) {
+            LaunchedEffect(uiState.computers) {
+                if (uiState.computers.isNotEmpty()) {
                     focusRequester.requestFocus()
                 }
             }
@@ -283,7 +283,7 @@ fun MainScreenContent(
 //    }
 
     MainScreenDialogs(
-        state = state,
+        state = uiState,
         actions = actions
     )
 }
@@ -398,7 +398,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     MainScreenContent(
-        state = MainScreenUiState(
+        uiState = MainScreenUiState(
             computers = computers,
             isRefreshing = isRefreshing,
             uniqueId = uniqueId,
@@ -457,7 +457,7 @@ fun MainScreenPreview() {
             Box(modifier = Modifier.weight(1f)) {
                 MoonlightAndroidTheme(theme = theme, dynamicColor = false) {
                     MainScreenContent(
-                        state = MainScreenUiState(
+                        uiState = MainScreenUiState(
                             computers = computers,
                         ),
                         actions = MainScreenActions()
