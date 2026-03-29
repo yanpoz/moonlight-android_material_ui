@@ -35,6 +35,7 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.preferences.PreferenceConfiguration
 import com.limelight.ui.components.ComputerRow
+import com.limelight.ui.components.MainScreenDialogs
 import com.limelight.ui.components.MainTopAppBar
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.viewmodel.MainScreenActions

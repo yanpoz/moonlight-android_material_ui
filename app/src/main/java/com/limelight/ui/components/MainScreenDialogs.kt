@@ -1,4 +1,4 @@
-package com.limelight.ui
+package com.limelight.ui.components
 
 import androidx.compose.runtime.Composable
 import com.limelight.ui.components.dialogs.AppDetailsDialog
