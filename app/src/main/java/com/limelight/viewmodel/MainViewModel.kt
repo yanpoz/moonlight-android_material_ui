@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+
 data class MainScreenUiState(
     val computers: List<Computer> = emptyList(),
     val isRefreshing: Boolean = false,
@@ -47,7 +48,6 @@ data class MainScreenUiState(
     val confirmationUiState: ConfirmationDialogUiState = ConfirmationDialogUiState(),
     val quickSettingsUiState: QuickSettingsUiState = QuickSettingsUiState()
 )
-
 
 data class MainScreenActions(
     val onSettingsClick: () -> Unit = {},
@@ -98,6 +98,7 @@ data class MainScreenActions(
     val onConfirmationDismiss: () -> Unit = {},
 )
 
+
 open class MainViewModel(
     private val computerRepository: ComputerRepository = ComputerRepository()
 ) : ViewModel()
@@ -111,11 +112,16 @@ open class MainViewModel(
     }
 
     open val computers: StateFlow<List<Computer>> = computerRepository.computers
-        .map { list ->
+        .map {
+            list ->
             list.sortedWith(
-                compareBy<Computer> { it.position }.thenBy { it.details.name })
+                compareBy<Computer> { it.position }.thenBy { it.details.name }
+            )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(
+            scope = viewModelScope, initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5000),
+        )
     open val uniqueId: StateFlow<String?> = computerRepository.uniqueId
     open val networkTestStatus: StateFlow<ComputerRepository.NetworkTestStatus> =
         computerRepository.networkTestStatus
@@ -123,24 +129,31 @@ open class MainViewModel(
     val confirmationHandler = ConfirmationHandler()
     val computerItemHandler = ComputerItemHandler(
         confirmationHandler = confirmationHandler,
-        quitRunningApp = { context, computer ->
-            computer.getRunningApp()?.let { app ->
+        quitRunningApp = {
+            context, computer ->
+            computer.getRunningApp()?.let {
+                app ->
                 computerRepository.quitApp(context, app, computer.details.uuid)
             }
         },
-        sendWakeOnLan = { context, computerUuid ->
+        sendWakeOnLan = {
+            context, computerUuid ->
             computerRepository.sendWakeOnLan(context, computerUuid)
         },
-        moveUp = { computerUuid ->
+        moveUp = {
+            computerUuid ->
             computerRepository.moveComputerUp(computerUuid)
         },
-        moveDown = { computerUuid ->
+        moveDown = {
+            computerUuid ->
             computerRepository.moveComputerDown(computerUuid)
         },
-        deleteComputer = { computerUuid ->
+        deleteComputer = {
+            computerUuid ->
             computerRepository.deleteComputer(computerUuid)
         },
-        testNetwork = { context ->
+        testNetwork = {
+            context ->
             computerRepository.testNetwork(context)
         },
         dismissNetworkTest = {
@@ -149,26 +162,32 @@ open class MainViewModel(
     )
     val appItemHandler = AppItemHandler(
         confirmationHandler = confirmationHandler,
-        quitApp = { context, app, computerUuid ->
+        quitApp = {
+            context, app, computerUuid ->
             computerRepository.quitApp(context, app, computerUuid)
         },
-        moveUp = { computerUuid, appId ->
+        moveUp = {
+            computerUuid, appId ->
             computerRepository.moveAppUp(computerUuid, appId)
         },
-        moveDown = { computerUuid, appId ->
+        moveDown = {
+            computerUuid, appId ->
             computerRepository.moveAppDown(computerUuid, appId)
         }
     )
     val manualComputerAddHandler = ManualComputerAddHandler(
-        manualAddComputer = { ipAddress ->
+        manualAddComputer = {
+            ipAddress ->
             computerRepository.addComputer(ipAddress)
         },
     )
     val connectionHandler = ConnectionHandler(
-        initiateConnection = { context, computerUuid ->
+        initiateConnection = {
+            context, computerUuid ->
             computerRepository.initiateConnection(context, computerUuid)
         },
-        launchApp = { context, app, computerUuid ->
+        launchApp = {
+            context, app, computerUuid ->
             computerRepository.launchApp(context, app, computerUuid)
         },
         cancelConnection = {
@@ -194,7 +213,8 @@ open class MainViewModel(
         snapshotFlow { manualComputerAddHandler.uiState },
         snapshotFlow { connectionHandler.uiState },
         snapshotFlow { quickSettingsHandler.uiState }
-    ) { params ->
+    ) {
+        params ->
         @Suppress("UNCHECKED_CAST")
         MainScreenUiState(
             computers = params[0] as List<Computer>,

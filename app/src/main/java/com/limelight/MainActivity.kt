@@ -72,7 +72,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable("settings") {
-                        SettingsScreen(settingsViewModel)
+                        SettingsScreen(
+                            viewModel = settingsViewModel
+                        )
                     }
                 }
             }
