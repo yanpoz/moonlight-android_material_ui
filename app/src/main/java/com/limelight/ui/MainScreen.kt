@@ -1,6 +1,7 @@
 package com.limelight.ui
 
 import android.content.Intent
+import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,7 +40,6 @@ import com.limelight.viewmodel.MainScreenActions
 import com.limelight.viewmodel.MainScreenUiState
 import com.limelight.viewmodel.MainViewModel
 import java.util.UUID
-import android.preference.PreferenceManager
 
 
 /**
@@ -50,10 +49,7 @@ import android.preference.PreferenceManager
 @Composable
 fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
-    val computers by viewModel.computers.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
-    val networkTestStatus by viewModel.networkTestStatus.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val actions = remember(viewModel, context, onSettingsClick) {
         MainScreenActions(
@@ -153,21 +149,7 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     }
 
     MainScreenContent(
-        uiState = MainScreenUiState(
-            computers = computers,
-            isRefreshing = isRefreshing,
-            uniqueId = uniqueId,
-            networkTestStatus = networkTestStatus,
-            manualComputerAddUiState = viewModel.manualComputerAddHandler.uiState,
-            connectionUiState = viewModel.connectionHandler.uiState,
-            appMenuUiState = viewModel.appItemHandler.uiState,
-            appViewDetailsUiState = viewModel.appItemHandler.viewDetails,
-            computerMenuUiState = viewModel.computerItemHandler.uiState,
-            computerViewDetailsUiState = viewModel.computerItemHandler.viewDetails,
-            networkTestUiState = viewModel.computerItemHandler.networkTest,
-            confirmationUiState = viewModel.confirmationHandler.uiState,
-            quickSettingsUiState = viewModel.quickSettingsHandler.uiState
-        ),
+        uiState = uiState,
         actions = actions
     )
 }

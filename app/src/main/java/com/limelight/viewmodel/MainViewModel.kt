@@ -1,6 +1,7 @@
 package com.limelight.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.limelight.computers.Computer
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -104,7 +106,9 @@ data class MainScreenActions(
 )
 
 open class MainViewModel(
-    private val computerRepository: ComputerRepository = ComputerRepository()) : ViewModel() {
+    private val computerRepository: ComputerRepository = ComputerRepository()
+) : ViewModel()
+{
     companion object {
         private const val APPS_POLL_DELAY_MS = 500L
         const val SETUP_GUIDE_URL =
@@ -182,6 +186,39 @@ open class MainViewModel(
 
     private val _isRefreshing = MutableStateFlow(false)
     open val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    val uiState: StateFlow<MainScreenUiState> = combine(
+        computers,
+        isRefreshing,
+        uniqueId,
+        networkTestStatus,
+        snapshotFlow { confirmationHandler.uiState },
+        snapshotFlow { computerItemHandler.uiState },
+        snapshotFlow { computerItemHandler.viewDetails },
+        snapshotFlow { computerItemHandler.networkTest },
+        snapshotFlow { appItemHandler.uiState },
+        snapshotFlow { appItemHandler.viewDetails },
+        snapshotFlow { manualComputerAddHandler.uiState },
+        snapshotFlow { connectionHandler.uiState },
+        snapshotFlow { quickSettingsHandler.uiState }
+    ) { params ->
+        @Suppress("UNCHECKED_CAST")
+        MainScreenUiState(
+            computers = params[0] as List<Computer>,
+            isRefreshing = params[1] as Boolean,
+            uniqueId = params[2] as String?,
+            networkTestStatus = params[3] as ComputerRepository.NetworkTestStatus,
+            confirmationUiState = params[4] as ConfirmationDialogUiState,
+            computerMenuUiState = params[5] as ComputerMenuUiState,
+            computerViewDetailsUiState = params[6] as ComputerViewDetailsUiState,
+            networkTestUiState = params[7] as NetworkTestUiState,
+            appMenuUiState = params[8] as AppMenuUiState,
+            appViewDetailsUiState = params[9] as AppViewDetailsUiState,
+            manualComputerAddUiState = params[10] as ManualComputerAddingUiState,
+            connectionUiState = params[11] as ConnectionDialogUiState,
+            quickSettingsUiState = params[12] as QuickSettingsUiState
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MainScreenUiState())
 
     init {
         viewModelScope.launch {
