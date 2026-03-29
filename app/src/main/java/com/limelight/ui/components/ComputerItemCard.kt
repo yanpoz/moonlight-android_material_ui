@@ -204,47 +204,21 @@ fun ComputerItemCardGridPreview() {
         "Offline" to SampleComputers.OfflineComputer,
         "Unknown" to SampleComputers.UnknownComputer
     )
+    val themes = listOf("light", "dark")
 
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        computerStates.forEach { (label, computer) ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Light version
-                MoonlightAndroidTheme("light") {
-                    Surface(
-                        modifier = Modifier.weight(1f),
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        ComputerItemCard(
-                            computer = computer,
-                            isMenuExpanded = false,
-                            onDismissMenu = { },
-                            onSendWakeOnLan = { },
-                            onQuitRunningApp = { },
-                            onComputerDetailsClicked = { },
-                            onDeleteComputer = { },
-                            onMoveUp = { },
-                            onMoveDown = { },
-                            onTestNetwork = { },
-                            onClick = { },
-                            onLongClick = { }
-                        )
-                    }
-                }
-
-                // Dark version
-                MoonlightAndroidTheme("dark") {
-                    Surface(
-                        modifier = Modifier.weight(1f),
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
+        themes.forEach { theme ->
+            MoonlightAndroidTheme(theme) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    computerStates.forEach { (_, computer) ->
                         ComputerItemCard(
                             computer = computer,
                             isMenuExpanded = false,
