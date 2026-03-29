@@ -25,13 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.limelight.R
 import com.limelight.repository.SettingCategory
 import com.limelight.repository.SettingItem
@@ -41,6 +41,7 @@ import com.limelight.ui.components.settings.SelectionSettingListItem
 import com.limelight.ui.components.settings.SliderDialog
 import com.limelight.ui.components.settings.SliderSettingListItem
 import com.limelight.ui.components.settings.ToggleSettingListItem
+import com.limelight.viewmodel.SettingsActions
 import com.limelight.viewmodel.SettingsUiState
 import com.limelight.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -49,22 +50,29 @@ import kotlinx.parcelize.Parcelize
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+
+    val actions = remember(viewModel) {
+        SettingsActions(
+            onCategorySelected = { viewModel.selectCategory(it) },
+            onSettingToggled = { categoryName, settingName, isEnabled ->
+                viewModel.onSettingToggled(categoryName, settingName, isEnabled)
+            },
+            onSettingSelected = { categoryName, settingName, newValue ->
+                viewModel.onSettingSelected(categoryName, settingName, newValue)
+            },
+            onSelectionItemClick = { viewModel.showSelectionDialog(it) },
+            onSliderItemClick = { viewModel.showSliderDialog(it) },
+            onDismissSelectionDialog = { viewModel.dismissSelectionDialog() },
+            onDismissSliderDialog = { viewModel.dismissSliderDialog() },
+            onSliderValueChanged = { categoryName, settingName, newValue ->
+                viewModel.onSliderValueChanged(categoryName, settingName, newValue)
+            }
+        )
+    }
+
     SettingsScreenContent(
         uiState = uiState,
-        onCategorySelected = { viewModel.selectCategory(it) },
-        onSettingToggled = { categoryName, settingName, isEnabled ->
-            viewModel.onSettingToggled(categoryName, settingName, isEnabled)
-        },
-        onSettingSelected = { categoryName, settingName, newValue ->
-            viewModel.onSettingSelected(categoryName, settingName, newValue)
-        },
-        onSelectionItemClick = { viewModel.showSelectionDialog(it) },
-        onSliderItemClick = { viewModel.showSliderDialog(it) },
-        onDismissSelectionDialog = { viewModel.dismissSelectionDialog() },
-        onDismissSliderDialog = { viewModel.dismissSliderDialog() },
-        onSliderValueChanged = { categoryName, settingName, newValue ->
-            viewModel.onSliderValueChanged(categoryName, settingName, newValue)
-        }
+        actions = actions
     )
 }
 
@@ -72,14 +80,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 @Composable
 private fun SettingsScreenContent(
     uiState: SettingsUiState,
-    onCategorySelected: (SettingCategory) -> Unit,
-    onSettingToggled: (String, String, Boolean) -> Unit,
-    onSettingSelected: (String, String, String) -> Unit,
-    onSelectionItemClick: (SettingItem.Selection) -> Unit,
-    onSliderItemClick: (SettingItem.Slider) -> Unit,
-    onDismissSelectionDialog: () -> Unit,
-    onDismissSliderDialog: () -> Unit,
-    onSliderValueChanged: (String, String, Float) -> Unit,
+    actions: SettingsActions,
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<SettingCategoryItem>()
     val scope = rememberCoroutineScope()
@@ -90,7 +91,7 @@ private fun SettingsScreenContent(
             uiState.categories.isNotEmpty() &&
             scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded
         ) {
-            onCategorySelected(uiState.categories.first())
+            actions.onCategorySelected(uiState.categories.first())
         }
     }
 
@@ -101,7 +102,7 @@ private fun SettingsScreenContent(
                 SettingsCategoryList(
                     categories = uiState.categories,
                     onCategoryClick = { category ->
-                        onCategorySelected(category)
+                        actions.onCategorySelected(category)
                         scope.launch {
                             scaffoldNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
@@ -118,13 +119,13 @@ private fun SettingsScreenContent(
                     SettingsCategoryDetail(
                         category = category,
                         onSettingToggled = { settingName, isEnabled ->
-                            onSettingToggled(category.name, settingName, isEnabled)
+                            actions.onSettingToggled(category.name, settingName, isEnabled)
                         },
                         onSelectionItemClick = { item ->
-                            onSelectionItemClick(item)
+                            actions.onSelectionItemClick(item)
                         },
                         onSliderItemClick = { item ->
-                            onSliderItemClick(item)
+                            actions.onSliderItemClick(item)
                         }
                     )
                 }
@@ -135,9 +136,9 @@ private fun SettingsScreenContent(
     uiState.openSelectionDialog?.let { item ->
         SelectionDialog(
             item = item,
-            onDismiss = { onDismissSelectionDialog() },
+            onDismiss = { actions.onDismissSelectionDialog() },
             onSelected = { newValue ->
-                onSettingSelected(item.category, item.name, newValue)
+                actions.onSettingSelected(item.category, item.name, newValue)
             }
         )
     }
@@ -145,9 +146,9 @@ private fun SettingsScreenContent(
     uiState.openSliderDialog?.let { item ->
         SliderDialog(
             item = item,
-            onDismiss = { onDismissSliderDialog() },
+            onDismiss = { actions.onDismissSliderDialog() },
             onValueChange = { newValue ->
-                onSliderValueChanged(item.category, item.name, newValue)
+                actions.onSliderValueChanged(item.category, item.name, newValue)
             }
         )
     }
@@ -279,13 +280,6 @@ fun SettingsScreenPreview() {
             categories = mockCategories,
             selectedCategory = mockCategories.first()
         ),
-        onCategorySelected = {},
-        onSettingToggled = { _, _, _ -> },
-        onSettingSelected = { _, _, _ -> },
-        onSelectionItemClick = {},
-        onSliderItemClick = {},
-        onDismissSelectionDialog = {},
-        onDismissSliderDialog = {},
-        onSliderValueChanged = { _, _, _ -> }
+        actions = SettingsActions()
     )
 }

@@ -15,6 +15,17 @@ data class SettingsUiState(
     val openSliderDialog: SettingItem.Slider? = null
 )
 
+data class SettingsActions(
+    val onCategorySelected: (SettingCategory) -> Unit = {},
+    val onSettingToggled: (String, String, Boolean) -> Unit = { _, _, _ -> },
+    val onSettingSelected: (String, String, String) -> Unit = { _, _, _ -> },
+    val onSelectionItemClick: (SettingItem.Selection) -> Unit = {},
+    val onSliderItemClick: (SettingItem.Slider) -> Unit = {},
+    val onDismissSelectionDialog: () -> Unit = {},
+    val onDismissSliderDialog: () -> Unit = {},
+    val onSliderValueChanged: (String, String, Float) -> Unit = { _, _, _ -> }
+)
+
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: SettingsRepository = SettingsRepository(application)
