@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
+fun SettingsScreen(viewModel: SettingsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     SettingsScreenContent(
         uiState = uiState,

@@ -18,10 +18,12 @@ import com.limelight.preferences.PreferenceConfiguration
 import com.limelight.ui.MainScreen
 import com.limelight.ui.SettingsScreen
 import com.limelight.ui.theme.MoonlightAndroidTheme
+import com.limelight.viewmodel.SettingsViewModel
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var prefs: SharedPreferences
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
         if (key == PreferenceConfiguration.THEME_PREF_STRING) {
@@ -56,6 +58,8 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = dynamicThemeState
             ) {
                 mainViewModel = viewModel()
+                settingsViewModel = viewModel()
+
                 val navController = rememberNavController()
 
                 mainViewModel.bindComputerManagerService(this@MainActivity)
@@ -68,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable("settings") {
-                        SettingsScreen()
+                        SettingsScreen(settingsViewModel)
                     }
                 }
             }
