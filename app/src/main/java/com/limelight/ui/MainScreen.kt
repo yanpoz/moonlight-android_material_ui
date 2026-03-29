@@ -49,95 +49,144 @@ import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.preferences.PreferenceConfiguration
-import com.limelight.repository.ComputerRepository
 import com.limelight.ui.components.AppItemCard
 import com.limelight.ui.components.ComputerItemCard
 import com.limelight.ui.components.MainTopAppBar
 import com.limelight.ui.theme.MoonlightAndroidTheme
+import com.limelight.viewmodel.MainScreenActions
+import com.limelight.viewmodel.MainScreenUiState
 import com.limelight.viewmodel.MainViewModel
-import com.limelight.viewmodel.components.AppMenuUiState
-import com.limelight.viewmodel.components.AppViewDetailsUiState
-import com.limelight.viewmodel.components.ComputerMenuUiState
-import com.limelight.viewmodel.components.ComputerViewDetailsUiState
-import com.limelight.viewmodel.components.ConfirmationDialogUiState
-import com.limelight.viewmodel.components.ConnectionDialogUiState
-import com.limelight.viewmodel.components.ManualComputerAddingUiState
-import com.limelight.viewmodel.components.NetworkTestUiState
-import com.limelight.viewmodel.components.QuickSettingsUiState
 import java.util.UUID
 
-/**
- * UI State for the Main Screen.
- * Contains all the data required to render the MainScreenContent.
- */
-data class MainScreenUiState(
-    val computers: List<Computer> = emptyList(),
-    val isRefreshing: Boolean = false,
-    val uniqueId: String? = null,
-    val networkTestStatus: ComputerRepository.NetworkTestStatus = ComputerRepository.NetworkTestStatus.Idle,
-    val manualComputerAddUiState: ManualComputerAddingUiState = ManualComputerAddingUiState(),
-    val connectionUiState: ConnectionDialogUiState = ConnectionDialogUiState(),
-    val appMenuUiState: AppMenuUiState = AppMenuUiState(),
-    val appViewDetailsUiState: AppViewDetailsUiState = AppViewDetailsUiState(),
-    val computerMenuUiState: ComputerMenuUiState = ComputerMenuUiState(),
-    val computerViewDetailsUiState: ComputerViewDetailsUiState = ComputerViewDetailsUiState(),
-    val networkTestUiState: NetworkTestUiState = NetworkTestUiState(),
-    val confirmationUiState: ConfirmationDialogUiState = ConfirmationDialogUiState(),
-    val quickSettingsUiState: QuickSettingsUiState = QuickSettingsUiState()
-)
 
 /**
- * Actions for the Main Screen.
- * Holds all event handlers to keep the screen composable clean.
+ * Stateful version of the Main Screen.
+ * Collects state from the ViewModel and passes it to the stateless MainScreenContent.
  */
-data class MainScreenActions(
-    val onSettingsClick: () -> Unit = {},
-    val onHelpClick: () -> Unit = {},
-    val onRefresh: () -> Unit = {},
-    // Manual Computer Add
-    val onShowManualAddDialog: () -> Unit = {},
-    val onManualComputerAddInputChanged: (String) -> Unit = {},
-    val onManualComputerAddConfirm: () -> Unit = {},
-    val onManualComputerAddDismiss: () -> Unit = {},
-    // Quick Settings
-    val onShowQuickSettings: () -> Unit = {},
-    val onQuickSettingsFpsChanged: (String) -> Unit = {},
-    val onQuickSettingsResolutionChanged: (String) -> Unit = {},
-    val onQuickSettingsBitrateChanged: (Float) -> Unit = {},
-    val onQuickSettingsTouchscreenTrackpadChanged: (Boolean) -> Unit = {},
-    val onQuickSettingsOnscreenControllerChanged: (Boolean) -> Unit = {},
-    val onQuickSettingsHostAudioChanged: (Boolean) -> Unit = {},
-    val onQuickSettingsMouseEmulationChanged: (Boolean) -> Unit = {},
-    val onQuickSettingsVibrateOscChanged: (Boolean) -> Unit = {},
-    val onQuickSettingsDismiss: () -> Unit = {},
-    // Connection
-    val onConnectionInitiate: (String) -> Unit = {},
-    val onConnectionCancel: () -> Unit = {},
-    val onLaunchApp: (NvApp, String) -> Unit = { _, _ -> },
-    // App Item
-    val onAppMenuOpen: (Int, String) -> Unit = { _, _ -> },
-    val onAppMenuDismiss: () -> Unit = {},
-    val onAppQuit: (NvApp, String) -> Unit = { _, _ -> },
-    val onAppDetailsClick: (NvApp) -> Unit = {},
-    val onAppDetailsDismiss: () -> Unit = {},
-    val onAppMoveUp: (String, Int) -> Unit = { _, _ -> },
-    val onAppMoveDown: (String, Int) -> Unit = { _, _ -> },
-    // Computer Item
-    val onComputerMenuOpen: (String) -> Unit = {},
-    val onComputerMenuDismiss: () -> Unit = {},
-    val onComputerDetailsClick: (Computer) -> Unit = {},
-    val onComputerDetailsDismiss: () -> Unit = {},
-    val onComputerQuitRunningApp: (Computer) -> Unit = {},
-    val onComputerWakeOnLan: (String) -> Unit = {},
-    val onComputerMoveUp: (String) -> Unit = {},
-    val onComputerMoveDown: (String) -> Unit = {},
-    val onComputerDelete: (Computer) -> Unit = {},
-    val onComputerTestNetwork: () -> Unit = {},
-    val onComputerDismissNetworkTest: () -> Unit = {},
-    // Confirmation
-    val onConfirmationConfirm: () -> Unit = {},
-    val onConfirmationDismiss: () -> Unit = {},
-)
+@Composable
+fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
+    val context = LocalContext.current
+    val computers by viewModel.computers.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
+    val networkTestStatus by viewModel.networkTestStatus.collectAsStateWithLifecycle()
+
+    val actions = remember(viewModel, context, onSettingsClick) {
+        MainScreenActions(
+            onSettingsClick = onSettingsClick,
+            onHelpClick = {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = MainViewModel.SETUP_GUIDE_URL.toUri()
+                }
+                context.startActivity(intent)
+            },
+            onRefresh = { viewModel.updateComputerApps() },
+            onShowManualAddDialog = { viewModel.manualComputerAddHandler.onShowDialog() },
+            onManualComputerAddInputChanged = { viewModel.manualComputerAddHandler.onInputChanged(it) },
+            onManualComputerAddConfirm = { viewModel.manualComputerAddHandler.onManualAddComputer() },
+            onManualComputerAddDismiss = { viewModel.manualComputerAddHandler.onDismissDialog() },
+            onShowQuickSettings = {
+                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                val currentFps = prefs.getString(
+                    PreferenceConfiguration.FPS_PREF_STRING,
+                    PreferenceConfiguration.DEFAULT_FPS
+                ) ?: PreferenceConfiguration.DEFAULT_FPS
+                val currentRes = prefs.getString(
+                    PreferenceConfiguration.RESOLUTION_PREF_STRING,
+                    PreferenceConfiguration.DEFAULT_RESOLUTION
+                ) ?: PreferenceConfiguration.DEFAULT_RESOLUTION
+                val currentBitrate = prefs.getInt(
+                    PreferenceConfiguration.BITRATE_PREF_STRING,
+                    PreferenceConfiguration.getDefaultBitrate(context)
+                ).toFloat() / 1000f
+                val touchscreenTrackpad = prefs.getBoolean(
+                    PreferenceConfiguration.TOUCHSCREEN_TRACKPAD_PREF_STRING,
+                    PreferenceConfiguration.DEFAULT_TOUCHSCREEN_TRACKPAD
+                )
+                val onscreenController = prefs.getBoolean(
+                    PreferenceConfiguration.ONSCREEN_CONTROLLER_PREF_STRING,
+                    PreferenceConfiguration.ONSCREEN_CONTROLLER_DEFAULT
+                )
+                val hostAudio = prefs.getBoolean(
+                    PreferenceConfiguration.HOST_AUDIO_PREF_STRING,
+                    PreferenceConfiguration.DEFAULT_HOST_AUDIO
+                )
+                val mouseEmulation = prefs.getBoolean(
+                    PreferenceConfiguration.MOUSE_EMULATION_STRING,
+                    PreferenceConfiguration.DEFAULT_MOUSE_EMULATION
+                )
+                val vibrateOsc = prefs.getBoolean(
+                    PreferenceConfiguration.VIBRATE_OSC_PREF_STRING,
+                    PreferenceConfiguration.DEFAULT_VIBRATE_OSC
+                )
+                viewModel.quickSettingsHandler.onShowQuickSettings(
+                    currentFps,
+                    currentRes,
+                    currentBitrate,
+                    touchscreenTrackpad,
+                    onscreenController,
+                    hostAudio,
+                    mouseEmulation,
+                    vibrateOsc
+                )
+            },
+            onQuickSettingsFpsChanged = { viewModel.quickSettingsHandler.onFpsChanged(context, it) },
+            onQuickSettingsResolutionChanged = { viewModel.quickSettingsHandler.onResolutionChanged(context, it) },
+            onQuickSettingsBitrateChanged = { viewModel.quickSettingsHandler.onBitrateChanged(context, it) },
+            onQuickSettingsTouchscreenTrackpadChanged = { viewModel.quickSettingsHandler.onTouchscreenTrackpadChanged(context, it) },
+            onQuickSettingsOnscreenControllerChanged = { viewModel.quickSettingsHandler.onOnscreenControllerChanged(context, it) },
+            onQuickSettingsHostAudioChanged = { viewModel.quickSettingsHandler.onHostAudioChanged(context, it) },
+            onQuickSettingsMouseEmulationChanged = { viewModel.quickSettingsHandler.onMouseEmulationChanged(context, it) },
+            onQuickSettingsVibrateOscChanged = { viewModel.quickSettingsHandler.onVibrateOscChanged(context, it) },
+            onQuickSettingsDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() },
+            onConnectionInitiate = { viewModel.connectionHandler.onInitiateConnection(context, it) },
+            onConnectionCancel = { viewModel.connectionHandler.onCancelConnection() },
+            onLaunchApp = { app, computerUuid -> viewModel.connectionHandler.onLaunchApp(context, app, computerUuid) },
+            onAppMenuOpen = { appId, computerUuid -> viewModel.appItemHandler.onOpenMenu(appId, computerUuid) },
+            onAppMenuDismiss = { viewModel.appItemHandler.onDismissMenu() },
+            onAppQuit = { app, computerUuid -> viewModel.appItemHandler.onQuitApp(context, app, computerUuid) },
+            onAppDetailsClick = { viewModel.appItemHandler.onDetailsClicked(it) },
+            onAppDetailsDismiss = { viewModel.appItemHandler.onDismissDetailsDialog() },
+            onAppMoveUp = { computerUuid, appId -> viewModel.appItemHandler.onMoveUp(computerUuid, appId) },
+            onAppMoveDown = { computerUuid, appId -> viewModel.appItemHandler.onMoveDown(computerUuid, appId) },
+            onComputerMenuOpen = { viewModel.computerItemHandler.onOpenMenu(it) },
+            onComputerMenuDismiss = { viewModel.computerItemHandler.onDismissMenu() },
+            onComputerDetailsClick = { viewModel.computerItemHandler.onViewDetailsClicked(it) },
+            onComputerDetailsDismiss = { viewModel.computerItemHandler.onDismissDetailsDialog() },
+            onComputerQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, it) },
+            onComputerWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, it) },
+            onComputerMoveUp = { viewModel.computerItemHandler.onMoveUp(it) },
+            onComputerMoveDown = { viewModel.computerItemHandler.onMoveDown(it) },
+            onComputerDelete = { viewModel.computerItemHandler.onDeleteComputer(it) },
+            onComputerTestNetwork = { viewModel.computerItemHandler.onTestNetwork(context) },
+            onComputerDismissNetworkTest = { viewModel.computerItemHandler.onDismissNetworkTest() },
+            onConfirmationConfirm = {
+                viewModel.confirmationHandler.uiState.action()
+                viewModel.confirmationHandler.dismissDialog()
+            },
+            onConfirmationDismiss = { viewModel.confirmationHandler.dismissDialog() }
+        )
+    }
+
+    MainScreenContent(
+        uiState = MainScreenUiState(
+            computers = computers,
+            isRefreshing = isRefreshing,
+            uniqueId = uniqueId,
+            networkTestStatus = networkTestStatus,
+            manualComputerAddUiState = viewModel.manualComputerAddHandler.uiState,
+            connectionUiState = viewModel.connectionHandler.uiState,
+            appMenuUiState = viewModel.appItemHandler.uiState,
+            appViewDetailsUiState = viewModel.appItemHandler.viewDetails,
+            computerMenuUiState = viewModel.computerItemHandler.uiState,
+            computerViewDetailsUiState = viewModel.computerItemHandler.viewDetails,
+            networkTestUiState = viewModel.computerItemHandler.networkTest,
+            confirmationUiState = viewModel.confirmationHandler.uiState,
+            quickSettingsUiState = viewModel.quickSettingsHandler.uiState
+        ),
+        actions = actions
+    )
+}
 
 /**
  * Stateless version of the Main Screen.
@@ -284,135 +333,6 @@ fun MainScreenContent(
 
     MainScreenDialogs(
         state = uiState,
-        actions = actions
-    )
-}
-
-/**
- * Stateful version of the Main Screen.
- * Collects state from the ViewModel and passes it to the stateless MainScreenContent.
- */
-@Composable
-fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
-    val context = LocalContext.current
-    val computers by viewModel.computers.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val uniqueId by viewModel.uniqueId.collectAsStateWithLifecycle()
-    val networkTestStatus by viewModel.networkTestStatus.collectAsStateWithLifecycle()
-
-    val actions = remember(viewModel, context, onSettingsClick) {
-        MainScreenActions(
-            onSettingsClick = onSettingsClick,
-            onHelpClick = {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = MainViewModel.SETUP_GUIDE_URL.toUri()
-                }
-                context.startActivity(intent)
-            },
-            onRefresh = { viewModel.updateComputerApps() },
-            onShowManualAddDialog = { viewModel.manualComputerAddHandler.onShowDialog() },
-            onManualComputerAddInputChanged = { viewModel.manualComputerAddHandler.onInputChanged(it) },
-            onManualComputerAddConfirm = { viewModel.manualComputerAddHandler.onManualAddComputer() },
-            onManualComputerAddDismiss = { viewModel.manualComputerAddHandler.onDismissDialog() },
-            onShowQuickSettings = {
-                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                val currentFps = prefs.getString(
-                    PreferenceConfiguration.FPS_PREF_STRING,
-                    PreferenceConfiguration.DEFAULT_FPS
-                ) ?: PreferenceConfiguration.DEFAULT_FPS
-                val currentRes = prefs.getString(
-                    PreferenceConfiguration.RESOLUTION_PREF_STRING,
-                    PreferenceConfiguration.DEFAULT_RESOLUTION
-                ) ?: PreferenceConfiguration.DEFAULT_RESOLUTION
-                val currentBitrate = prefs.getInt(
-                    PreferenceConfiguration.BITRATE_PREF_STRING,
-                    PreferenceConfiguration.getDefaultBitrate(context)
-                ).toFloat() / 1000f
-                val touchscreenTrackpad = prefs.getBoolean(
-                    PreferenceConfiguration.TOUCHSCREEN_TRACKPAD_PREF_STRING,
-                    PreferenceConfiguration.DEFAULT_TOUCHSCREEN_TRACKPAD
-                )
-                val onscreenController = prefs.getBoolean(
-                    PreferenceConfiguration.ONSCREEN_CONTROLLER_PREF_STRING,
-                    PreferenceConfiguration.ONSCREEN_CONTROLLER_DEFAULT
-                )
-                val hostAudio = prefs.getBoolean(
-                    PreferenceConfiguration.HOST_AUDIO_PREF_STRING,
-                    PreferenceConfiguration.DEFAULT_HOST_AUDIO
-                )
-                val mouseEmulation = prefs.getBoolean(
-                    PreferenceConfiguration.MOUSE_EMULATION_STRING,
-                    PreferenceConfiguration.DEFAULT_MOUSE_EMULATION
-                )
-                val vibrateOsc = prefs.getBoolean(
-                    PreferenceConfiguration.VIBRATE_OSC_PREF_STRING,
-                    PreferenceConfiguration.DEFAULT_VIBRATE_OSC
-                )
-                viewModel.quickSettingsHandler.onShowQuickSettings(
-                    currentFps,
-                    currentRes,
-                    currentBitrate,
-                    touchscreenTrackpad,
-                    onscreenController,
-                    hostAudio,
-                    mouseEmulation,
-                    vibrateOsc
-                )
-            },
-            onQuickSettingsFpsChanged = { viewModel.quickSettingsHandler.onFpsChanged(context, it) },
-            onQuickSettingsResolutionChanged = { viewModel.quickSettingsHandler.onResolutionChanged(context, it) },
-            onQuickSettingsBitrateChanged = { viewModel.quickSettingsHandler.onBitrateChanged(context, it) },
-            onQuickSettingsTouchscreenTrackpadChanged = { viewModel.quickSettingsHandler.onTouchscreenTrackpadChanged(context, it) },
-            onQuickSettingsOnscreenControllerChanged = { viewModel.quickSettingsHandler.onOnscreenControllerChanged(context, it) },
-            onQuickSettingsHostAudioChanged = { viewModel.quickSettingsHandler.onHostAudioChanged(context, it) },
-            onQuickSettingsMouseEmulationChanged = { viewModel.quickSettingsHandler.onMouseEmulationChanged(context, it) },
-            onQuickSettingsVibrateOscChanged = { viewModel.quickSettingsHandler.onVibrateOscChanged(context, it) },
-            onQuickSettingsDismiss = { viewModel.quickSettingsHandler.onDismissQuickSettings() },
-            onConnectionInitiate = { viewModel.connectionHandler.onInitiateConnection(context, it) },
-            onConnectionCancel = { viewModel.connectionHandler.onCancelConnection() },
-            onLaunchApp = { app, computerUuid -> viewModel.connectionHandler.onLaunchApp(context, app, computerUuid) },
-            onAppMenuOpen = { appId, computerUuid -> viewModel.appItemHandler.onOpenMenu(appId, computerUuid) },
-            onAppMenuDismiss = { viewModel.appItemHandler.onDismissMenu() },
-            onAppQuit = { app, computerUuid -> viewModel.appItemHandler.onQuitApp(context, app, computerUuid) },
-            onAppDetailsClick = { viewModel.appItemHandler.onDetailsClicked(it) },
-            onAppDetailsDismiss = { viewModel.appItemHandler.onDismissDetailsDialog() },
-            onAppMoveUp = { computerUuid, appId -> viewModel.appItemHandler.onMoveUp(computerUuid, appId) },
-            onAppMoveDown = { computerUuid, appId -> viewModel.appItemHandler.onMoveDown(computerUuid, appId) },
-            onComputerMenuOpen = { viewModel.computerItemHandler.onOpenMenu(it) },
-            onComputerMenuDismiss = { viewModel.computerItemHandler.onDismissMenu() },
-            onComputerDetailsClick = { viewModel.computerItemHandler.onViewDetailsClicked(it) },
-            onComputerDetailsDismiss = { viewModel.computerItemHandler.onDismissDetailsDialog() },
-            onComputerQuitRunningApp = { viewModel.computerItemHandler.onQuitRunningApp(context, it) },
-            onComputerWakeOnLan = { viewModel.computerItemHandler.onSendWakeOnLan(context, it) },
-            onComputerMoveUp = { viewModel.computerItemHandler.onMoveUp(it) },
-            onComputerMoveDown = { viewModel.computerItemHandler.onMoveDown(it) },
-            onComputerDelete = { viewModel.computerItemHandler.onDeleteComputer(it) },
-            onComputerTestNetwork = { viewModel.computerItemHandler.onTestNetwork(context) },
-            onComputerDismissNetworkTest = { viewModel.computerItemHandler.onDismissNetworkTest() },
-            onConfirmationConfirm = {
-                viewModel.confirmationHandler.uiState.action()
-                viewModel.confirmationHandler.dismissDialog()
-            },
-            onConfirmationDismiss = { viewModel.confirmationHandler.dismissDialog() }
-        )
-    }
-
-    MainScreenContent(
-        uiState = MainScreenUiState(
-            computers = computers,
-            isRefreshing = isRefreshing,
-            uniqueId = uniqueId,
-            networkTestStatus = networkTestStatus,
-            manualComputerAddUiState = viewModel.manualComputerAddHandler.uiState,
-            connectionUiState = viewModel.connectionHandler.uiState,
-            appMenuUiState = viewModel.appItemHandler.uiState,
-            appViewDetailsUiState = viewModel.appItemHandler.viewDetails,
-            computerMenuUiState = viewModel.computerItemHandler.uiState,
-            computerViewDetailsUiState = viewModel.computerItemHandler.viewDetails,
-            networkTestUiState = viewModel.computerItemHandler.networkTest,
-            confirmationUiState = viewModel.confirmationHandler.uiState,
-            quickSettingsUiState = viewModel.quickSettingsHandler.uiState
-        ),
         actions = actions
     )
 }

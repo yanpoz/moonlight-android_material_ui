@@ -8,6 +8,8 @@ import com.limelight.ui.components.dialogs.ConnectionDialog
 import com.limelight.ui.components.dialogs.ManualComputerAddDialog
 import com.limelight.ui.components.dialogs.NetworkTestDialog
 import com.limelight.ui.components.dialogs.QuickSettingsDialog
+import com.limelight.viewmodel.MainScreenActions
+import com.limelight.viewmodel.MainScreenUiState
 
 @Composable
 fun MainScreenDialogs(
