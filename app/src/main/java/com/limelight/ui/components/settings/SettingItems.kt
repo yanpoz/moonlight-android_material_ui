@@ -2,6 +2,7 @@ package com.limelight.ui.components.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -14,8 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import com.limelight.R
 import com.limelight.repository.SettingItem
+import com.limelight.ui.theme.MoonlightAndroidTheme
 
 @Composable
 fun ToggleSettingListItem(settingItem: SettingItem.Toggle, onToggle: (Boolean) -> Unit) {
@@ -115,4 +118,60 @@ fun ActionSettingListItem(item: SettingItem.Action) {
             Text(stringResource(item.summary))
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingItemsPreview() {
+    MoonlightAndroidTheme {
+        Column {
+            ToggleSettingListItem(
+                settingItem = SettingItem.Toggle(
+                    name = "toggle",
+                    category = "category",
+                    title = R.string.title_checkbox_stretch_video,
+                    summary = R.string.title_checkbox_stretch_video,
+                    default = true,
+                    onToggle = {}
+                ),
+                onToggle = {}
+            )
+            SelectionSettingListItem(
+                item = SettingItem.Selection(
+                    name = "selection",
+                    category = "category",
+                    title = R.string.title_resolution_list,
+                    summary = R.string.summary_resolution_list,
+                    entries = listOf("1080p", "720p"),
+                    entryValues = listOf("1080", "720"),
+                    currentValue = "1080",
+                    onSelected = {}
+                ),
+                onClick = {}
+            )
+            SliderSettingListItem(
+                item = SettingItem.Slider(
+                    name = "slider",
+                    category = "category",
+                    title = R.string.title_seekbar_bitrate,
+                    summary = R.string.summary_seekbar_bitrate,
+                    value = 50.0f,
+                    min = 0.5f,
+                    max = 150.0f,
+                    unit = R.string.suffix_seekbar_bitrate_mbps,
+                    onValueChange = {}
+                ),
+                onClick = {}
+            )
+            ActionSettingListItem(
+                item = SettingItem.Action(
+                    name = "action",
+                    category = "category",
+                    title = R.string.title_language_list,
+                    summary = R.string.summary_language_list,
+                    onClick = {}
+                )
+            )
+        }
+    }
 }
