@@ -18,30 +18,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.limelight.computers.Computer
-import com.limelight.computers.actionTextColor
-import com.limelight.computers.addressText
-import com.limelight.computers.itemCardActionText
-import com.limelight.computers.statusColor
-import com.limelight.computers.statusText
+import com.limelight.computers.toUiState
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.ui.utils.SampleComputers
+import com.limelight.viewmodel.components.ComputerItemUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ComputerItemCard(
+    uiState: ComputerItemUiState,
     computer: Computer,
     isMenuExpanded: Boolean,
     onDismissMenu: () -> Unit,
@@ -77,21 +75,21 @@ fun ComputerItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Title(computer)
-                Indicator(computer)
+                Title(uiState.name)
+                Indicator(uiState.statusColor)
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            ComputerAddressBadge(computer)
+            ComputerAddressBadge(uiState.address)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            ComputerStatusBadge(computer)
+            ComputerStatusBadge(uiState.statusText)
 
             Spacer(modifier = Modifier.weight(1f))
 
-            ComputerActionLabel(computer)
+            ComputerActionLabel(uiState.actionText, uiState.actionTextColor)
         }
 
         ComputerItemMenu(
@@ -113,9 +111,9 @@ fun ComputerItemCard(
 }
 
 @Composable
-private fun Title(computer: Computer, modifier: Modifier = Modifier) {
+private fun Title(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = computer.details.name,
+        text = name,
         style = MaterialTheme.typography.headlineLarge,
         fontWeight = FontWeight.Bold,
         fontFamily = FontFamily.Default,
@@ -124,20 +122,20 @@ private fun Title(computer: Computer, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Indicator(computer: Computer, modifier: Modifier = Modifier) {
+private fun Indicator(color: Color, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(40.dp)
             .clip(VerySunnyShape)
-            .background(computer.statusColor)
+            .background(color)
     )
 }
 
 @Composable
-private fun ComputerAddressBadge(computer: Computer, modifier: Modifier = Modifier) {
+private fun ComputerAddressBadge(address: String, modifier: Modifier = Modifier) {
     val isDark = LocalIsDarkTheme.current
     Text(
-        text = computer.addressText,
+        text = address,
         style = MaterialTheme.typography.bodyLarge.copy(
             fontFamily = FontFamily.Monospace,
             color = if (isDark)
@@ -167,9 +165,9 @@ private fun ComputerAddressBadge(computer: Computer, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun ComputerStatusBadge(computer: Computer, modifier: Modifier = Modifier) {
+private fun ComputerStatusBadge(statusText: String, modifier: Modifier = Modifier) {
     Text(
-        text = computer.statusText,
+        text = statusText,
         style = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.secondary
         ),
@@ -185,24 +183,25 @@ private fun ComputerStatusBadge(computer: Computer, modifier: Modifier = Modifie
 }
 
 @Composable
-private fun ComputerActionLabel(computer: Computer, modifier: Modifier = Modifier) {
+private fun ComputerActionLabel(actionText: String, actionTextColor: Color, modifier: Modifier = Modifier) {
     Text(
-        text = computer.itemCardActionText,
+        text = actionText,
         style = MaterialTheme.typography.bodyLarge.copy(
-            color = computer.actionTextColor
+            color = actionTextColor
         ),
         modifier = modifier
     )
 }
 
-@Preview(showBackground = true, widthDp = 700)
+@Preview(showBackground = true, widthDp = 800)
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
-        "OnlinePaired" to SampleComputers.OnlinePairedComputer,
-        "OnlineUnpaired" to SampleComputers.OnlineUnpairedComputer,
+        "Online Paired" to SampleComputers.OnlinePairedComputer,
+        "Online Unpaired" to SampleComputers.OnlineUnpairedComputer,
         "Offline" to SampleComputers.OfflineComputer,
-        "Unknown" to SampleComputers.UnknownComputer
+        "Connecting" to SampleComputers.UnknownComputer,
+        "Pairing Failed" to SampleComputers.PairingFailedComputer
     )
     val themes = listOf("light", "dark")
 
@@ -220,6 +219,7 @@ fun ComputerItemCardGridPreview() {
                 ) {
                     computerStates.forEach { (_, computer) ->
                         ComputerItemCard(
+                            uiState = computer.toUiState(),
                             computer = computer,
                             isMenuExpanded = false,
                             onDismissMenu = { },

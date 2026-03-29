@@ -4,8 +4,18 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import com.limelight.computers.Computer
 
+data class ComputerItemUiState(
+    val uuid: String,
+    val name: String,
+    val address: String,
+    val statusText: String,
+    val statusColor: Color,
+    val actionText: String,
+    val actionTextColor: Color
+)
 
 data class ComputerMenuUiState(
     val computerUuid: String? = null,

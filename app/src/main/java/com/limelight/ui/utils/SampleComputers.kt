@@ -7,7 +7,7 @@ import com.limelight.nvstream.http.PairingManager
 object SampleComputers {
     val OnlinePairedComputer = Computer(
         details = ComputerDetails().apply {
-            name = "Gaming PC"
+            name = "Online Paired"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.PAIRED
@@ -18,7 +18,7 @@ object SampleComputers {
 
     val OnlineUnpairedComputer = Computer(
         details = ComputerDetails().apply {
-            name = "Gaming PC"
+            name = "Online not paired"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.NOT_PAIRED
@@ -29,7 +29,7 @@ object SampleComputers {
 
     val OfflineComputer = Computer(
         details = ComputerDetails().apply {
-            name = "Offline PC"
+            name = "Offline Paired"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.OFFLINE
             pairState = PairingManager.PairState.PAIRED
@@ -44,6 +44,17 @@ object SampleComputers {
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.UNKNOWN
             pairState = PairingManager.PairState.PAIRED
+            runningGameId = 0
+        },
+        apps = emptyList()
+    )
+
+    val PairingFailedComputer = Computer(
+        details = ComputerDetails().apply {
+            name = "Failed PC"
+            activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
+            state = ComputerDetails.State.ONLINE
+            pairState = PairingManager.PairState.PIN_WRONG
             runningGameId = 0
         },
         apps = emptyList()

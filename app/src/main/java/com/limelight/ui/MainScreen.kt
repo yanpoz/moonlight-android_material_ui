@@ -40,6 +40,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.limelight.R
 import com.limelight.computers.Computer
+import com.limelight.computers.toUiState
 import com.limelight.grid.assets.CachedAppAssetLoader
 import com.limelight.grid.assets.DiskAssetLoader
 import com.limelight.grid.assets.MemoryAssetLoader
@@ -222,6 +223,7 @@ fun MainScreenContent(
                         // ComputerItem as the first item
                         item(key = computer.details.uuid) {
                             ComputerItemCard(
+                                uiState = computer.toUiState(),
                                 computer = computer,
                                 isMenuExpanded = state.computerMenuUiState.computerUuid == computer.details.uuid,
                                 onDismissMenu = actions.onComputerMenuDismiss,
