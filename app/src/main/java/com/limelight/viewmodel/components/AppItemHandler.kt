@@ -23,19 +23,19 @@ class AppItemHandler(
     private val moveDown: (String, Int) -> Unit,
 )
 {
-    var uiState by mutableStateOf(AppMenuUiState())
+    var menuUiState by mutableStateOf(AppMenuUiState())
         private set
-    var viewDetails by mutableStateOf(AppViewDetailsUiState())
+    var viewDetailsUiState by mutableStateOf(AppViewDetailsUiState())
         private set
 
     fun isMenuExpanded(appId: Int, computerUuid: String): Boolean =
-        uiState.appId == appId && uiState.computerUuid == computerUuid
+        menuUiState.appId == appId && menuUiState.computerUuid == computerUuid
 
     fun onOpenMenu(appId: Int, computerUuid: String) {
-        uiState = AppMenuUiState(appId, computerUuid)
+        menuUiState = AppMenuUiState(appId, computerUuid)
     }
     fun onDismissMenu() {
-        uiState = AppMenuUiState()
+        menuUiState = AppMenuUiState()
     }
     fun onMoveUp(computerUuid: String, appId: Int) {
         moveUp(computerUuid, appId)
@@ -44,10 +44,10 @@ class AppItemHandler(
         moveDown(computerUuid, appId)
     }
     fun onDetailsClicked(app: NvApp) {
-        viewDetails = AppViewDetailsUiState(true, app)
+        viewDetailsUiState = AppViewDetailsUiState(true, app)
     }
     fun onDismissDetailsDialog() {
-        viewDetails = AppViewDetailsUiState()
+        viewDetailsUiState = AppViewDetailsUiState()
     }
     fun onQuitApp(context: Context, app: NvApp, computerUuid: String) {
         confirmationHandler.confirmAction(

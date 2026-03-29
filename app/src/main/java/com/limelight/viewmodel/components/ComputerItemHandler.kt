@@ -39,26 +39,26 @@ class ComputerItemHandler(
     private val dismissNetworkTest: () -> Unit,
 )
 {
-    var uiState by mutableStateOf(ComputerMenuUiState())
+    var menuUiState by mutableStateOf(ComputerMenuUiState())
         private set
-    var viewDetails by mutableStateOf(ComputerViewDetailsUiState())
+    var viewDetailsUiState by mutableStateOf(ComputerViewDetailsUiState())
         private set
-    var networkTest by mutableStateOf(NetworkTestUiState())
+    var networkTestUiState by mutableStateOf(NetworkTestUiState())
         private set
 
-    fun isMenuExpanded(computerUuid: String): Boolean = uiState.computerUuid == computerUuid
+    fun isMenuExpanded(computerUuid: String): Boolean = menuUiState.computerUuid == computerUuid
 
     fun onOpenMenu(computerUuid: String) {
-        uiState = ComputerMenuUiState(computerUuid)
+        menuUiState = ComputerMenuUiState(computerUuid)
     }
     fun onDismissMenu() {
-        uiState = ComputerMenuUiState()
+        menuUiState = ComputerMenuUiState()
     }
     fun onViewDetailsClicked(computer: Computer) {
-        viewDetails = ComputerViewDetailsUiState(true, computer)
+        viewDetailsUiState = ComputerViewDetailsUiState(true, computer)
     }
     fun onDismissDetailsDialog() {
-        viewDetails = ComputerViewDetailsUiState()
+        viewDetailsUiState = ComputerViewDetailsUiState()
     }
     fun onQuitRunningApp(context: Context, computer: Computer) {
         computer.getRunningApp()?.let { app ->
@@ -86,11 +86,11 @@ class ComputerItemHandler(
         )
     }
     fun onTestNetwork(context: Context) {
-        networkTest = NetworkTestUiState(true)
+        networkTestUiState = NetworkTestUiState(true)
         testNetwork(context)
     }
     fun onDismissNetworkTest() {
-        networkTest = NetworkTestUiState(false)
+        networkTestUiState = NetworkTestUiState(false)
         dismissNetworkTest()
     }
 }
