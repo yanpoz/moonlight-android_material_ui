@@ -13,20 +13,20 @@ import com.limelight.viewmodel.MainScreenUiState
 
 @Composable
 fun MainScreenDialogs(
-    state: MainScreenUiState,
+    uiState: MainScreenUiState,
     actions: MainScreenActions
 ) {
-    if (state.manualComputerAddUiState.showDialog) {
+    if (uiState.manualComputerAddUiState.showDialog) {
         ManualComputerAddDialog(
-            inputIp = state.manualComputerAddUiState.inputIp,
+            inputIp = uiState.manualComputerAddUiState.inputIp,
             onInputIpChange = actions.onManualComputerAddInputChanged,
             onAddComputer = actions.onManualComputerAddConfirm,
             onDismiss = actions.onManualComputerAddDismiss,
         )
     }
 
-    if (state.connectionUiState.showDialog && state.connectionUiState.computerUuid != null) {
-        val computer = state.computers.find { it.details.uuid == state.connectionUiState.computerUuid }
+    if (uiState.connectionUiState.showDialog && uiState.connectionUiState.computerUuid != null) {
+        val computer = uiState.computers.find { it.details.uuid == uiState.connectionUiState.computerUuid }
         if (computer != null) {
             ConnectionDialog(
                 computer,
@@ -36,8 +36,8 @@ fun MainScreenDialogs(
         }
     }
 
-    if (state.appViewDetailsUiState.showDialog) {
-        state.appViewDetailsUiState.app?.let { app ->
+    if (uiState.appViewDetailsUiState.showDialog) {
+        uiState.appViewDetailsUiState.app?.let { app ->
             AppDetailsDialog(
                 app = app,
                 onDismiss = actions.onAppDetailsDismiss,
@@ -45,8 +45,8 @@ fun MainScreenDialogs(
         }
     }
 
-    if (state.computerViewDetailsUiState.showDialog) {
-        state.computerViewDetailsUiState.computer?.let { computer ->
+    if (uiState.computerViewDetailsUiState.showDialog) {
+        uiState.computerViewDetailsUiState.computer?.let { computer ->
             ComputerDetailsDialog(
                 computer = computer,
                 onDismiss = actions.onComputerDetailsDismiss,
@@ -54,40 +54,40 @@ fun MainScreenDialogs(
         }
     }
 
-    if (state.confirmationUiState.showDialog) {
+    if (uiState.confirmationUiState.showDialog) {
         ConfirmationDialog(
-            title = state.confirmationUiState.title,
-            text = state.confirmationUiState.text,
+            title = uiState.confirmationUiState.title,
+            text = uiState.confirmationUiState.text,
             onConfirm = actions.onConfirmationConfirm,
             onDismiss = actions.onConfirmationDismiss
         )
     }
 
-    if (state.quickSettingsUiState.showDialog) {
+    if (uiState.quickSettingsUiState.showDialog) {
         QuickSettingsDialog(
-            fps = state.quickSettingsUiState.fps,
+            fps = uiState.quickSettingsUiState.fps,
             onFpsChanged = actions.onQuickSettingsFpsChanged,
-            resolution = state.quickSettingsUiState.resolution,
+            resolution = uiState.quickSettingsUiState.resolution,
             onResolutionChanged = actions.onQuickSettingsResolutionChanged,
-            bitrate = state.quickSettingsUiState.bitrate,
+            bitrate = uiState.quickSettingsUiState.bitrate,
             onBitrateChanged = actions.onQuickSettingsBitrateChanged,
-            touchscreenTrackpad = state.quickSettingsUiState.touchscreenTrackpad,
+            touchscreenTrackpad = uiState.quickSettingsUiState.touchscreenTrackpad,
             onTouchscreenTrackpadChanged = actions.onQuickSettingsTouchscreenTrackpadChanged,
-            onscreenController = state.quickSettingsUiState.onscreenController,
+            onscreenController = uiState.quickSettingsUiState.onscreenController,
             onOnscreenControllerChanged = actions.onQuickSettingsOnscreenControllerChanged,
-            hostAudio = state.quickSettingsUiState.hostAudio,
+            hostAudio = uiState.quickSettingsUiState.hostAudio,
             onHostAudioChanged = actions.onQuickSettingsHostAudioChanged,
-            mouseEmulation = state.quickSettingsUiState.mouseEmulation,
+            mouseEmulation = uiState.quickSettingsUiState.mouseEmulation,
             onMouseEmulationChanged = actions.onQuickSettingsMouseEmulationChanged,
-            vibrateOsc = state.quickSettingsUiState.vibrateOsc,
+            vibrateOsc = uiState.quickSettingsUiState.vibrateOsc,
             onVibrateOscChanged = actions.onQuickSettingsVibrateOscChanged,
             onDismiss = actions.onQuickSettingsDismiss
         )
     }
 
-    if (state.networkTestUiState.showDialog) {
+    if (uiState.networkTestUiState.showDialog) {
         NetworkTestDialog(
-            networkTestStatus = state.networkTestStatus,
+            networkTestStatus = uiState.networkTestStatus,
             onDismiss = actions.onComputerDismissNetworkTest
         )
     }

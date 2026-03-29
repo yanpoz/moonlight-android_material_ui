@@ -246,7 +246,7 @@ fun MainScreenContent(
 //    }
 
     MainScreenDialogs(
-        state = uiState,
+        uiState = uiState,
         actions = actions
     )
 }
