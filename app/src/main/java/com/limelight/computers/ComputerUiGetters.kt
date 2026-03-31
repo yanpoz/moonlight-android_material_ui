@@ -59,16 +59,13 @@ fun Computer.toUiState(): ComputerItemUiState {
         networkStateText
     }
 
-    val statusColor = when (details.state) {
-        ComputerDetails.State.ONLINE -> {
-            if (details.pairState == PairingManager.PairState.PAIRED) {
-                MaterialTheme.colorScheme.tertiary
-            } else {
-                MaterialTheme.colorScheme.secondary
-            }
-        }
-        ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.secondary
-        ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
+    val statusColor = when (state) {
+        Computer.State.IN_GAME -> MaterialTheme.colorScheme.tertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.primary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSurfaceVariant
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSurfaceVariant
+        Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val actionTextColor = when (details.state) {
