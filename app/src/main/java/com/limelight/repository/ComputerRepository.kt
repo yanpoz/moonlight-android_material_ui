@@ -172,7 +172,7 @@ class ComputerRepository {
                 oldComputer?.applistPoller?.stop()
                 null
             }
-            // Preserve fields not included in ComputerDetails (pairResult, pairPin)
+            // Preserve fields not included in ComputerDetails
             val newComputer = Computer(
                 details = details,
                 apps = apps,

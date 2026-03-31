@@ -46,8 +46,6 @@ class ComputerItemHandler(
     var networkTestUiState by mutableStateOf(NetworkTestUiState())
         private set
 
-    fun isMenuExpanded(computerUuid: String): Boolean = menuUiState.computerUuid == computerUuid
-
     fun onOpenMenu(computerUuid: String) {
         menuUiState = ComputerMenuUiState(computerUuid)
     }

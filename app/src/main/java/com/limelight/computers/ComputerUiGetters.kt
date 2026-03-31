@@ -78,7 +78,7 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     return ComputerItemUiState(
-        name = details.name ?: "Unknown",
+        name = details.name ?: "NO_NAME",
         address = address,
         statusText = statusText,
         statusColor = statusColor,

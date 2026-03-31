@@ -127,7 +127,9 @@ private fun Indicator(color: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ComputerAddressBadge(address: String, modifier: Modifier = Modifier) {
+private fun ComputerAddressBadge(
+    address: String, modifier: Modifier = Modifier
+) {
     val isDark = LocalIsDarkTheme.current
     Text(
         text = address,
@@ -160,7 +162,9 @@ private fun ComputerAddressBadge(address: String, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun ComputerStatusBadge(statusText: String, modifier: Modifier = Modifier) {
+private fun ComputerStatusBadge(
+    statusText: String, modifier: Modifier = Modifier
+) {
     Text(
         text = statusText,
         style = MaterialTheme.typography.bodyLarge.copy(
@@ -178,7 +182,9 @@ private fun ComputerStatusBadge(statusText: String, modifier: Modifier = Modifie
 }
 
 @Composable
-private fun ComputerActionLabel(actionText: String, actionTextColor: Color, modifier: Modifier = Modifier) {
+private fun ComputerActionLabel(
+    actionText: String, actionTextColor: Color, modifier: Modifier = Modifier
+) {
     Text(
         text = actionText,
         style = MaterialTheme.typography.bodyLarge.copy(
@@ -187,6 +193,7 @@ private fun ComputerActionLabel(actionText: String, actionTextColor: Color, modi
         modifier = modifier
     )
 }
+
 
 @Preview(showBackground = true, widthDp = 700, heightDp = 1200)
 @Composable
