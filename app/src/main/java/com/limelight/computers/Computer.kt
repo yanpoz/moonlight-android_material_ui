@@ -12,7 +12,7 @@ data class Computer(
     val applistPoller: ComputerManagerService.ApplistPoller? = null
 ) {
     enum class State {
-        IN_GAME,
+        STREAMING,
         READY_TO_CONNECT,
         READY_TO_PAIR,
         OFFLINE,
@@ -26,7 +26,7 @@ data class Computer(
         details.state == ComputerDetails.State.OFFLINE -> State.OFFLINE
         details.state == ComputerDetails.State.UNKNOWN -> State.CONNECTING
         details.pairState != PairingManager.PairState.PAIRED -> State.READY_TO_PAIR
-        details.runningGameId != 0 -> State.IN_GAME
+        details.runningGameId != 0 -> State.STREAMING
         else -> State.READY_TO_CONNECT
     }
 
