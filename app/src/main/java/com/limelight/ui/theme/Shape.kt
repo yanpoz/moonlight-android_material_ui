@@ -11,7 +11,7 @@ import androidx.graphics.shapes.toPath
 val VerySunnyShape = GenericShape { size, _ ->
     val polygon = RoundedPolygon.star(
         numVerticesPerRadius = 8,
-        innerRadius = 0.5f,
+        innerRadius = 0.4f,
         rounding = CornerRounding(size.width * 0.15f)
     )
     val path = polygon.toPath()
