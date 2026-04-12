@@ -12,8 +12,10 @@ data class ComputerItemUiState(
     val address: String,
     val statusText: String,
     val statusColor: Color,
+    val statusTextColor: Color,
     val actionText: String,
-    val actionTextColor: Color
+    val actionTextColor: Color,
+    val cardColor: Color,
 )
 
 data class ComputerMenuUiState(

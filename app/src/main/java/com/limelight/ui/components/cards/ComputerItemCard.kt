@@ -10,8 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,8 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.limelight.computers.Computer
 import com.limelight.computers.toUiState
 import com.limelight.ui.components.menus.ComputerItemMenu
@@ -41,7 +42,7 @@ import com.limelight.viewmodel.components.ComputerItemUiState
 @Composable
 fun ComputerItemCard(
     uiState: ComputerItemUiState,
-    computer: Computer,
+    computer: Computer, //TODO: change to computer.details
     isMenuExpanded: Boolean,
     onDismissMenu: () -> Unit,
     onSendWakeOnLan: () -> Unit,
@@ -61,30 +62,30 @@ fun ComputerItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = uiState.cardColor,
         ),
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxHeight()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        Box(modifier = Modifier.fillMaxSize()) {
+            ComputerStatusIndicator(
+                fillColor = uiState.statusColor,
+                text = uiState.statusText,
+                textColor = uiState.statusTextColor,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 15.dp, y = (45).dp)
+            )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxHeight()
             ) {
                 Title(uiState.name)
-                Indicator(uiState.statusColor)
+                ComputerAddressBadge(uiState.address)
+                Spacer(modifier = Modifier.weight(1f))
+                ComputerActionLabel(uiState.actionText, uiState.actionTextColor)
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            ComputerAddressBadge(uiState.address)
-            Spacer(modifier = Modifier.height(4.dp))
-            ComputerStatusBadge(uiState.statusText)
-            Spacer(modifier = Modifier.weight(1f))
-            ComputerActionLabel(uiState.actionText, uiState.actionTextColor)
         }
 
         ComputerItemMenu(
@@ -109,7 +110,9 @@ fun ComputerItemCard(
 private fun Title(name: String, modifier: Modifier = Modifier) {
     Text(
         text = name,
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.headlineLarge.copy(
+            color = MaterialTheme.colorScheme.primary,
+        ),
         fontWeight = FontWeight.Bold,
         fontFamily = FontFamily.Default,
         modifier = modifier
@@ -117,13 +120,25 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Indicator(color: Color, modifier: Modifier = Modifier) {
+private fun ComputerStatusIndicator(
+    fillColor: Color, text: String, textColor: Color, modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
-            .size(40.dp)
+            .size(160.dp)
             .clip(VerySunnyShape)
-            .background(color)
-    )
+            .background(fillColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = textColor,
+                fontSize = 20.sp
+            ),
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 @Composable
@@ -133,34 +148,27 @@ private fun ComputerAddressBadge(
     val isDark = LocalIsDarkTheme.current
     Text(
         text = address,
-        style = MaterialTheme.typography.bodyLarge.copy(
+        style = MaterialTheme.typography.bodyMedium.copy(
             fontFamily = FontFamily.Monospace,
-            color = if (isDark)
-                MaterialTheme.colorScheme.secondary
+            color = if (!isDark)
+                MaterialTheme.colorScheme.primaryFixed
             else
-                MaterialTheme.colorScheme.secondaryFixed,
+                MaterialTheme.colorScheme.primary,
         ),
         modifier = modifier
-            .offset(x = (-6).dp)
+            .offset(x = (-4).dp)
             .background(
-                shape = RoundedCornerShape(20.dp),
-                color = if (isDark)
-                    MaterialTheme.colorScheme.onSecondaryFixed
+                shape = RoundedCornerShape(4.dp),
+                color = if (!isDark)
+                    MaterialTheme.colorScheme.primary
                 else
-                    MaterialTheme.colorScheme.secondary,
+                    MaterialTheme.colorScheme.onPrimaryFixed,
             )
-            .border(
-                width = 1.dp,
-                color = if (isDark)
-                    MaterialTheme.colorScheme.onSecondaryFixed
-                else
-                    MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 1.dp)
     )
 }
 
+// Rounded pill
 @Composable
 private fun ComputerStatusBadge(
     statusText: String, modifier: Modifier = Modifier

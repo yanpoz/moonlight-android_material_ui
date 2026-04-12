@@ -20,14 +20,14 @@ fun Computer.toUiState(): ComputerItemUiState {
 
     val actionText = when (details.state) {
         ComputerDetails.State.OFFLINE -> "Send Wake-On-LAN"
-        ComputerDetails.State.UNKNOWN -> "Waiting response from PC"
+        ComputerDetails.State.UNKNOWN -> "Send Wake-On-LAN"
         else -> {
             if (details.pairState != PairingManager.PairState.PAIRED) {
                 "Pair to PC"
             } else {
                 val runningApp = getRunningApp()
                 if (runningApp != null) {
-                    "Connect to running: ${runningApp.appName}"
+                    "Connect to: ${runningApp.appName}"
                 } else {
                     "Connect to Desktop"
                 }
@@ -51,7 +51,8 @@ fun Computer.toUiState(): ComputerItemUiState {
         null -> null
     }
 
-    val statusText = if (details.state == ComputerDetails.State.UNKNOWN) {
+    // Rounded pill with text
+    val statusText_old = if (details.state == ComputerDetails.State.UNKNOWN) {
         "Connecting..."
     } else if (pairStatusText != null) {
         "$networkStateText • $pairStatusText"
@@ -59,13 +60,41 @@ fun Computer.toUiState(): ComputerItemUiState {
         networkStateText
     }
 
+    val statusText = when (state) {
+        Computer.State.STREAMING -> "Streaming"
+        Computer.State.READY_TO_CONNECT -> "Ready to\nconnect"
+        Computer.State.READY_TO_PAIR -> "Ready\nto pair"
+        Computer.State.OFFLINE -> "Offline"
+        Computer.State.CONNECTING -> "Connecting"
+        Computer.State.ERROR -> "Error"
+    }
+
+
+    val cardColor = when (state) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.primaryContainer
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.ERROR -> MaterialTheme.colorScheme.secondaryContainer
+    }
+
     val statusColor = when (state) {
-        Computer.State.IN_GAME -> MaterialTheme.colorScheme.tertiary
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
         Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.primary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSurfaceVariant
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSurfaceVariant
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
         Computer.State.ERROR -> MaterialTheme.colorScheme.error
+    }
+
+    val statusTextColor = when (state) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onPrimary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSecondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
+        Computer.State.ERROR -> MaterialTheme.colorScheme.onError
     }
 
     val actionTextColor = when (details.state) {
@@ -79,8 +108,10 @@ fun Computer.toUiState(): ComputerItemUiState {
         address = address,
         statusText = statusText,
         statusColor = statusColor,
+        statusTextColor = statusTextColor,
         actionText = actionText,
-        actionTextColor = actionTextColor
+        actionTextColor = actionTextColor,
+        cardColor = cardColor
     )
 }
 
