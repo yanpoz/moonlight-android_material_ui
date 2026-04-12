@@ -7,6 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import com.limelight.computers.Computer
 
+enum class StatusShapeState {
+    Far, Near, Orbit
+}
+
 data class ComputerItemUiState(
     val name: String,
     val address: String,
@@ -16,6 +20,7 @@ data class ComputerItemUiState(
     val actionText: String,
     val actionTextColor: Color,
     val cardColor: Color,
+    val statusShapeState: StatusShapeState,
 )
 
 data class ComputerMenuUiState(

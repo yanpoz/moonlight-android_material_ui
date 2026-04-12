@@ -39,6 +39,7 @@ import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.ui.utils.SampleComputers
 import com.limelight.viewmodel.components.ComputerItemUiState
+import com.limelight.viewmodel.components.StatusShapeState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -71,7 +72,7 @@ fun ComputerItemCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             ComputerStatusBackground(
-                mainColor = uiState.statusColor,
+                uiState = uiState,
                 modifier = Modifier.fillMaxSize()
             )
             ComputerStatusForeground(
@@ -145,7 +146,7 @@ private fun OuterComputerStatusShape(
 ) {
     Box(
         modifier = modifier
-            .size(400.dp)
+            .size(450.dp)
             .clip(VerySunnyShape)
             .border(
                 width = 3.dp,
@@ -156,12 +157,26 @@ private fun OuterComputerStatusShape(
 
 @Composable
 private fun MainComputerStatusShape(
-    modifier: Modifier = Modifier,
     mainColor: Color,
+    shapeState: StatusShapeState,
+    modifier: Modifier = Modifier,
 ) {
+    val size = when (shapeState) {
+        StatusShapeState.Far -> 50.dp
+        StatusShapeState.Near -> 130.dp
+        StatusShapeState.Orbit -> 260.dp
+    }
+
+    val offset = when (shapeState) {
+        StatusShapeState.Far -> (-80).dp
+        StatusShapeState.Near -> (-60).dp
+        StatusShapeState.Orbit -> (-40).dp
+    }
+
     Box(
         modifier = modifier
-            .size(160.dp)
+            .size(size)
+            .offset(x = offset, y = offset)
             .clip(VerySunnyShape)
             .background(mainColor),
     ) {}
@@ -186,7 +201,7 @@ private fun StatusText(
 
 @Composable
 private fun ComputerStatusBackground(
-    mainColor: Color,
+    uiState: ComputerItemUiState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -200,7 +215,10 @@ private fun ComputerStatusBackground(
             contentAlignment = Alignment.Center
         ) {
             OuterComputerStatusShape()
-            MainComputerStatusShape(mainColor = mainColor)
+            MainComputerStatusShape(
+                mainColor = uiState.statusColor,
+                shapeState = uiState.statusShapeState
+            )
         }
     }
 }

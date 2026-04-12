@@ -89,11 +89,11 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val statusTextColor = when (state) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onPrimary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
         Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
@@ -101,6 +101,15 @@ fun Computer.toUiState(): ComputerItemUiState {
         ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.tertiary
         ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.tertiary
         ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.secondary
+    }
+
+    val statusShapeState = when (state) {
+        Computer.State.STREAMING -> com.limelight.viewmodel.components.StatusShapeState.Orbit
+        Computer.State.READY_TO_CONNECT -> com.limelight.viewmodel.components.StatusShapeState.Near
+        Computer.State.READY_TO_PAIR -> com.limelight.viewmodel.components.StatusShapeState.Near
+        Computer.State.OFFLINE -> com.limelight.viewmodel.components.StatusShapeState.Far
+        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Orbit
+        Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Far
     }
 
     return ComputerItemUiState(
@@ -111,7 +120,8 @@ fun Computer.toUiState(): ComputerItemUiState {
         statusTextColor = statusTextColor,
         actionText = actionText,
         actionTextColor = actionTextColor,
-        cardColor = cardColor
+        cardColor = cardColor,
+        statusShapeState = statusShapeState
     )
 }
 
