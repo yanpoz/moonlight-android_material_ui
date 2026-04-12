@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -68,24 +70,14 @@ fun ComputerItemCard(
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            ComputerStatusIndicator(
-                fillColor = uiState.statusColor,
-                text = uiState.statusText,
-                textColor = uiState.statusTextColor,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = 15.dp, y = (45).dp)
+            ComputerStatusBackground(
+                mainColor = uiState.statusColor,
             )
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxHeight()
-            ) {
-                Title(uiState.name)
-                ComputerAddressBadge(uiState.address)
-                Spacer(modifier = Modifier.weight(1f))
-                ComputerActionLabel(uiState.actionText, uiState.actionTextColor)
-            }
+
+            ComputerStatusForeground(
+                uiState = uiState,
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         ComputerItemMenu(
@@ -120,7 +112,7 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ComputerAddressBadge(
+private fun AddressBadge(
     address: String, modifier: Modifier = Modifier
 ) {
     val isDark = LocalIsDarkTheme.current
@@ -146,24 +138,92 @@ private fun ComputerAddressBadge(
     )
 }
 
+
 @Composable
-private fun ComputerStatusIndicator(
-    fillColor: Color, text: String, textColor: Color, modifier: Modifier = Modifier
+private fun OuterComputerStatusShape(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(400.dp)
+            .clip(VerySunnyShape)
+            .border(
+                width = 3.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = VerySunnyShape)
+    ) {}
+}
+
+@Composable
+private fun MainComputerStatusShape(
+    modifier: Modifier = Modifier,
+    mainColor: Color,
 ) {
     Box(
         modifier = modifier
             .size(160.dp)
             .clip(VerySunnyShape)
-            .background(fillColor),
-        contentAlignment = Alignment.Center
+            .background(mainColor),
+    ) {}
+}
+
+@Composable
+private fun StatusText(
+    text: String,
+    textColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = textColor,
+            fontSize = 20.sp
+        ),
+        textAlign = TextAlign.End,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun ComputerStatusBackground(
+    mainColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .wrapContentSize(align = Alignment.BottomEnd, unbounded = true)
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = textColor,
-                fontSize = 20.sp
-            ),
-            textAlign = TextAlign.Center,
+        OuterComputerStatusShape(
+            modifier = Modifier.align(Alignment.BottomEnd)
+        )
+        MainComputerStatusShape(
+            mainColor = mainColor,
+            modifier = Modifier.align(Alignment.BottomEnd)
+        )
+    }
+}
+
+@Composable
+private fun ComputerStatusForeground(
+    uiState: ComputerItemUiState,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxHeight()
+    ) {
+        Title(uiState.name)
+        AddressBadge(uiState.address)
+        Spacer(modifier = Modifier.weight(1f))
+        StatusText(
+            uiState.statusText,
+            uiState.statusTextColor,
+//            modifier = Modifier.align(Alignment.End)
+        )
+        ActionLabel(
+            uiState.actionText,
+            uiState.actionTextColor,
         )
     }
 }
@@ -190,7 +250,7 @@ private fun ComputerStatusBadge(
 }
 
 @Composable
-private fun ComputerActionLabel(
+private fun ActionLabel(
     actionText: String, actionTextColor: Color, modifier: Modifier = Modifier
 ) {
     Text(
@@ -198,6 +258,7 @@ private fun ComputerActionLabel(
         style = MaterialTheme.typography.bodyLarge.copy(
             color = actionTextColor
         ),
+        textAlign = TextAlign.End,
         modifier = modifier
     )
 }

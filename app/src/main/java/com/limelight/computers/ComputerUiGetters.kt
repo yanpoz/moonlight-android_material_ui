@@ -89,12 +89,12 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val statusTextColor = when (state) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onPrimary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSecondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
-        Computer.State.ERROR -> MaterialTheme.colorScheme.onError
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+        Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val actionTextColor = when (details.state) {
