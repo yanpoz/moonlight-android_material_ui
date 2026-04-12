@@ -72,8 +72,8 @@ fun ComputerItemCard(
         Box(modifier = Modifier.fillMaxSize()) {
             ComputerStatusBackground(
                 mainColor = uiState.statusColor,
+                modifier = Modifier.fillMaxSize()
             )
-
             ComputerStatusForeground(
                 uiState = uiState,
                 modifier = Modifier.fillMaxSize()
@@ -190,16 +190,11 @@ private fun ComputerStatusBackground(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
-            .wrapContentSize(align = Alignment.BottomEnd, unbounded = true)
+        modifier = modifier.wrapContentSize(align = Alignment.Center, unbounded = true),
+        contentAlignment = Alignment.Center
     ) {
-        OuterComputerStatusShape(
-            modifier = Modifier.align(Alignment.BottomEnd)
-        )
-        MainComputerStatusShape(
-            mainColor = mainColor,
-            modifier = Modifier.align(Alignment.BottomEnd)
-        )
+        OuterComputerStatusShape()
+        MainComputerStatusShape(mainColor = mainColor)
     }
 }
 
@@ -219,7 +214,7 @@ private fun ComputerStatusForeground(
         StatusText(
             uiState.statusText,
             uiState.statusTextColor,
-//            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.End)
         )
         ActionLabel(
             uiState.actionText,
