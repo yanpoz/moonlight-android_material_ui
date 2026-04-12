@@ -108,7 +108,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.READY_TO_CONNECT -> com.limelight.viewmodel.components.StatusShapeState.Near
         Computer.State.READY_TO_PAIR -> com.limelight.viewmodel.components.StatusShapeState.Near
         Computer.State.OFFLINE -> com.limelight.viewmodel.components.StatusShapeState.Far
-        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Orbit
+        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Near
         Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Far
     }
 

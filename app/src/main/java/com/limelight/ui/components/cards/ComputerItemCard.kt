@@ -150,7 +150,7 @@ private fun OuterComputerStatusShape(
             .clip(VerySunnyShape)
             .border(
                 width = 3.dp,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.secondary,
                 shape = VerySunnyShape)
     ) {}
 }
@@ -163,13 +163,13 @@ private fun MainComputerStatusShape(
 ) {
     val size = when (shapeState) {
         StatusShapeState.Far -> 50.dp
-        StatusShapeState.Near -> 130.dp
+        StatusShapeState.Near -> 160.dp
         StatusShapeState.Orbit -> 260.dp
     }
 
     val offset = when (shapeState) {
-        StatusShapeState.Far -> (-80).dp
-        StatusShapeState.Near -> (-60).dp
+        StatusShapeState.Far -> (-100).dp
+        StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (-40).dp
     }
 
@@ -239,7 +239,9 @@ private fun ComputerStatusForeground(
         StatusText(
             uiState.statusText,
             uiState.statusTextColor,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier
+                .align(Alignment.End)
+                .offset(x = (-20).dp)
         )
         ActionLabel(
             uiState.actionText,
