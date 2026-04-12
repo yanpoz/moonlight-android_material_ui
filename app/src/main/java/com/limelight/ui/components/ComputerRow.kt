@@ -77,7 +77,7 @@ fun ComputerRow(
         item(key = computer.details.uuid) {
             ComputerItemCard(
                 uiState = computer.toUiState(),
-                computer = computer,
+                details = computer.details,
                 isMenuExpanded = computerMenuUiState.computerUuid == computer.details.uuid,
                 onDismissMenu = actions.onComputerMenuDismiss,
                 onSendWakeOnLan = { actions.onComputerWakeOnLan(computer.details.uuid) },

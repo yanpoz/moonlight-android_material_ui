@@ -29,8 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.limelight.computers.Computer
 import com.limelight.computers.toUiState
+import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.ui.components.menus.ComputerItemMenu
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
@@ -42,7 +42,7 @@ import com.limelight.viewmodel.components.ComputerItemUiState
 @Composable
 fun ComputerItemCard(
     uiState: ComputerItemUiState,
-    computer: Computer, //TODO: change to computer.details
+    details: ComputerDetails,
     isMenuExpanded: Boolean,
     onDismissMenu: () -> Unit,
     onSendWakeOnLan: () -> Unit,
@@ -89,7 +89,7 @@ fun ComputerItemCard(
         }
 
         ComputerItemMenu(
-            computer = computer,
+            details = details,
             isExpanded = isMenuExpanded,
             onDismissRequest = onDismissMenu,
             onSendWakeOnLan = onSendWakeOnLan,
@@ -120,28 +120,6 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ComputerStatusIndicator(
-    fillColor: Color, text: String, textColor: Color, modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .size(160.dp)
-            .clip(VerySunnyShape)
-            .background(fillColor),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = textColor,
-                fontSize = 20.sp
-            ),
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Composable
 private fun ComputerAddressBadge(
     address: String, modifier: Modifier = Modifier
 ) {
@@ -166,6 +144,28 @@ private fun ComputerAddressBadge(
             )
             .padding(horizontal = 8.dp, vertical = 1.dp)
     )
+}
+
+@Composable
+private fun ComputerStatusIndicator(
+    fillColor: Color, text: String, textColor: Color, modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(160.dp)
+            .clip(VerySunnyShape)
+            .background(fillColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = textColor,
+                fontSize = 20.sp
+            ),
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 // Rounded pill
@@ -231,7 +231,7 @@ fun ComputerItemCardGridPreview() {
                     computerStates.forEach { (_, computer) ->
                         ComputerItemCard(
                             uiState = computer.toUiState(),
-                            computer = computer,
+                            details = computer.details,
                             isMenuExpanded = false,
                             onDismissMenu = { },
                             onSendWakeOnLan = { },

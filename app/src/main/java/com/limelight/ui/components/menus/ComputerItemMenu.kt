@@ -22,13 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.limelight.R
-import com.limelight.computers.Computer
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.PairingManager
 
 @Composable
 fun ComputerItemMenu(
-    computer: Computer,
+    details: ComputerDetails,
     isExpanded: Boolean,
     onDismissRequest: () -> Unit,
     onSendWakeOnLan: () -> Unit,
@@ -48,24 +47,26 @@ fun ComputerItemMenu(
         expanded = isExpanded,
         onDismissRequest = onDismissRequest
     ) {
-        if (computer.details.state == ComputerDetails.State.OFFLINE ||
-            computer.details.state == ComputerDetails.State.UNKNOWN
+        if (details.state == ComputerDetails.State.OFFLINE ||
+            details.state == ComputerDetails.State.UNKNOWN
         ) {
             // Send Wake-On-LAN
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_send_wol)) },
-                leadingIcon = { Icon(Icons.Outlined.PowerSettingsNew, null) },
+                leadingIcon = {
+                    Icon(Icons.Outlined.PowerSettingsNew, null) },
                 onClick = {
                     onDismissRequest()
                     onSendWakeOnLan()
                 }
             )
             HorizontalDivider()
-        } else if (computer.details.pairState != PairingManager.PairState.PAIRED) {
+        } else if (details.pairState != PairingManager.PairState.PAIRED) {
             // Pair PC
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pcview_menu_pair_pc)) },
-                leadingIcon = { Icon(Icons.Outlined.Handshake, null) },
+                leadingIcon = {
+                    Icon(Icons.Outlined.Handshake, null) },
                 onClick = {
                     onDismissRequest()
                     onPairOrStart()
@@ -73,11 +74,12 @@ fun ComputerItemMenu(
             )
             HorizontalDivider()
         } else {
-            if (computer.details.runningGameId == 0) {
+            if (details.runningGameId == 0) {
                 // Start Session
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.applist_menu_resume)) },
-                    leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
+                    leadingIcon = {
+                        Icon(Icons.Outlined.PlayArrow, null) },
                     onClick = {
                         onDismissRequest()
                         onPairOrStart()
@@ -87,7 +89,8 @@ fun ComputerItemMenu(
                 // Resume Session
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.applist_menu_resume)) },
-                    leadingIcon = { Icon(Icons.Outlined.PlayArrow, null) },
+                    leadingIcon = {
+                        Icon(Icons.Outlined.PlayArrow, null) },
                     onClick = {
                         onDismissRequest()
                         onPairOrStart()
@@ -96,7 +99,8 @@ fun ComputerItemMenu(
                 // Quit Session
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.applist_menu_quit)) },
-                    leadingIcon = { Icon(Icons.Outlined.Close, null) },
+                    leadingIcon = {
+                        Icon(Icons.Outlined.Close, null) },
                     onClick = {
                         onDismissRequest()
                         onQuitRunningApp()
@@ -108,7 +112,8 @@ fun ComputerItemMenu(
         // Move Up
         DropdownMenuItem(
             text = { Text(text = "Move Up") },
-            leadingIcon = { Icon(Icons.Outlined.KeyboardArrowUp, null) },
+            leadingIcon = {
+                Icon(Icons.Outlined.KeyboardArrowUp, null) },
             enabled = canMoveUp,
             onClick = {
                 onDismissRequest()
@@ -118,7 +123,8 @@ fun ComputerItemMenu(
         // Move Down
         DropdownMenuItem(
             text = { Text(text = "Move Down") },
-            leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, null) },
+            leadingIcon = {
+                Icon(Icons.Outlined.KeyboardArrowDown, null) },
             enabled = canMoveDown,
             onClick = {
                 onDismissRequest()
