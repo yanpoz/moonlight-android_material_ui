@@ -190,11 +190,18 @@ private fun ComputerStatusBackground(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.wrapContentSize(align = Alignment.Center, unbounded = true),
-        contentAlignment = Alignment.Center
+        modifier = modifier.clipToBounds(),
+        contentAlignment = Alignment.BottomEnd
     ) {
-        OuterComputerStatusShape()
-        MainComputerStatusShape(mainColor = mainColor)
+        Box(
+            modifier = Modifier
+                .size(0.dp)
+                .wrapContentSize(align = Alignment.Center, unbounded = true),
+            contentAlignment = Alignment.Center
+        ) {
+            OuterComputerStatusShape()
+            MainComputerStatusShape(mainColor = mainColor)
+        }
     }
 }
 
@@ -221,27 +228,6 @@ private fun ComputerStatusForeground(
             uiState.actionTextColor,
         )
     }
-}
-
-// Rounded pill
-@Composable
-private fun ComputerStatusBadge(
-    statusText: String, modifier: Modifier = Modifier
-) {
-    Text(
-        text = statusText,
-        style = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.secondary
-        ),
-        modifier = modifier
-            .offset(x = (-6).dp)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 4.dp)
-    )
 }
 
 @Composable
