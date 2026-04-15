@@ -146,18 +146,18 @@ private fun AtmosphereStatusShape(
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
-        StatusShapeState.Far -> 450.dp
-        StatusShapeState.Near -> 450.dp
+        StatusShapeState.Far -> 150.dp
+        StatusShapeState.Near -> 250.dp
         StatusShapeState.Orbit -> 450.dp
     }
     val offsetX = when (shapeState) {
-        StatusShapeState.Far -> (0).dp
-        StatusShapeState.Near -> (0).dp
+        StatusShapeState.Far -> (-70).dp
+        StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (0).dp
     }
     val offsetY = when (shapeState) {
-        StatusShapeState.Far -> (0).dp
-        StatusShapeState.Near -> (0).dp
+        StatusShapeState.Far -> (-70).dp
+        StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (0).dp
     }
     Box(
@@ -179,17 +179,17 @@ private fun PlanetStatusShape(
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
-        StatusShapeState.Far -> 50.dp
+        StatusShapeState.Far -> 90.dp
         StatusShapeState.Near -> 160.dp
         StatusShapeState.Orbit -> 260.dp
     }
     val offsetX = when (shapeState) {
-        StatusShapeState.Far -> (-50).dp
+        StatusShapeState.Far -> (-70).dp
         StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (-40).dp
     }
     val offsetY = when (shapeState) {
-        StatusShapeState.Far -> (-150).dp
+        StatusShapeState.Far -> (-70).dp
         StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (-30).dp
     }
@@ -263,7 +263,7 @@ private fun ComputerStatusForeground(
             uiState.statusTextColor,
             modifier = Modifier
                 .align(Alignment.End)
-                .offset(x = (-20).dp)
+                .offset(x = (-20).dp, y = (-20).dp)
         )
         ActionLabel(
             uiState.actionText,
@@ -287,7 +287,34 @@ private fun ActionLabel(
 }
 
 
-@Preview(showBackground = true, widthDp = 700, heightDp = 1200)
+//@Preview
+@Composable
+fun ComputerItemCardPreview() {
+    val computer = SampleComputers.PairingFailedComputer
+    MoonlightAndroidTheme {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)) {
+            ComputerItemCard(
+                uiState = computer.toUiState(),
+                details = computer.details,
+                isMenuExpanded = false,
+                onDismissMenu = { },
+                onSendWakeOnLan = { },
+                onQuitRunningApp = { },
+                onComputerDetailsClicked = { },
+                onDeleteComputer = { },
+                onMoveUp = { },
+                onMoveDown = { },
+                onTestNetwork = { },
+                onClick = { },
+                onLongClick = { }
+            )
+        }
+    }
+}
+
+ @Preview(showBackground = true, widthDp = 700, heightDp = 1200)
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
