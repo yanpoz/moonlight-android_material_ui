@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.limelight.computers.toUiState
@@ -150,22 +151,14 @@ private fun AddressBadge(
 @Composable
 private fun AtmosphereStatusIndicatorShape(
     shapeState: StatusShapeState,
+    offsetX: Dp,
+    offsetY: Dp,
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
         StatusShapeState.Far -> 120.dp
         StatusShapeState.Near -> 250.dp
         StatusShapeState.Orbit -> 450.dp
-    }
-    val offsetX = when (shapeState) {
-        StatusShapeState.Far -> 0.dp
-        StatusShapeState.Near -> 0.dp
-        StatusShapeState.Orbit -> 40.dp
-    }
-    val offsetY = when (shapeState) {
-        StatusShapeState.Far -> 0.dp
-        StatusShapeState.Near -> 0.dp
-        StatusShapeState.Orbit -> 30.dp
     }
     Box(
         modifier = modifier
@@ -220,18 +213,6 @@ private fun StatusIndicator(
     uiState: ComputerItemUiState,
     modifier: Modifier = Modifier
 ) {
-    val shapeState = uiState.atmosphereStatusShapeState
-    val offsetX = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (-40).dp
-    }
-    val offsetY = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (-30).dp
-    }
-
     Box(
         modifier = modifier,
         contentAlignment = Alignment.CenterEnd
@@ -239,16 +220,18 @@ private fun StatusIndicator(
         Box(
             modifier = Modifier
                 .size(0.dp)
-                .offset(x = offsetX, y = offsetY)
+                .offset(x = uiState.statusIndicatorOffsetX, y = uiState.statusIndicatorOffsetY)
                 .wrapContentSize(align = Alignment.Center, unbounded = true),
             contentAlignment = Alignment.Center
         ) {
             AtmosphereStatusIndicatorShape(
-                shapeState = shapeState
+                shapeState = uiState.atmosphereStatusShapeState,
+                offsetX = uiState.atmosphereOffsetX,
+                offsetY = uiState.atmosphereOffsetY
             )
             PlanetStatusIndicatorShape(
                 mainColor = uiState.statusColor,
-                shapeState = shapeState
+                shapeState = uiState.planetStatusShapeState
             )
         }
         StatusText(

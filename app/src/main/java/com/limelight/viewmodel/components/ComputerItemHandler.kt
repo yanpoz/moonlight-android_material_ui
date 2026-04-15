@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import com.limelight.computers.Computer
 
 enum class StatusShapeState {
@@ -21,7 +22,11 @@ data class ComputerItemUiState(
     val actionTextColor: Color,
     val cardColor: Color,
     val atmosphereStatusShapeState: StatusShapeState,
-    val planetStatusShapeState: StatusShapeState
+    val planetStatusShapeState: StatusShapeState,
+    val atmosphereOffsetX: Dp,
+    val atmosphereOffsetY: Dp,
+    val statusIndicatorOffsetX: Dp,
+    val statusIndicatorOffsetY: Dp
 )
 
 data class ComputerMenuUiState(
