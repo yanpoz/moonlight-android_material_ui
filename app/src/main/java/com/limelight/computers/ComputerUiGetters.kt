@@ -51,7 +51,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "Ready to pair"
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer to "Offline"
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer to "Connecting"
-        Computer.State.ERROR -> MaterialTheme.colorScheme.error to "Error"
+        Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer to "Error"
     }
 
     val statusTextColor = when (computerState) {
@@ -81,7 +81,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
-        Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer
+        Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val planetSize = when (statusShape) {

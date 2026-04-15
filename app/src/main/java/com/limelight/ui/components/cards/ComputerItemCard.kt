@@ -114,11 +114,17 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
     Text(
         text = name,
         style = MaterialTheme.typography.headlineLarge.copy(
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
         fontWeight = FontWeight.ExtraBold,
         fontFamily = FontFamily.Default,
         modifier = modifier
+            .offset(x = (-12).dp, y = 0.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                shape = RoundedCornerShape(100.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 2.dp)
     )
 }
 
