@@ -69,45 +69,46 @@ fun ComputerItemCard(
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize()
-        ) {
-            Title(uiState.name)
-            AddressBadge(uiState.address)
-            Spacer(modifier = Modifier.weight(1f))
+        Box(modifier = Modifier.fillMaxSize()) {
             StatusIndicator(
                 uiState = uiState.statusIndicator,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.matchParentSize()
             )
-            StatusText(
-                text = uiState.statusText.text,
-                textColor = uiState.statusText.textColor,
-            )
-              // TODO move outside
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize()
+            ) {
+                Title(uiState.name)
+                AddressBadge(uiState.address)
+                StatusText(
+                    text = uiState.statusText.text,
+                    textColor = uiState.statusText.textColor,
+                )
+                // TODO move outside
 //            ActionLabel(
 //                uiState.actionText,
 //                uiState.actionTextColor,
 //                modifier = Modifier.align(Alignment.End)
 //            )
-        }
+            }
 
-        ComputerItemMenu(
-            details = details,
-            isExpanded = isMenuExpanded,
-            onDismissRequest = onDismissMenu,
-            onSendWakeOnLan = onSendWakeOnLan,
-            onQuitRunningApp = onQuitRunningApp,
-            onComputerDetailsClicked = onComputerDetailsClicked,
-            onDeleteComputer = onDeleteComputer,
-            onMoveUp = onMoveUp,
-            onMoveDown = onMoveDown,
-            onTestNetwork = onTestNetwork,
-            onPairOrStart = onClick,
-            canMoveUp = canMoveUp,
-            canMoveDown = canMoveDown
-        )
+            ComputerItemMenu(
+                details = details,
+                isExpanded = isMenuExpanded,
+                onDismissRequest = onDismissMenu,
+                onSendWakeOnLan = onSendWakeOnLan,
+                onQuitRunningApp = onQuitRunningApp,
+                onComputerDetailsClicked = onComputerDetailsClicked,
+                onDeleteComputer = onDeleteComputer,
+                onMoveUp = onMoveUp,
+                onMoveDown = onMoveDown,
+                onTestNetwork = onTestNetwork,
+                onPairOrStart = onClick,
+                canMoveUp = canMoveUp,
+                canMoveDown = canMoveDown
+            )
+        }
     }
 }
 
