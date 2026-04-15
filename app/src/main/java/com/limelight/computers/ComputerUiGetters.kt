@@ -55,18 +55,18 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val statusTextColor = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.tertiary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onPrimaryContainer
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onPrimaryContainer
         Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val (offsetX, offsetY) = when (statusShape) {
         StatusShapeState.Far -> (-70).dp to 10.dp
-        StatusShapeState.Near -> (0).dp to 10.dp
-        StatusShapeState.Orbit -> (-40).dp to 90.dp
+        StatusShapeState.Near ->(-20).dp to 20.dp
+        StatusShapeState.Orbit -> 0.dp to 120.dp
     }
 
     val atmosphereSize = when (statusShape) {
@@ -75,10 +75,19 @@ fun Computer.toUiState(): ComputerItemUiState {
         StatusShapeState.Orbit -> 450.dp
     }
 
+    val atmosphereColor = when (computerState) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer
+    }
+
     val planetSize = when (statusShape) {
         StatusShapeState.Far -> 60.dp
-        StatusShapeState.Near -> 200.dp
-        StatusShapeState.Orbit -> 350.dp
+        StatusShapeState.Near -> 150.dp
+        StatusShapeState.Orbit -> 400.dp
     }
 
     return ComputerItemUiState(
@@ -86,13 +95,10 @@ fun Computer.toUiState(): ComputerItemUiState {
         address = address,
         actionText = actionText,
         actionTextColor = actionTextColor,
-        cardColor = if (computerState == Computer.State.STREAMING) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.secondaryContainer
-        },
+        cardColor = MaterialTheme.colorScheme.primaryContainer,
         statusIndicator = StatusIndicatorUiState(
             atmosphereSize = atmosphereSize,
+            atmosphereColor = atmosphereColor,
             planetSize = planetSize,
             planetColor = statusColor,
             offsetX = offsetX,

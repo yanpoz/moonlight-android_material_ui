@@ -2,7 +2,6 @@ package com.limelight.ui.components.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.limelight.computers.toUiState
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.ui.components.menus.ComputerItemMenu
@@ -154,6 +152,7 @@ private fun AddressBadge(
 
 @Composable
 private fun AtmosphereStatusIndicatorShape(
+    color: Color,
     size: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -161,16 +160,15 @@ private fun AtmosphereStatusIndicatorShape(
         modifier = modifier
             .size(size)
             .clip(VerySunnyShape)
-            .border(
-                width = 3.dp,
-                color = MaterialTheme.colorScheme.secondary,
-                shape = VerySunnyShape)
+            .background(
+                color = color
+            )
     ) {}
 }
 
 @Composable
 private fun PlanetStatusIndicatorShape(
-    mainColor: Color,
+    color: Color,
     size: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -178,7 +176,7 @@ private fun PlanetStatusIndicatorShape(
         modifier = modifier
             .size(size)
             .clip(VerySunnyShape)
-            .background(mainColor),
+            .background(color),
     ) {}
 }
 
@@ -216,10 +214,11 @@ private fun StatusIndicator(
             contentAlignment = Alignment.Center
         ) {
             AtmosphereStatusIndicatorShape(
+                color = uiState.atmosphereColor,
                 size = uiState.atmosphereSize,
             )
             PlanetStatusIndicatorShape(
-                mainColor = uiState.planetColor,
+                color = uiState.planetColor,
                 size = uiState.planetSize
             )
         }
