@@ -217,21 +217,21 @@ private fun StatusIndicator(
         Box(
             modifier = Modifier
                 .size(0.dp)
-                .offset(x = uiState.statusIndicatorOffsetX, y = uiState.statusIndicatorOffsetY)
+                .offset(x = uiState.statusIndicator.offsetX, y = uiState.statusIndicator.offsetY)
                 .wrapContentSize(align = Alignment.Center, unbounded = true),
             contentAlignment = Alignment.Center
         ) {
             AtmosphereStatusIndicatorShape(
-                shapeState = uiState.atmosphereStatusShapeState,
+                shapeState = uiState.statusIndicator.atmosphereShapeState,
             )
             PlanetStatusIndicatorShape(
-                mainColor = uiState.statusColor,
-                shapeState = uiState.planetStatusShapeState
+                mainColor = uiState.statusIndicator.color,
+                shapeState = uiState.statusIndicator.planetShapeState
             )
         }
         StatusText(
-            text = uiState.statusText,
-            textColor = uiState.statusTextColor,
+            text = uiState.statusIndicator.text,
+            textColor = uiState.statusIndicator.textColor,
         )
     }
 }

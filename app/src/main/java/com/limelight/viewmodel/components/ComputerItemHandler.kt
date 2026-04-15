@@ -12,19 +12,23 @@ enum class StatusShapeState {
     Far, Near, Orbit
 }
 
+data class StatusIndicatorUiState(
+    val atmosphereShapeState: StatusShapeState,
+    val planetShapeState: StatusShapeState,
+    val color: Color,
+    val text: String,
+    val textColor: Color,
+    val offsetX: Dp,
+    val offsetY: Dp
+)
+
 data class ComputerItemUiState(
     val name: String,
     val address: String,
-    val statusText: String,
-    val statusColor: Color,
-    val statusTextColor: Color,
     val actionText: String,
     val actionTextColor: Color,
     val cardColor: Color,
-    val atmosphereStatusShapeState: StatusShapeState,
-    val planetStatusShapeState: StatusShapeState,
-    val statusIndicatorOffsetX: Dp,
-    val statusIndicatorOffsetY: Dp
+    val statusIndicator: StatusIndicatorUiState
 )
 
 data class ComputerMenuUiState(

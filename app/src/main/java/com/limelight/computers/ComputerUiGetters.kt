@@ -118,16 +118,18 @@ fun Computer.toUiState(): ComputerItemUiState {
     return ComputerItemUiState(
         name = details.name ?: "NO_NAME",
         address = address,
-        statusText = statusText,
-        statusColor = statusColor,
-        statusTextColor = statusTextColor,
         actionText = actionText,
         actionTextColor = actionTextColor,
         cardColor = cardColor,
-        atmosphereStatusShapeState = statusShapeState,
-        planetStatusShapeState = statusShapeState,
-        statusIndicatorOffsetX = statusIndicatorOffsetX,
-        statusIndicatorOffsetY = statusIndicatorOffsetY
+        statusIndicator = com.limelight.viewmodel.components.StatusIndicatorUiState(
+            atmosphereShapeState = statusShapeState,
+            planetShapeState = statusShapeState,
+            color = statusColor,
+            text = statusText,
+            textColor = statusTextColor,
+            offsetX = statusIndicatorOffsetX,
+            offsetY = statusIndicatorOffsetY
+        )
     )
 }
 
