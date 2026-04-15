@@ -61,8 +61,9 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (offsetX, offsetY) = when (statusShape) {
-        StatusShapeState.Orbit -> (-40).dp to (-30).dp
-        else -> (-70).dp to (-70).dp
+        StatusShapeState.Far -> (-70).dp to 10.dp
+        StatusShapeState.Near -> (0).dp to 10.dp
+        StatusShapeState.Orbit -> (-40).dp to 90.dp
     }
 
     val atmosphereSize = when (statusShape) {
@@ -72,9 +73,9 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val planetSize = when (statusShape) {
-        StatusShapeState.Far -> 40.dp
-        StatusShapeState.Near -> 100.dp
-        StatusShapeState.Orbit -> 260.dp
+        StatusShapeState.Far -> 60.dp
+        StatusShapeState.Near -> 200.dp
+        StatusShapeState.Orbit -> 350.dp
     }
 
     return ComputerItemUiState(
