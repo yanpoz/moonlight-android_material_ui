@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -70,15 +68,24 @@ fun ComputerItemCard(
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            ComputerStatusBackground(
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            Title(uiState.name)
+            AddressBadge(uiState.address)
+            Spacer(modifier = Modifier.weight(1f))
+            StatusIndicator(
                 uiState = uiState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.align(Alignment.End)
             )
-            ComputerStatusForeground(
-                uiState = uiState,
-                modifier = Modifier.fillMaxSize()
-            )
+              // TODO move outside
+//            ActionLabel(
+//                uiState.actionText,
+//                uiState.actionTextColor,
+//                modifier = Modifier.align(Alignment.End)
+//            )
         }
 
         ComputerItemMenu(
@@ -141,24 +148,24 @@ private fun AddressBadge(
 
 
 @Composable
-private fun AtmosphereStatusShape(
+private fun AtmosphereStatusIndicatorShape(
     shapeState: StatusShapeState,
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
-        StatusShapeState.Far -> 150.dp
+        StatusShapeState.Far -> 120.dp
         StatusShapeState.Near -> 250.dp
         StatusShapeState.Orbit -> 450.dp
     }
     val offsetX = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (0).dp
+        StatusShapeState.Far -> 0.dp
+        StatusShapeState.Near -> 0.dp
+        StatusShapeState.Orbit -> 40.dp
     }
     val offsetY = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (0).dp
+        StatusShapeState.Far -> 0.dp
+        StatusShapeState.Near -> 0.dp
+        StatusShapeState.Orbit -> 30.dp
     }
     Box(
         modifier = modifier
@@ -173,30 +180,19 @@ private fun AtmosphereStatusShape(
 }
 
 @Composable
-private fun PlanetStatusShape(
+private fun PlanetStatusIndicatorShape(
     mainColor: Color,
     shapeState: StatusShapeState,
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
-        StatusShapeState.Far -> 90.dp
-        StatusShapeState.Near -> 160.dp
+        StatusShapeState.Far -> 40.dp
+        StatusShapeState.Near -> 100.dp
         StatusShapeState.Orbit -> 260.dp
-    }
-    val offsetX = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (-40).dp
-    }
-    val offsetY = when (shapeState) {
-        StatusShapeState.Far -> (-70).dp
-        StatusShapeState.Near -> (-70).dp
-        StatusShapeState.Orbit -> (-30).dp
     }
     Box(
         modifier = modifier
             .size(size)
-            .offset(x = offsetX, y = offsetY)
             .clip(VerySunnyShape)
             .background(mainColor),
     ) {}
@@ -220,54 +216,44 @@ private fun StatusText(
 }
 
 @Composable
-private fun ComputerStatusBackground(
+private fun StatusIndicator(
     uiState: ComputerItemUiState,
     modifier: Modifier = Modifier
 ) {
+    val shapeState = uiState.atmosphereStatusShapeState
+    val offsetX = when (shapeState) {
+        StatusShapeState.Far -> (-70).dp
+        StatusShapeState.Near -> (-70).dp
+        StatusShapeState.Orbit -> (-40).dp
+    }
+    val offsetY = when (shapeState) {
+        StatusShapeState.Far -> (-70).dp
+        StatusShapeState.Near -> (-70).dp
+        StatusShapeState.Orbit -> (-30).dp
+    }
+
     Box(
-        modifier = modifier.clipToBounds(),
-        contentAlignment = Alignment.BottomEnd
+        modifier = modifier,
+        contentAlignment = Alignment.CenterEnd
     ) {
         Box(
             modifier = Modifier
                 .size(0.dp)
+                .offset(x = offsetX, y = offsetY)
                 .wrapContentSize(align = Alignment.Center, unbounded = true),
             contentAlignment = Alignment.Center
         ) {
-            AtmosphereStatusShape(
-                shapeState = uiState.atmosphereStatusShapeState
+            AtmosphereStatusIndicatorShape(
+                shapeState = shapeState
             )
-            PlanetStatusShape(
+            PlanetStatusIndicatorShape(
                 mainColor = uiState.statusColor,
-                shapeState = uiState.atmosphereStatusShapeState
+                shapeState = shapeState
             )
         }
-    }
-}
-
-@Composable
-private fun ComputerStatusForeground(
-    uiState: ComputerItemUiState,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxHeight()
-    ) {
-        Title(uiState.name)
-        AddressBadge(uiState.address)
-        Spacer(modifier = Modifier.weight(1f))
         StatusText(
-            uiState.statusText,
-            uiState.statusTextColor,
-            modifier = Modifier
-                .align(Alignment.End)
-                .offset(x = (-20).dp, y = (-20).dp)
-        )
-        ActionLabel(
-            uiState.actionText,
-            uiState.actionTextColor,
+            text = uiState.statusText,
+            textColor = uiState.statusTextColor,
         )
     }
 }

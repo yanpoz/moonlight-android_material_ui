@@ -53,8 +53,8 @@ fun Computer.toUiState(): ComputerItemUiState {
 
     val statusText = when (state) {
         Computer.State.STREAMING -> "Streaming"
-        Computer.State.READY_TO_CONNECT -> "Ready to\nconnect"
-        Computer.State.READY_TO_PAIR -> "Ready\nto pair"
+        Computer.State.READY_TO_CONNECT -> "Ready to connect"
+        Computer.State.READY_TO_PAIR -> "Ready to pair"
         Computer.State.OFFLINE -> "Offline"
         Computer.State.CONNECTING -> "Connecting"
         Computer.State.ERROR -> "Error"
@@ -81,11 +81,11 @@ fun Computer.toUiState(): ComputerItemUiState {
 
     val statusTextColor = when (state) {
         Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onPrimary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSecondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
-        Computer.State.ERROR -> MaterialTheme.colorScheme.onError
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+        Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val actionTextColor = when (details.state) {
@@ -99,8 +99,8 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.READY_TO_CONNECT -> com.limelight.viewmodel.components.StatusShapeState.Near
         Computer.State.READY_TO_PAIR -> com.limelight.viewmodel.components.StatusShapeState.Near
         Computer.State.OFFLINE -> com.limelight.viewmodel.components.StatusShapeState.Far
-        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Near
-        Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Far
+        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Far
+        Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Near
     }
 
     return ComputerItemUiState(
