@@ -1,7 +1,10 @@
 package com.limelight.computers
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.limelight.R
@@ -32,11 +35,12 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.ERROR -> "Error"
     }
 
-    val actionTextColor = if (computerState == Computer.State.CONNECTING) {
+    val targetActionTextColor = if (computerState == Computer.State.CONNECTING) {
         MaterialTheme.colorScheme.secondary
     } else {
         MaterialTheme.colorScheme.tertiary
     }
+    val actionTextColor by animateColorAsState(targetActionTextColor, label = "actionTextColor")
 
     // Status Indicator Theme Mapping
     val statusShape = when (computerState) {
@@ -45,7 +49,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.OFFLINE, Computer.State.CONNECTING -> StatusShapeState.Far
     }
 
-    val (statusColor, statusText) = when (computerState) {
+    val (targetStatusColor, statusText) = when (computerState) {
         Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer to "Streaming"
         Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer to "Ready to connect"
         Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "Ready to pair"
@@ -53,8 +57,9 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer to "Error"
     }
+    val statusColor by animateColorAsState(targetStatusColor, label = "statusColor")
 
-    val statusTextColor = when (computerState) {
+    val targetStatusTextColor = when (computerState) {
         Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary
         Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary
         Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
@@ -62,20 +67,24 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.onPrimaryContainer
         Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
+    val statusTextColor by animateColorAsState(targetStatusTextColor, label = "statusTextColor")
 
-    val (offsetX, offsetY) = when (statusShape) {
+    val (targetOffsetX, targetOffsetY) = when (statusShape) {
         StatusShapeState.Far -> (-70).dp to 10.dp
         StatusShapeState.Near ->(-20).dp to 20.dp
         StatusShapeState.Orbit -> 0.dp to 120.dp
     }
+    val offsetX by animateDpAsState(targetOffsetX, label = "offsetX")
+    val offsetY by animateDpAsState(targetOffsetY, label = "offsetY")
 
-    val atmosphereSize = when (statusShape) {
+    val targetAtmosphereSize = when (statusShape) {
         StatusShapeState.Far -> 120.dp
         StatusShapeState.Near -> 250.dp
         StatusShapeState.Orbit -> 450.dp
     }
+    val atmosphereSize by animateDpAsState(targetAtmosphereSize, label = "atmosphereSize")
 
-    val atmosphereColor = when (computerState) {
+    val targetAtmosphereColor = when (computerState) {
         Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary
         Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary
         Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
@@ -83,12 +92,14 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
         Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
+    val atmosphereColor by animateColorAsState(targetAtmosphereColor, label = "atmosphereColor")
 
-    val planetSize = when (statusShape) {
+    val targetPlanetSize = when (statusShape) {
         StatusShapeState.Far -> 60.dp
         StatusShapeState.Near -> 150.dp
         StatusShapeState.Orbit -> 400.dp
     }
+    val planetSize by animateDpAsState(targetPlanetSize, label = "planetSize")
 
     return ComputerItemUiState(
         name = details.name ?: "NO_NAME", //TODO: is it possible?
