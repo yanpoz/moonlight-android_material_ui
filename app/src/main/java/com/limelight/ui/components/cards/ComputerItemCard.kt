@@ -81,6 +81,10 @@ fun ComputerItemCard(
                 uiState = uiState.statusIndicator,
                 modifier = Modifier.align(Alignment.End)
             )
+            StatusText(
+                text = uiState.statusText.text,
+                textColor = uiState.statusText.textColor,
+            )
               // TODO move outside
 //            ActionLabel(
 //                uiState.actionText,
@@ -220,10 +224,6 @@ private fun StatusIndicator(
                 size = uiState.planetSize
             )
         }
-        StatusText(
-            text = uiState.text,
-            textColor = uiState.textColor,
-        )
     }
 }
 

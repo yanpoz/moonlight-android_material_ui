@@ -16,10 +16,13 @@ data class StatusIndicatorUiState(
     val atmosphereSize: Dp,
     val planetSize: Dp,
     val color: Color,
-    val text: String,
-    val textColor: Color,
     val offsetX: Dp,
     val offsetY: Dp
+)
+
+data class StatusTextUiState(
+    val text: String,
+    val textColor: Color
 )
 
 data class ComputerItemUiState(
@@ -28,7 +31,8 @@ data class ComputerItemUiState(
     val actionText: String,
     val actionTextColor: Color,
     val cardColor: Color,
-    val statusIndicator: StatusIndicatorUiState
+    val statusIndicator: StatusIndicatorUiState,
+    val statusText: StatusTextUiState
 )
 
 data class ComputerMenuUiState(

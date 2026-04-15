@@ -8,6 +8,7 @@ import com.limelight.R
 import com.limelight.nvstream.http.NvApp
 import com.limelight.viewmodel.components.ComputerItemUiState
 import com.limelight.viewmodel.components.StatusIndicatorUiState
+import com.limelight.viewmodel.components.StatusTextUiState
 import com.limelight.viewmodel.components.StatusShapeState
 
 @Composable
@@ -90,10 +91,12 @@ fun Computer.toUiState(): ComputerItemUiState {
             atmosphereSize = atmosphereSize,
             planetSize = planetSize,
             color = statusColor,
-            text = statusText,
-            textColor = statusTextColor,
             offsetX = offsetX,
             offsetY = offsetY
+        ),
+        statusText = StatusTextUiState(
+            text = statusText,
+            textColor = statusTextColor
         )
     )
 }
