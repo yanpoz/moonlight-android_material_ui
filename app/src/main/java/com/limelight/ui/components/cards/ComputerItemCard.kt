@@ -38,6 +38,7 @@ import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.ui.utils.SampleComputers
 import com.limelight.viewmodel.components.ComputerItemUiState
+import com.limelight.viewmodel.components.StatusIndicatorUiState
 import com.limelight.viewmodel.components.StatusShapeState
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -78,7 +79,7 @@ fun ComputerItemCard(
             AddressBadge(uiState.address)
             Spacer(modifier = Modifier.weight(1f))
             StatusIndicator(
-                uiState = uiState,
+                uiState = uiState.statusIndicator,
                 modifier = Modifier.align(Alignment.End)
             )
               // TODO move outside
@@ -207,7 +208,7 @@ private fun StatusText(
 
 @Composable
 private fun StatusIndicator(
-    uiState: ComputerItemUiState,
+    uiState: StatusIndicatorUiState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -217,21 +218,21 @@ private fun StatusIndicator(
         Box(
             modifier = Modifier
                 .size(0.dp)
-                .offset(x = uiState.statusIndicator.offsetX, y = uiState.statusIndicator.offsetY)
+                .offset(x = uiState.offsetX, y = uiState.offsetY)
                 .wrapContentSize(align = Alignment.Center, unbounded = true),
             contentAlignment = Alignment.Center
         ) {
             AtmosphereStatusIndicatorShape(
-                shapeState = uiState.statusIndicator.atmosphereShapeState,
+                shapeState = uiState.atmosphereShapeState,
             )
             PlanetStatusIndicatorShape(
-                mainColor = uiState.statusIndicator.color,
-                shapeState = uiState.statusIndicator.planetShapeState
+                mainColor = uiState.color,
+                shapeState = uiState.planetShapeState
             )
         }
         StatusText(
-            text = uiState.statusIndicator.text,
-            textColor = uiState.statusIndicator.textColor,
+            text = uiState.text,
+            textColor = uiState.textColor,
         )
     }
 }
