@@ -61,7 +61,7 @@ fun ComputerItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
         colors = CardDefaults.cardColors(
-            containerColor = uiState.cardColor,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         modifier = modifier
             .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)

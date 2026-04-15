@@ -31,7 +31,6 @@ data class ComputerItemUiState(
     val address: String,
     val actionText: String,
     val actionTextColor: Color,
-    val cardColor: Color,
     val statusIndicator: StatusIndicatorUiState,
     val statusText: StatusTextUiState
 )

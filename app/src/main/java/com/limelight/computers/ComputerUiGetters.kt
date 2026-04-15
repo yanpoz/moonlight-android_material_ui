@@ -95,7 +95,6 @@ fun Computer.toUiState(): ComputerItemUiState {
         address = address,
         actionText = actionText,
         actionTextColor = actionTextColor,
-        cardColor = MaterialTheme.colorScheme.primaryContainer,
         statusIndicator = StatusIndicatorUiState(
             atmosphereSize = atmosphereSize,
             atmosphereColor = atmosphereColor,
