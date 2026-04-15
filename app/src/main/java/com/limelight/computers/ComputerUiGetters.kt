@@ -46,18 +46,21 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (statusColor, statusText) = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary to "Streaming"
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary to "Ready to connect"
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary to "Ready to pair"
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary to "Streaming"
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary to "Ready to connect"
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary to "Ready to pair"
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary to "Offline"
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.error to "Error"
     }
 
-    val statusTextColor = if (computerState == Computer.State.STREAMING) {
-        MaterialTheme.colorScheme.onTertiary
-    } else {
-        statusColor
+    val statusTextColor = when (computerState) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.tertiary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+        Computer.State.ERROR -> MaterialTheme.colorScheme.error
     }
 
     val (offsetX, offsetY) = when (statusShape) {
@@ -91,7 +94,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         statusIndicator = StatusIndicatorUiState(
             atmosphereSize = atmosphereSize,
             planetSize = planetSize,
-            color = statusColor,
+            planetColor = statusColor,
             offsetX = offsetX,
             offsetY = offsetY
         ),

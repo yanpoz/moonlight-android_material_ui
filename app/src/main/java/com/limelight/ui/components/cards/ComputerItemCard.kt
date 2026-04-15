@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -119,7 +118,7 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.headlineLarge.copy(
             color = MaterialTheme.colorScheme.primary,
         ),
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontFamily = FontFamily.Default,
         modifier = modifier
     )
@@ -191,10 +190,9 @@ private fun StatusText(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.headlineMedium.copy(
+        style = MaterialTheme.typography.bodyLarge.copy(
             color = textColor,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold
+            fontWeight = FontWeight.SemiBold
         ),
         textAlign = TextAlign.End,
         modifier = modifier
@@ -221,7 +219,7 @@ private fun StatusIndicator(
                 size = uiState.atmosphereSize,
             )
             PlanetStatusIndicatorShape(
-                mainColor = uiState.color,
+                mainColor = uiState.planetColor,
                 size = uiState.planetSize
             )
         }
