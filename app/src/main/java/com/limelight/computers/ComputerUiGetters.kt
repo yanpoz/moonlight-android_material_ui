@@ -46,11 +46,11 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (statusColor, statusText) = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary to "Streaming"
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary to "Ready to connect"
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary to "Ready to pair"
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary to "Offline"
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary to "Connecting"
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer to "Streaming"
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer to "Ready to connect"
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "Ready to pair"
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer to "Offline"
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.error to "Error"
     }
 
@@ -76,11 +76,11 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val atmosphereColor = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
         Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer
     }
 
