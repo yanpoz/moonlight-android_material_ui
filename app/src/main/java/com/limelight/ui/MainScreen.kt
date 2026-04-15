@@ -185,6 +185,7 @@ fun MainScreenContent(
 //    ) {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             MainTopAppBar(
                 scrollBehavior = scrollBehavior,
