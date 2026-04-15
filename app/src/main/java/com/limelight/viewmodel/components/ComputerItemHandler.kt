@@ -13,8 +13,8 @@ enum class StatusShapeState {
 }
 
 data class StatusIndicatorUiState(
-    val atmosphereShapeState: StatusShapeState,
-    val planetShapeState: StatusShapeState,
+    val atmosphereSize: Dp,
+    val planetSize: Dp,
     val color: Color,
     val text: String,
     val textColor: Color,

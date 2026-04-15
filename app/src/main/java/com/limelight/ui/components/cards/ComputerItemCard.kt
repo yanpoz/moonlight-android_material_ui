@@ -39,7 +39,6 @@ import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.ui.utils.SampleComputers
 import com.limelight.viewmodel.components.ComputerItemUiState
 import com.limelight.viewmodel.components.StatusIndicatorUiState
-import com.limelight.viewmodel.components.StatusShapeState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -151,14 +150,9 @@ private fun AddressBadge(
 
 @Composable
 private fun AtmosphereStatusIndicatorShape(
-    shapeState: StatusShapeState,
+    size: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val size = when (shapeState) {
-        StatusShapeState.Far -> 120.dp
-        StatusShapeState.Near -> 250.dp
-        StatusShapeState.Orbit -> 450.dp
-    }
     Box(
         modifier = modifier
             .size(size)
@@ -173,14 +167,9 @@ private fun AtmosphereStatusIndicatorShape(
 @Composable
 private fun PlanetStatusIndicatorShape(
     mainColor: Color,
-    shapeState: StatusShapeState,
+    size: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val size = when (shapeState) {
-        StatusShapeState.Far -> 40.dp
-        StatusShapeState.Near -> 100.dp
-        StatusShapeState.Orbit -> 260.dp
-    }
     Box(
         modifier = modifier
             .size(size)
@@ -197,9 +186,10 @@ private fun StatusText(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.bodyLarge.copy(
+        style = MaterialTheme.typography.headlineMedium.copy(
             color = textColor,
-            fontSize = 20.sp
+            fontSize = 24.sp,
+            fontWeight = FontWeight.ExtraBold
         ),
         textAlign = TextAlign.End,
         modifier = modifier
@@ -223,11 +213,11 @@ private fun StatusIndicator(
             contentAlignment = Alignment.Center
         ) {
             AtmosphereStatusIndicatorShape(
-                shapeState = uiState.atmosphereShapeState,
+                size = uiState.atmosphereSize,
             )
             PlanetStatusIndicatorShape(
                 mainColor = uiState.color,
-                shapeState = uiState.planetShapeState
+                size = uiState.planetSize
             )
         }
         StatusText(

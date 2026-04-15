@@ -64,6 +64,18 @@ fun Computer.toUiState(): ComputerItemUiState {
         else -> (-70).dp to (-70).dp
     }
 
+    val atmosphereSize = when (statusShape) {
+        StatusShapeState.Far -> 120.dp
+        StatusShapeState.Near -> 250.dp
+        StatusShapeState.Orbit -> 450.dp
+    }
+
+    val planetSize = when (statusShape) {
+        StatusShapeState.Far -> 40.dp
+        StatusShapeState.Near -> 100.dp
+        StatusShapeState.Orbit -> 260.dp
+    }
+
     return ComputerItemUiState(
         name = details.name ?: "NO_NAME", //TODO: is it possible?
         address = address,
@@ -75,8 +87,8 @@ fun Computer.toUiState(): ComputerItemUiState {
             MaterialTheme.colorScheme.secondaryContainer
         },
         statusIndicator = StatusIndicatorUiState(
-            atmosphereShapeState = statusShape,
-            planetShapeState = statusShape,
+            atmosphereSize = atmosphereSize,
+            planetSize = planetSize,
             color = statusColor,
             text = statusText,
             textColor = statusTextColor,
