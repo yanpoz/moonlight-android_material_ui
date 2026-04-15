@@ -20,7 +20,8 @@ data class ComputerItemUiState(
     val actionText: String,
     val actionTextColor: Color,
     val cardColor: Color,
-    val statusShapeState: StatusShapeState,
+    val atmosphereStatusShapeState: StatusShapeState,
+    val planetStatusShapeState: StatusShapeState
 )
 
 data class ComputerMenuUiState(

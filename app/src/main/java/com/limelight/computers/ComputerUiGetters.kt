@@ -51,15 +51,6 @@ fun Computer.toUiState(): ComputerItemUiState {
         null -> null
     }
 
-    // Rounded pill with text
-    val statusText_old = if (details.state == ComputerDetails.State.UNKNOWN) {
-        "Connecting..."
-    } else if (pairStatusText != null) {
-        "$networkStateText • $pairStatusText"
-    } else {
-        networkStateText
-    }
-
     val statusText = when (state) {
         Computer.State.STREAMING -> "Streaming"
         Computer.State.READY_TO_CONNECT -> "Ready to\nconnect"
@@ -121,7 +112,8 @@ fun Computer.toUiState(): ComputerItemUiState {
         actionText = actionText,
         actionTextColor = actionTextColor,
         cardColor = cardColor,
-        statusShapeState = statusShapeState
+        atmosphereStatusShapeState = statusShapeState,
+        planetStatusShapeState = statusShapeState
     )
 }
 

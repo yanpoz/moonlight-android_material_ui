@@ -141,12 +141,29 @@ private fun AddressBadge(
 
 
 @Composable
-private fun OuterComputerStatusShape(
+private fun AtmosphereStatusShape(
+    shapeState: StatusShapeState,
     modifier: Modifier = Modifier,
 ) {
+    val size = when (shapeState) {
+        StatusShapeState.Far -> 450.dp
+        StatusShapeState.Near -> 450.dp
+        StatusShapeState.Orbit -> 450.dp
+    }
+    val offsetX = when (shapeState) {
+        StatusShapeState.Far -> (0).dp
+        StatusShapeState.Near -> (0).dp
+        StatusShapeState.Orbit -> (0).dp
+    }
+    val offsetY = when (shapeState) {
+        StatusShapeState.Far -> (0).dp
+        StatusShapeState.Near -> (0).dp
+        StatusShapeState.Orbit -> (0).dp
+    }
     Box(
         modifier = modifier
-            .size(450.dp)
+            .size(size)
+            .offset(x = offsetX, y = offsetY)
             .clip(VerySunnyShape)
             .border(
                 width = 3.dp,
@@ -156,7 +173,7 @@ private fun OuterComputerStatusShape(
 }
 
 @Composable
-private fun MainComputerStatusShape(
+private fun PlanetStatusShape(
     mainColor: Color,
     shapeState: StatusShapeState,
     modifier: Modifier = Modifier,
@@ -166,17 +183,20 @@ private fun MainComputerStatusShape(
         StatusShapeState.Near -> 160.dp
         StatusShapeState.Orbit -> 260.dp
     }
-
-    val offset = when (shapeState) {
-        StatusShapeState.Far -> (-100).dp
+    val offsetX = when (shapeState) {
+        StatusShapeState.Far -> (-50).dp
         StatusShapeState.Near -> (-70).dp
         StatusShapeState.Orbit -> (-40).dp
     }
-
+    val offsetY = when (shapeState) {
+        StatusShapeState.Far -> (-150).dp
+        StatusShapeState.Near -> (-70).dp
+        StatusShapeState.Orbit -> (-30).dp
+    }
     Box(
         modifier = modifier
             .size(size)
-            .offset(x = offset, y = offset)
+            .offset(x = offsetX, y = offsetY)
             .clip(VerySunnyShape)
             .background(mainColor),
     ) {}
@@ -214,10 +234,12 @@ private fun ComputerStatusBackground(
                 .wrapContentSize(align = Alignment.Center, unbounded = true),
             contentAlignment = Alignment.Center
         ) {
-            OuterComputerStatusShape()
-            MainComputerStatusShape(
+            AtmosphereStatusShape(
+                shapeState = uiState.atmosphereStatusShapeState
+            )
+            PlanetStatusShape(
                 mainColor = uiState.statusColor,
-                shapeState = uiState.statusShapeState
+                shapeState = uiState.atmosphereStatusShapeState
             )
         }
     }
