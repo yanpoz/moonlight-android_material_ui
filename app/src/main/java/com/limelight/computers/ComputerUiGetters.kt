@@ -9,6 +9,8 @@ import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.http.PairingManager
 import com.limelight.viewmodel.components.ComputerItemUiState
+import com.limelight.viewmodel.components.StatusIndicatorUiState
+import com.limelight.viewmodel.components.StatusShapeState
 
 
 @Composable
@@ -36,84 +38,64 @@ fun Computer.toUiState(): ComputerItemUiState {
         }
     }
 
-    val networkStateText = when (details.state) {
-        ComputerDetails.State.ONLINE -> "Online"
-        ComputerDetails.State.OFFLINE -> "Offline"
-        ComputerDetails.State.UNKNOWN -> "Unknown"
-        else -> "NULL"
-    }
-
-    val pairStatusText = when (details.pairState) {
-        PairingManager.PairState.PAIRED -> "Paired"
-        PairingManager.PairState.NOT_PAIRED -> "Not paired"
-        PairingManager.PairState.PIN_WRONG -> stringResource(R.string.pair_incorrect_pin)
-        PairingManager.PairState.FAILED -> stringResource(R.string.pair_fail)
-        PairingManager.PairState.ALREADY_IN_PROGRESS -> stringResource(R.string.pairing)
-        null -> null
-    }
-
-    val statusText = when (state) {
-        Computer.State.STREAMING -> "Streaming"
-        Computer.State.READY_TO_CONNECT -> "Ready to connect"
-        Computer.State.READY_TO_PAIR -> "Ready to pair"
-        Computer.State.OFFLINE -> "Offline"
-        Computer.State.CONNECTING -> "Connecting"
-        Computer.State.ERROR -> "Error"
-    }
-
-
-    val cardColor = when (state) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.primaryContainer
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer
-        Computer.State.ERROR -> MaterialTheme.colorScheme.secondaryContainer
-    }
-
-    val statusColor = when (state) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
-        Computer.State.ERROR -> MaterialTheme.colorScheme.error
-    }
-
-    val statusTextColor = when (state) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
-        Computer.State.ERROR -> MaterialTheme.colorScheme.error
-    }
-
     val actionTextColor = when (details.state) {
         ComputerDetails.State.ONLINE -> MaterialTheme.colorScheme.tertiary
         ComputerDetails.State.OFFLINE -> MaterialTheme.colorScheme.tertiary
         ComputerDetails.State.UNKNOWN -> MaterialTheme.colorScheme.secondary
     }
 
-    val statusShapeState = when (state) {
-        Computer.State.STREAMING -> com.limelight.viewmodel.components.StatusShapeState.Orbit
-        Computer.State.READY_TO_CONNECT -> com.limelight.viewmodel.components.StatusShapeState.Near
-        Computer.State.READY_TO_PAIR -> com.limelight.viewmodel.components.StatusShapeState.Near
-        Computer.State.OFFLINE -> com.limelight.viewmodel.components.StatusShapeState.Far
-        Computer.State.CONNECTING -> com.limelight.viewmodel.components.StatusShapeState.Far
-        Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Near
+    val cardColor = when (state) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.secondaryContainer
     }
 
-    val statusIndicatorOffsetX = when (statusShapeState) {
-        com.limelight.viewmodel.components.StatusShapeState.Far -> (-70).dp
-        com.limelight.viewmodel.components.StatusShapeState.Near -> (-70).dp
-        com.limelight.viewmodel.components.StatusShapeState.Orbit -> (-40).dp
+    val statusShapeState = when (state) {
+        Computer.State.STREAMING -> StatusShapeState.Orbit
+        Computer.State.READY_TO_CONNECT -> StatusShapeState.Near
+        Computer.State.READY_TO_PAIR -> StatusShapeState.Near
+        Computer.State.OFFLINE -> StatusShapeState.Far
+        Computer.State.CONNECTING -> StatusShapeState.Far
+        Computer.State.ERROR -> StatusShapeState.Near
     }
-    val statusIndicatorOffsetY = when (statusShapeState) {
-        com.limelight.viewmodel.components.StatusShapeState.Far -> (-70).dp
-        com.limelight.viewmodel.components.StatusShapeState.Near -> (-70).dp
-        com.limelight.viewmodel.components.StatusShapeState.Orbit -> (-30).dp
-    }
+
+    val statusIndicator = StatusIndicatorUiState(
+        atmosphereShapeState = statusShapeState,
+        planetShapeState = statusShapeState,
+        color = when (state) {
+            Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary
+            Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
+            Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+            Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+            Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+            Computer.State.ERROR -> MaterialTheme.colorScheme.error
+        },
+        text = when (state) {
+            Computer.State.STREAMING -> "Streaming"
+            Computer.State.READY_TO_CONNECT -> "Ready to connect"
+            Computer.State.READY_TO_PAIR -> "Ready to pair"
+            Computer.State.OFFLINE -> "Offline"
+            Computer.State.CONNECTING -> "Connecting"
+            Computer.State.ERROR -> "Error"
+        },
+        textColor = when (state) {
+            Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
+            Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.primary
+            Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary
+            Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary
+            Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary
+            Computer.State.ERROR -> MaterialTheme.colorScheme.error
+        },
+        offsetX = when (statusShapeState) {
+            StatusShapeState.Far -> (-70).dp
+            StatusShapeState.Near -> (-70).dp
+            StatusShapeState.Orbit -> (-40).dp
+        },
+        offsetY = when (statusShapeState) {
+            StatusShapeState.Far -> (-70).dp
+            StatusShapeState.Near -> (-70).dp
+            StatusShapeState.Orbit -> (-30).dp
+        }
+    )
 
     return ComputerItemUiState(
         name = details.name ?: "NO_NAME",
@@ -121,15 +103,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         actionText = actionText,
         actionTextColor = actionTextColor,
         cardColor = cardColor,
-        statusIndicator = com.limelight.viewmodel.components.StatusIndicatorUiState(
-            atmosphereShapeState = statusShapeState,
-            planetShapeState = statusShapeState,
-            color = statusColor,
-            text = statusText,
-            textColor = statusTextColor,
-            offsetX = statusIndicatorOffsetX,
-            offsetY = statusIndicatorOffsetY
-        )
+        statusIndicator = statusIndicator
     )
 }
 
