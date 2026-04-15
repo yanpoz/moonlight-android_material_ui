@@ -244,7 +244,7 @@ private fun ActionLabel(
 @Composable
 fun ComputerItemCardPreview() {
     val computer = SampleComputers.PairingFailedComputer
-    MoonlightAndroidTheme {
+    MoonlightAndroidTheme(dynamicColor = false) {
         Box(modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)) {
@@ -267,7 +267,7 @@ fun ComputerItemCardPreview() {
     }
 }
 
- @Preview(showBackground = true, widthDp = 700, heightDp = 1200)
+@Preview(showBackground = true, widthDp = 700, heightDp = 1200)
 @Composable
 fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
@@ -284,7 +284,7 @@ fun ComputerItemCardGridPreview() {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         themes.forEach { theme ->
-            MoonlightAndroidTheme(theme) {
+            MoonlightAndroidTheme(theme, dynamicColor = false) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
