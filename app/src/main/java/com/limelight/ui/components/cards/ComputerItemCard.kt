@@ -151,8 +151,6 @@ private fun AddressBadge(
 @Composable
 private fun AtmosphereStatusIndicatorShape(
     shapeState: StatusShapeState,
-    offsetX: Dp,
-    offsetY: Dp,
     modifier: Modifier = Modifier,
 ) {
     val size = when (shapeState) {
@@ -163,7 +161,6 @@ private fun AtmosphereStatusIndicatorShape(
     Box(
         modifier = modifier
             .size(size)
-            .offset(x = offsetX, y = offsetY)
             .clip(VerySunnyShape)
             .border(
                 width = 3.dp,
@@ -226,8 +223,6 @@ private fun StatusIndicator(
         ) {
             AtmosphereStatusIndicatorShape(
                 shapeState = uiState.atmosphereStatusShapeState,
-                offsetX = uiState.atmosphereOffsetX,
-                offsetY = uiState.atmosphereOffsetY
             )
             PlanetStatusIndicatorShape(
                 mainColor = uiState.statusColor,

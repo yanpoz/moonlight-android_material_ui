@@ -23,8 +23,6 @@ data class ComputerItemUiState(
     val cardColor: Color,
     val atmosphereStatusShapeState: StatusShapeState,
     val planetStatusShapeState: StatusShapeState,
-    val atmosphereOffsetX: Dp,
-    val atmosphereOffsetY: Dp,
     val statusIndicatorOffsetX: Dp,
     val statusIndicatorOffsetY: Dp
 )

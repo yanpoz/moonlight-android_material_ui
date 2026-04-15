@@ -104,17 +104,6 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.ERROR -> com.limelight.viewmodel.components.StatusShapeState.Near
     }
 
-    val atmosphereOffsetX = when (statusShapeState) {
-        com.limelight.viewmodel.components.StatusShapeState.Far -> 0.dp
-        com.limelight.viewmodel.components.StatusShapeState.Near -> 0.dp
-        com.limelight.viewmodel.components.StatusShapeState.Orbit -> 40.dp
-    }
-    val atmosphereOffsetY = when (statusShapeState) {
-        com.limelight.viewmodel.components.StatusShapeState.Far -> 0.dp
-        com.limelight.viewmodel.components.StatusShapeState.Near -> 0.dp
-        com.limelight.viewmodel.components.StatusShapeState.Orbit -> 30.dp
-    }
-
     val statusIndicatorOffsetX = when (statusShapeState) {
         com.limelight.viewmodel.components.StatusShapeState.Far -> (-70).dp
         com.limelight.viewmodel.components.StatusShapeState.Near -> (-70).dp
@@ -137,8 +126,6 @@ fun Computer.toUiState(): ComputerItemUiState {
         cardColor = cardColor,
         atmosphereStatusShapeState = statusShapeState,
         planetStatusShapeState = statusShapeState,
-        atmosphereOffsetX = atmosphereOffsetX,
-        atmosphereOffsetY = atmosphereOffsetY,
         statusIndicatorOffsetX = statusIndicatorOffsetX,
         statusIndicatorOffsetY = statusIndicatorOffsetY
     )
