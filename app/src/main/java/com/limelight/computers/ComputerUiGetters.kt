@@ -29,10 +29,10 @@ fun Computer.toUiState(): ComputerItemUiState {
 
     // Determine Action Button UI
     val actionText = when (computerState) {
-        Computer.State.OFFLINE, Computer.State.CONNECTING -> stringResource(R.string.pcview_menu_send_wol)
+        Computer.State.OFFLINE, Computer.State.CONNECTING -> "send WOL"
         Computer.State.READY_TO_PAIR -> stringResource(R.string.pcview_menu_pair_pc)
-        Computer.State.STREAMING -> runningApp?.let { "Connect to: ${it.appName}" } ?: "Connect to Desktop"
-        Computer.State.READY_TO_CONNECT -> "Connect to Desktop"
+        Computer.State.STREAMING -> runningApp?.let { "Resume: ${it.appName}" } ?: "Resume"
+        Computer.State.READY_TO_CONNECT -> "Open Desktop"
         Computer.State.ERROR -> "Error"
     }
 

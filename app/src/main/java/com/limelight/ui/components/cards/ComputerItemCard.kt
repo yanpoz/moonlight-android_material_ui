@@ -60,52 +60,55 @@ fun ComputerItemCard(
     canMoveUp: Boolean = true,
     canMoveDown: Boolean = true
 ) {
-    ItemCard(
-        onClick = onClick,
-        onLongClick = onLongClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-        modifier = modifier
-            .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            StatusIndicator(
-                uiState = uiState.statusIndicator,
-                modifier = Modifier.matchParentSize()
-            )
-            StatusLabel(
-                uiState = uiState.statusLabel,
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                Title(uiState.name)
-                AddressBadge(uiState.address)
-                Spacer(modifier = Modifier.weight(1f))
-                ActionLabel(uiState.actionLabel)
-            }
+    Box(modifier = modifier) {
+        ItemCard(
+            onClick = onClick,
+            onLongClick = onLongClick,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            modifier = Modifier.aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                StatusIndicator(
+                    uiState = uiState.statusIndicator,
+                    modifier = Modifier.matchParentSize()
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Title(uiState.name)
+                    AddressBadge(uiState.address)
+                    Spacer(modifier = Modifier.weight(1f))
+                    ActionLabel(uiState.actionLabel)
+                }
 
-            ComputerItemMenu(
-                details = details,
-                isExpanded = isMenuExpanded,
-                onDismissRequest = onDismissMenu,
-                onSendWakeOnLan = onSendWakeOnLan,
-                onQuitRunningApp = onQuitRunningApp,
-                onComputerDetailsClicked = onComputerDetailsClicked,
-                onDeleteComputer = onDeleteComputer,
-                onMoveUp = onMoveUp,
-                onMoveDown = onMoveDown,
-                onTestNetwork = onTestNetwork,
-                onPairOrStart = onClick,
-                canMoveUp = canMoveUp,
-                canMoveDown = canMoveDown
-            )
+                ComputerItemMenu(
+                    details = details,
+                    isExpanded = isMenuExpanded,
+                    onDismissRequest = onDismissMenu,
+                    onSendWakeOnLan = onSendWakeOnLan,
+                    onQuitRunningApp = onQuitRunningApp,
+                    onComputerDetailsClicked = onComputerDetailsClicked,
+                    onDeleteComputer = onDeleteComputer,
+                    onMoveUp = onMoveUp,
+                    onMoveDown = onMoveDown,
+                    onTestNetwork = onTestNetwork,
+                    onPairOrStart = onClick,
+                    canMoveUp = canMoveUp,
+                    canMoveDown = canMoveDown
+                )
+            }
         }
+        StatusLabel(
+            uiState = uiState.statusLabel,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 8.dp, y = (-8).dp)
+        )
     }
 }
 
@@ -180,15 +183,15 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
     Text(
         text = uiState.text,
         style = MaterialTheme.typography.labelLarge.copy(
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
-            fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.onTertiary,
+            fontWeight = FontWeight.ExtraBold
         ),
         modifier = modifier
             .background(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = RoundedCornerShape(bottomStart = 12.dp)
+                color = MaterialTheme.colorScheme.tertiary,
+                shape = RoundedCornerShape(100.dp)
             )
-            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .padding(horizontal = 14.dp, vertical = 6.dp)
     )
 }
 
