@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -78,11 +79,12 @@ fun ComputerItemCard(
                     .padding(16.dp)
                     .fillMaxSize()
             ) {
+                Spacer(modifier = Modifier.weight(1f))
                 Title(uiState.name)
                 AddressBadge(uiState.address)
                 StatusLabel(uiState.statusLabel)
-                ActionLabel(uiState.actionLabel,
-                )
+                ActionLabel(uiState.actionLabel)
+                Spacer(modifier = Modifier.weight(1f))
             }
 
             ComputerItemMenu(
@@ -221,11 +223,11 @@ private fun ActionLabel(uiState: ActionLabelUiState, modifier: Modifier = Modifi
 }
 
 
-//@Preview
+@Preview
 @Composable
 fun ComputerItemCardPreview() {
-    val computer = SampleComputers.PairingFailedComputer
-    MoonlightAndroidTheme(dynamicColor = false) {
+    val computer = SampleComputers.OnlinePairedComputer
+    MoonlightAndroidTheme(dynamicColor = false, theme = "dark") {
         Box(modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)) {
