@@ -3,6 +3,7 @@ package com.limelight.ui
 import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -239,7 +240,7 @@ fun MainScreenContent(
 /**
  * Preview for the Main Screen showing both Light and Dark themes side-by-side.
  */
-@Preview(showBackground = true, widthDp = 680)
+@Preview(showBackground = true, heightDp = 440*2, widthDp = 600)
 @Composable
 fun MainScreenPreview() {
     val computers = remember {
@@ -270,7 +271,7 @@ fun MainScreenPreview() {
         )
     }
 
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         listOf("light", "dark").forEach { theme ->
             Box(modifier = Modifier.weight(1f)) {
                 MoonlightAndroidTheme(theme = theme, dynamicColor = false) {
