@@ -80,12 +80,8 @@ fun ComputerItemCard(
             ) {
                 Title(uiState.name)
                 AddressBadge(uiState.address)
-                StatusLabel(
-                    uiState = uiState.statusLabel,
-                )
-                // TODO move outside
-                ActionLabel(
-                    uiState = uiState.actionLabel,
+                StatusLabel(uiState.statusLabel)
+                ActionLabel(uiState.actionLabel,
                 )
             }
 
@@ -151,7 +147,6 @@ private fun AddressBadge(address: String, modifier: Modifier = Modifier) {
             .padding(horizontal = 8.dp, vertical = 1.dp)
     )
 }
-
 
 @Composable
 private fun AtmosphereStatusIndicatorShape(color: Color, size: Dp, modifier: Modifier = Modifier) {
