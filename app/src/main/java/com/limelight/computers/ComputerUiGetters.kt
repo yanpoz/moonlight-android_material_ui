@@ -51,9 +51,9 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (targetStatusColor, statusText) = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer to "Streaming"
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer to "Ready to connect"
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "Ready to pair"
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer to "Live"
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer to "Ready"
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "New"
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer to "Offline"
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer to "Error"
