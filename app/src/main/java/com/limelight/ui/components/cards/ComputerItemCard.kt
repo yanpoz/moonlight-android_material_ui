@@ -74,6 +74,10 @@ fun ComputerItemCard(
                 uiState = uiState.statusIndicator,
                 modifier = Modifier.matchParentSize()
             )
+            StatusLabel(
+                uiState = uiState.statusLabel,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -82,9 +86,8 @@ fun ComputerItemCard(
                 Spacer(modifier = Modifier.weight(1f))
                 Title(uiState.name)
                 AddressBadge(uiState.address)
-                StatusLabel(uiState.statusLabel)
-                ActionLabel(uiState.actionLabel)
                 Spacer(modifier = Modifier.weight(1f))
+                ActionLabel(uiState.actionLabel)
             }
 
             ComputerItemMenu(
@@ -176,12 +179,16 @@ private fun PlanetStatusIndicatorShape(color: Color, size: Dp, modifier: Modifie
 private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifier) {
     Text(
         text = uiState.text,
-        style = MaterialTheme.typography.bodyLarge.copy(
-            color = uiState.textColor,
-            fontWeight = FontWeight.SemiBold
+        style = MaterialTheme.typography.labelLarge.copy(
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            fontWeight = FontWeight.Bold
         ),
-        textAlign = TextAlign.End,
         modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(bottomStart = 12.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 4.dp)
     )
 }
 
