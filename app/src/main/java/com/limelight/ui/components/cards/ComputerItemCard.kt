@@ -34,8 +34,10 @@ import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
 import com.limelight.ui.utils.SampleComputers
+import com.limelight.viewmodel.components.ActionLabelUiState
 import com.limelight.viewmodel.components.ComputerItemUiState
 import com.limelight.viewmodel.components.StatusIndicatorUiState
+import com.limelight.viewmodel.components.StatusLabelUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -79,13 +81,11 @@ fun ComputerItemCard(
                 Title(uiState.name)
                 AddressBadge(uiState.address)
                 StatusLabel(
-                    text = uiState.statusLabel.text,
-                    textColor = uiState.statusLabel.textColor,
+                    uiState = uiState.statusLabel,
                 )
                 // TODO move outside
                 ActionLabel(
-                    text = uiState.actionLabel.text,
-                    textColor = uiState.actionLabel.textColor,
+                    uiState = uiState.actionLabel,
                     modifier = Modifier.align(Alignment.End)
                 )
             }
@@ -188,14 +188,13 @@ private fun PlanetStatusIndicatorShape(
 
 @Composable
 private fun StatusLabel(
-    text: String,
-    textColor: Color,
+    uiState: StatusLabelUiState,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = text,
+        text = uiState.text,
         style = MaterialTheme.typography.bodyLarge.copy(
-            color = textColor,
+            color = uiState.textColor,
             fontWeight = FontWeight.SemiBold
         ),
         textAlign = TextAlign.End,
@@ -233,14 +232,13 @@ private fun StatusIndicator(
 
 @Composable
 private fun ActionLabel(
-    text: String,
-    textColor: Color,
+    uiState: ActionLabelUiState,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = text,
+        text = uiState.text,
         style = MaterialTheme.typography.bodyLarge.copy(
-            color = textColor
+            color = uiState.textColor
         ),
         textAlign = TextAlign.End,
         modifier = modifier
