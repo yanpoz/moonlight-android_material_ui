@@ -240,7 +240,7 @@ fun MainScreenContent(
 /**
  * Preview for the Main Screen showing both Light and Dark themes side-by-side.
  */
-@Preview(showBackground = true, heightDp = 440*2, widthDp = 600)
+@Preview(showBackground = true, heightDp = 600*2, widthDp = 400)
 @Composable
 fun MainScreenPreview() {
     val computers = remember {
