@@ -78,16 +78,16 @@ fun ComputerItemCard(
             ) {
                 Title(uiState.name)
                 AddressBadge(uiState.address)
-                StatusText(
-                    text = uiState.statusText.text,
-                    textColor = uiState.statusText.textColor,
+                StatusLabel(
+                    text = uiState.statusLabel.text,
+                    textColor = uiState.statusLabel.textColor,
                 )
                 // TODO move outside
-//            ActionLabel(
-//                uiState.actionText,
-//                uiState.actionTextColor,
-//                modifier = Modifier.align(Alignment.End)
-//            )
+                ActionLabel(
+                    text = uiState.actionLabel.text,
+                    textColor = uiState.actionLabel.textColor,
+                    modifier = Modifier.align(Alignment.End)
+                )
             }
 
             ComputerItemMenu(
@@ -187,7 +187,7 @@ private fun PlanetStatusIndicatorShape(
 }
 
 @Composable
-private fun StatusText(
+private fun StatusLabel(
     text: String,
     textColor: Color,
     modifier: Modifier = Modifier
@@ -233,12 +233,14 @@ private fun StatusIndicator(
 
 @Composable
 private fun ActionLabel(
-    actionText: String, actionTextColor: Color, modifier: Modifier = Modifier
+    text: String,
+    textColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Text(
-        text = actionText,
+        text = text,
         style = MaterialTheme.typography.bodyLarge.copy(
-            color = actionTextColor
+            color = textColor
         ),
         textAlign = TextAlign.End,
         modifier = modifier

@@ -9,9 +9,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.limelight.R
 import com.limelight.nvstream.http.NvApp
+import com.limelight.viewmodel.components.ActionLabelUiState
 import com.limelight.viewmodel.components.ComputerItemUiState
 import com.limelight.viewmodel.components.StatusIndicatorUiState
-import com.limelight.viewmodel.components.StatusTextUiState
+import com.limelight.viewmodel.components.StatusLabelUiState
 import com.limelight.viewmodel.components.StatusShapeState
 
 @Composable
@@ -104,8 +105,10 @@ fun Computer.toUiState(): ComputerItemUiState {
     return ComputerItemUiState(
         name = details.name ?: "NO_NAME", //TODO: is it possible?
         address = address,
-        actionText = actionText,
-        actionTextColor = actionTextColor,
+        actionLabel = ActionLabelUiState(
+            text = actionText,
+            textColor = actionTextColor
+        ),
         statusIndicator = StatusIndicatorUiState(
             atmosphereSize = atmosphereSize,
             atmosphereColor = atmosphereColor,
@@ -114,7 +117,7 @@ fun Computer.toUiState(): ComputerItemUiState {
             offsetX = offsetX,
             offsetY = offsetY
         ),
-        statusText = StatusTextUiState(
+        statusLabel = StatusLabelUiState(
             text = statusText,
             textColor = statusTextColor
         )

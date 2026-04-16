@@ -21,7 +21,12 @@ data class StatusIndicatorUiState(
     val offsetY: Dp
 )
 
-data class StatusTextUiState(
+data class StatusLabelUiState(
+    val text: String,
+    val textColor: Color
+)
+
+data class ActionLabelUiState(
     val text: String,
     val textColor: Color
 )
@@ -29,10 +34,9 @@ data class StatusTextUiState(
 data class ComputerItemUiState(
     val name: String,
     val address: String,
-    val actionText: String,
-    val actionTextColor: Color,
+    val actionLabel: ActionLabelUiState,
     val statusIndicator: StatusIndicatorUiState,
-    val statusText: StatusTextUiState
+    val statusLabel: StatusLabelUiState
 )
 
 data class ComputerMenuUiState(
