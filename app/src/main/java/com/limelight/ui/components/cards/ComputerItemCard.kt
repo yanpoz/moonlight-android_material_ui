@@ -86,7 +86,6 @@ fun ComputerItemCard(
                 // TODO move outside
                 ActionLabel(
                     uiState = uiState.actionLabel,
-                    modifier = Modifier.align(Alignment.End)
                 )
             }
 
@@ -129,9 +128,7 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AddressBadge(
-    address: String, modifier: Modifier = Modifier
-) {
+private fun AddressBadge(address: String, modifier: Modifier = Modifier) {
     val isDark = LocalIsDarkTheme.current
     Text(
         text = address,
@@ -157,11 +154,7 @@ private fun AddressBadge(
 
 
 @Composable
-private fun AtmosphereStatusIndicatorShape(
-    color: Color,
-    size: Dp,
-    modifier: Modifier = Modifier,
-) {
+private fun AtmosphereStatusIndicatorShape(color: Color, size: Dp, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(size)
@@ -173,11 +166,7 @@ private fun AtmosphereStatusIndicatorShape(
 }
 
 @Composable
-private fun PlanetStatusIndicatorShape(
-    color: Color,
-    size: Dp,
-    modifier: Modifier = Modifier,
-) {
+private fun PlanetStatusIndicatorShape(color: Color, size: Dp, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(size)
@@ -187,10 +176,7 @@ private fun PlanetStatusIndicatorShape(
 }
 
 @Composable
-private fun StatusLabel(
-    uiState: StatusLabelUiState,
-    modifier: Modifier = Modifier
-) {
+private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifier) {
     Text(
         text = uiState.text,
         style = MaterialTheme.typography.bodyLarge.copy(
@@ -203,10 +189,7 @@ private fun StatusLabel(
 }
 
 @Composable
-private fun StatusIndicator(
-    uiState: StatusIndicatorUiState,
-    modifier: Modifier = Modifier
-) {
+private fun StatusIndicator(uiState: StatusIndicatorUiState, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.CenterEnd
@@ -231,10 +214,7 @@ private fun StatusIndicator(
 }
 
 @Composable
-private fun ActionLabel(
-    uiState: ActionLabelUiState,
-    modifier: Modifier = Modifier
-) {
+private fun ActionLabel(uiState: ActionLabelUiState, modifier: Modifier = Modifier) {
     Text(
         text = uiState.text,
         style = MaterialTheme.typography.bodyLarge.copy(
