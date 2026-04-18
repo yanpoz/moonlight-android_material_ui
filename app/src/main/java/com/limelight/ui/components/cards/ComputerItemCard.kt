@@ -79,7 +79,6 @@ fun ComputerItemCard(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
                     Title(uiState.name)
                     AddressBadge(uiState.address)
                     Spacer(modifier = Modifier.weight(1f))
@@ -120,7 +119,6 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
         fontWeight = FontWeight.ExtraBold,
-        fontFamily = FontFamily.Default,
         modifier = modifier
             .offset(x = (-12).dp, y = 0.dp)
             .background(
@@ -237,7 +235,7 @@ private fun ActionLabel(uiState: ActionLabelUiState, modifier: Modifier = Modifi
 @Composable
 fun ComputerItemCardPreview() {
     val computer = SampleComputers.OnlinePairedComputer
-    MoonlightAndroidTheme(dynamicColor = false, theme = "dark") {
+    MoonlightAndroidTheme(dynamicColor = false, theme = "light") {
         Box(modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)) {
