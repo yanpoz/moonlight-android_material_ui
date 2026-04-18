@@ -79,10 +79,13 @@ fun ComputerItemCard(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    Title(uiState.name)
+                    Title(uiState.name) //TODO: use RobotoFlex
                     AddressBadge(uiState.address)
                     Spacer(modifier = Modifier.weight(1f))
-                    ActionLabel(uiState.actionLabel)
+                    ActionLabel(
+                        uiState = uiState.actionLabel,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
                 }
 
                 ComputerItemMenu(
@@ -222,11 +225,16 @@ private fun StatusIndicator(uiState: StatusIndicatorUiState, modifier: Modifier 
 private fun ActionLabel(uiState: ActionLabelUiState, modifier: Modifier = Modifier) {
     Text(
         text = uiState.text,
-        style = MaterialTheme.typography.bodyLarge.copy(
-            color = uiState.textColor
+        style = MaterialTheme.typography.labelLarge.copy(
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.ExtraBold
         ),
-        textAlign = TextAlign.End,
         modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(100.dp)
+            )
+            .padding(horizontal = 14.dp, vertical = 6.dp)
     )
 }
 
