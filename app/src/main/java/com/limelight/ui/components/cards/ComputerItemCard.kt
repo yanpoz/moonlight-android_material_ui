@@ -139,9 +139,9 @@ private fun AddressBadge(address: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.bodyMedium.copy(
             fontFamily = FontFamily.Monospace,
             color = if (!isDark)
-                MaterialTheme.colorScheme.primaryFixed
+                MaterialTheme.colorScheme.onPrimary
             else
-                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.onPrimaryContainer,
         ),
         modifier = modifier
             .offset(x = (-4).dp)
