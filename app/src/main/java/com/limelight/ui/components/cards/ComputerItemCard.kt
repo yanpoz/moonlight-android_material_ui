@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -225,19 +226,32 @@ private fun StatusIndicator(uiState: StatusIndicatorUiState, modifier: Modifier 
 
 @Composable
 private fun ActionLabel(uiState: ActionLabelUiState, modifier: Modifier = Modifier) {
-    Text(
-        text = uiState.text,
-        style = MaterialTheme.typography.labelLarge.copy(
-            color = MaterialTheme.colorScheme.onPrimary,
-            fontWeight = FontWeight.ExtraBold
-        ),
+    Row(
         modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(100.dp)
             )
-            .padding(horizontal = 14.dp, vertical = 6.dp)
-    )
+            .padding(horizontal = 14.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        uiState.icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Text(
+            text = uiState.text,
+            style = MaterialTheme.typography.labelLarge.copy(
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.ExtraBold
+            )
+        )
+    }
 }
 
 

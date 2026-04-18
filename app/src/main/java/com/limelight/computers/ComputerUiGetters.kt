@@ -2,6 +2,12 @@ package com.limelight.computers
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.outlined.Handshake
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.PowerSettingsNew
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,12 +34,12 @@ fun Computer.toUiState(): ComputerItemUiState {
         ?: "UNKNOWN"
 
     // Determine Action Button UI
-    val actionText = when (computerState) {
-        Computer.State.OFFLINE, Computer.State.CONNECTING -> "send WOL"
-        Computer.State.READY_TO_PAIR -> stringResource(R.string.pcview_menu_pair_pc)
-        Computer.State.STREAMING -> runningApp?.let { "Resume: ${it.appName}" } ?: "Resume"
-        Computer.State.READY_TO_CONNECT -> "Open Desktop"
-        Computer.State.ERROR -> "Error"
+    val (actionText, actionIcon) = when (computerState) {
+        Computer.State.OFFLINE, Computer.State.CONNECTING -> "Send WOL" to Icons.Outlined.PowerSettingsNew
+        Computer.State.READY_TO_PAIR -> stringResource(R.string.pcview_menu_pair_pc) to Icons.Outlined.Handshake
+        Computer.State.STREAMING -> (runningApp?.let { "Resume: ${it.appName}" } ?: "Resume") to Icons.Outlined.PlayArrow
+        Computer.State.READY_TO_CONNECT -> "Open Desktop" to Icons.AutoMirrored.Outlined.OpenInNew
+        Computer.State.ERROR -> "Error" to Icons.Outlined.Warning
     }
 
     val targetActionTextColor = if (computerState == Computer.State.CONNECTING) {
@@ -107,7 +113,8 @@ fun Computer.toUiState(): ComputerItemUiState {
         address = address,
         actionLabel = ActionLabelUiState(
             text = actionText,
-            textColor = actionTextColor
+            textColor = actionTextColor,
+            icon = actionIcon
         ),
         statusIndicator = StatusIndicatorUiState(
             atmosphereSize = atmosphereSize,

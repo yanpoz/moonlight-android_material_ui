@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import com.limelight.computers.Computer
 
@@ -28,7 +29,8 @@ data class StatusLabelUiState(
 
 data class ActionLabelUiState(
     val text: String,
-    val textColor: Color
+    val textColor: Color,
+    val icon: ImageVector? = null
 )
 
 data class ComputerItemUiState(
