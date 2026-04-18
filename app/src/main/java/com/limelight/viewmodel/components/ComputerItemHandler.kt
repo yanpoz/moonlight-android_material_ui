@@ -24,7 +24,8 @@ data class StatusIndicatorUiState(
 
 data class StatusLabelUiState(
     val text: String,
-    val textColor: Color
+    val textColor: Color,
+    val statusColor: Color
 )
 
 data class ActionLabelUiState(

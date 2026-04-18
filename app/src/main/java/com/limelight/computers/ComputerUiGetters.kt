@@ -57,22 +57,32 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (targetStatusColor, statusText) = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer to "Live"
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer to "Ready"
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer to "New"
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer to "Offline"
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer to "Connecting"
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiaryContainer to "Live"
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.tertiary to "Ready"
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary to "New"
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary to "Offline"
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer to "Error"
     }
     val statusColor by animateColorAsState(targetStatusColor, label = "statusColor")
 
+    val targetPlanetColor = when (computerState) {
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondaryContainer
+        Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer
+    }
+    val planetColor by animateColorAsState(targetPlanetColor, label = "planetColor")
+
     val targetStatusTextColor = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.secondary
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.secondary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.secondary
-        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onPrimaryContainer
-        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onPrimaryContainer
-        Computer.State.ERROR -> MaterialTheme.colorScheme.error
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiaryContainer
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSecondary
+        Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
+        Computer.State.ERROR -> MaterialTheme.colorScheme.onErrorContainer
     }
     val statusTextColor by animateColorAsState(targetStatusTextColor, label = "statusTextColor")
 
@@ -120,13 +130,14 @@ fun Computer.toUiState(): ComputerItemUiState {
             atmosphereSize = atmosphereSize,
             atmosphereColor = atmosphereColor,
             planetSize = planetSize,
-            planetColor = statusColor,
+            planetColor = planetColor,
             offsetX = offsetX,
             offsetY = offsetY
         ),
         statusLabel = StatusLabelUiState(
             text = statusText,
-            textColor = statusTextColor
+            textColor = statusTextColor,
+            statusColor = statusColor
         )
     )
 }

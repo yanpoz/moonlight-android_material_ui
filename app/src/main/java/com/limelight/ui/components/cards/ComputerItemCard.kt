@@ -2,6 +2,7 @@ package com.limelight.ui.components.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +72,7 @@ fun ComputerItemCard(
             modifier = Modifier.aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                StatusIndicator(
+                PlanetIndicator(
                     uiState = uiState.statusIndicator,
                     modifier = Modifier.matchParentSize()
                 )
@@ -131,7 +132,7 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(100.dp)
             )
-            .padding(horizontal = 12.dp, vertical = 2.dp)
+            .padding(horizontal = 12.dp, vertical = 0.dp)
     )
 }
 
@@ -187,12 +188,12 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
     Text(
         text = uiState.text,
         style = MaterialTheme.typography.labelLarge.copy(
-            color = MaterialTheme.colorScheme.onTertiary,
+            color = uiState.textColor,
             fontWeight = FontWeight.ExtraBold
         ),
         modifier = modifier
             .background(
-                color = MaterialTheme.colorScheme.tertiary,
+                color = uiState.statusColor,
                 shape = RoundedCornerShape(100.dp)
             )
             .padding(horizontal = 14.dp, vertical = 6.dp)
@@ -200,7 +201,7 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun StatusIndicator(uiState: StatusIndicatorUiState, modifier: Modifier = Modifier) {
+private fun PlanetIndicator(uiState: StatusIndicatorUiState, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.CenterEnd
