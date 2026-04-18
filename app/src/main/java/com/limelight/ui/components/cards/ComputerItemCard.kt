@@ -24,13 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.limelight.computers.toUiState
 import com.limelight.nvstream.http.ComputerDetails
 import com.limelight.ui.components.menus.ComputerItemMenu
+import com.limelight.ui.theme.Antonio
 import com.limelight.ui.theme.LocalIsDarkTheme
 import com.limelight.ui.theme.MoonlightAndroidTheme
 import com.limelight.ui.theme.VerySunnyShape
@@ -79,7 +79,7 @@ fun ComputerItemCard(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    Title(uiState.name) //TODO: use RobotoFlex
+                    Title(uiState.name)
                     AddressBadge(uiState.address)
                     Spacer(modifier = Modifier.weight(1f))
                     ActionLabel(
@@ -119,7 +119,9 @@ private fun Title(name: String, modifier: Modifier = Modifier) {
     Text(
         text = name,
         style = MaterialTheme.typography.headlineLarge.copy(
+            fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.5f,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontFamily = Antonio //TODO: use RobotoFlex later
         ),
         fontWeight = FontWeight.ExtraBold,
         modifier = modifier

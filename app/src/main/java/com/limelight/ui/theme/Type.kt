@@ -12,6 +12,10 @@ val RobotoFlex = FontFamily(
     Font(R.font.roboto_flex, FontWeight.Normal)
 )
 
+val Antonio = FontFamily(
+    Font(R.font.antonio, FontWeight.Normal)
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
@@ -22,7 +26,7 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = RobotoFlex,
+        fontFamily = Antonio,
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp,
         lineHeight = 28.sp,
@@ -36,7 +40,7 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     ),
     headlineLarge = TextStyle(
-        fontFamily = RobotoFlex,
+        fontFamily = Antonio,
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 40.sp,
@@ -57,14 +61,14 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
-        fontFamily = RobotoFlex,
+        fontFamily = Antonio,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
-        fontFamily = RobotoFlex,
+        fontFamily = Antonio,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
