@@ -20,11 +20,23 @@ val Sixtyfour = FontFamily(
     Font(R.font.sixtyfour, FontWeight.Normal)
 )
 
+val Bitcount = FontFamily(
+    Font(R.font.bitcount_single_regular, FontWeight.Normal)
+)
+
 val SixtyfourTextStyle = TextStyle(
     fontFamily = Sixtyfour,
     fontWeight = FontWeight.Normal,
-    fontSize = 18.sp,
-    lineHeight = 24.sp,
+    fontSize = 32.sp,
+    lineHeight = 38.sp,
+    letterSpacing = 0.sp
+)
+
+val BitcountTextStyle = TextStyle(
+    fontFamily = Bitcount,
+    fontWeight = FontWeight.Normal,
+    fontSize = 32.sp,
+    lineHeight = 38.sp,
     letterSpacing = 0.sp
 )
 
