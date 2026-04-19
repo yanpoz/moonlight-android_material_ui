@@ -3,7 +3,7 @@ package com.limelight.computers
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DesktopWindows
+import androidx.compose.material.icons.outlined.DesktopWindows
 import androidx.compose.material.icons.outlined.Handshake
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerSettingsNew
@@ -38,7 +38,7 @@ fun Computer.toUiState(): ComputerItemUiState {
         Computer.State.OFFLINE, Computer.State.CONNECTING -> "Send WOL" to Icons.Outlined.PowerSettingsNew
         Computer.State.READY_TO_PAIR -> stringResource(R.string.pcview_menu_pair_pc) to Icons.Outlined.Handshake
         Computer.State.STREAMING -> (runningApp?.let { "Resume: ${it.appName}" } ?: "Resume") to Icons.Outlined.PlayArrow
-        Computer.State.READY_TO_CONNECT -> "Open Desktop" to Icons.Default.DesktopWindows
+        Computer.State.READY_TO_CONNECT -> "Open Desktop" to Icons.Outlined.DesktopWindows
         Computer.State.ERROR -> "Error" to Icons.Outlined.Warning
     }
 
