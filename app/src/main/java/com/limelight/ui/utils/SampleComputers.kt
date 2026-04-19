@@ -29,7 +29,7 @@ object SampleComputers {
 
     val OnlineUnpairedComputer = Computer(
         details = ComputerDetails().apply {
-            name = "Online not paired"
+            name = "Online Unpair"
             activeAddress = ComputerDetails.AddressTuple("192.168.1.1", 1234)
             state = ComputerDetails.State.ONLINE
             pairState = PairingManager.PairState.NOT_PAIRED

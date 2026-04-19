@@ -2,7 +2,6 @@ package com.limelight.ui.components.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -146,7 +145,7 @@ private fun AddressBadge(address: String, modifier: Modifier = Modifier) {
             color = if (!isDark)
                 MaterialTheme.colorScheme.onPrimary
             else
-                MaterialTheme.colorScheme.onPrimaryContainer,
+                MaterialTheme.colorScheme.primaryFixed,
         ),
         modifier = modifier
             .offset(x = (-4).dp)
@@ -289,7 +288,7 @@ fun ComputerItemCardGridPreview() {
     val computerStates = listOf(
         "Running game" to SampleComputers.RunningGameComputer,
         "Online Paired" to SampleComputers.OnlinePairedComputer,
-        "Online Unpaired" to SampleComputers.OnlineUnpairedComputer,
+        "Online Unpair" to SampleComputers.OnlineUnpairedComputer,
         "Offline" to SampleComputers.OfflineComputer,
         "Connecting" to SampleComputers.UnknownComputer,
         "Pairing Failed" to SampleComputers.PairingFailedComputer
