@@ -16,6 +16,18 @@ val Antonio = FontFamily(
     Font(R.font.antonio, FontWeight.Normal)
 )
 
+val Sixtyfour = FontFamily(
+    Font(R.font.sixtyfour, FontWeight.Normal)
+)
+
+val SixtyfourTextStyle = TextStyle(
+    fontFamily = Sixtyfour,
+    fontWeight = FontWeight.Normal,
+    fontSize = 18.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.sp
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
