@@ -57,9 +57,9 @@ fun Computer.toUiState(): ComputerItemUiState {
     }
 
     val (targetStatusColor, statusText) = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiaryContainer to "Live"
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.tertiary to "Ready"
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiary to "New"
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.tertiary to "Live"
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.tertiaryContainer to "Ready"
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.tertiaryContainer to "New"
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.secondary to "Offline"
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.secondary to "Connecting"
         Computer.State.ERROR -> MaterialTheme.colorScheme.errorContainer to "Error"
@@ -77,9 +77,9 @@ fun Computer.toUiState(): ComputerItemUiState {
     val planetColor by animateColorAsState(targetPlanetColor, label = "planetColor")
 
     val targetStatusTextColor = when (computerState) {
-        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiaryContainer
-        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onTertiary
-        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.STREAMING -> MaterialTheme.colorScheme.onTertiary
+        Computer.State.READY_TO_CONNECT -> MaterialTheme.colorScheme.onTertiaryContainer
+        Computer.State.READY_TO_PAIR -> MaterialTheme.colorScheme.onTertiaryContainer
         Computer.State.OFFLINE -> MaterialTheme.colorScheme.onSecondary
         Computer.State.CONNECTING -> MaterialTheme.colorScheme.onSecondary
         Computer.State.ERROR -> MaterialTheme.colorScheme.onErrorContainer
