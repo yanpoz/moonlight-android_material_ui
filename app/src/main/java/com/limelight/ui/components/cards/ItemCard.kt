@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
@@ -15,8 +16,10 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -32,8 +35,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.limelight.viewmodel.components.StatusLabelUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -43,6 +48,7 @@ fun ItemCard(
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.cardColors(),
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    statusLabel: StatusLabelUiState? = null,
     overlayContent: @Composable BoxScope.(isFocused: Boolean) -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -95,8 +101,37 @@ fun ItemCard(
             elevation = if (isFocused) CardDefaults.cardElevation(defaultElevation = animatedElevation) else elevation,
             content = content
         )
+
+        statusLabel?.let { label ->
+            val labelOffsetX by animateDpAsState(targetValue = if (isFocused) (-8).dp else 8.dp, label = "labelOffsetX")
+            val labelOffsetY by animateDpAsState(targetValue = if (isFocused) 8.dp else (-8).dp, label = "labelOffsetY")
+            StatusLabel(
+                uiState = label,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = labelOffsetX, y = labelOffsetY)
+            )
+        }
+
         overlayContent(isFocused)
     }
+}
+
+@Composable
+private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifier) {
+    Text(
+        text = uiState.text,
+        style = MaterialTheme.typography.labelLarge.copy(
+            color = uiState.textColor,
+            fontWeight = FontWeight.ExtraBold
+        ),
+        modifier = modifier
+            .background(
+                color = uiState.statusColor,
+                shape = RoundedCornerShape(100.dp)
+            )
+            .padding(horizontal = 14.dp, vertical = 6.dp)
+    )
 }
 
 @Preview(showBackground = true)

@@ -1,6 +1,5 @@
 package com.limelight.ui.components.cards
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +41,6 @@ import com.limelight.ui.utils.SampleComputers
 import com.limelight.viewmodel.components.ActionLabelUiState
 import com.limelight.viewmodel.components.ComputerItemUiState
 import com.limelight.viewmodel.components.StatusIndicatorUiState
-import com.limelight.viewmodel.components.StatusLabelUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,16 +73,8 @@ fun ComputerItemCard(
             modifier = Modifier
                 .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
                 .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier),
-            overlayContent = { isFocused ->
-                val labelOffsetX by animateDpAsState(targetValue = if (isFocused) (-8).dp else 8.dp, label = "labelOffsetX")
-                val labelOffsetY by animateDpAsState(targetValue = if (isFocused) 8.dp else (-8).dp, label = "labelOffsetY")
-                StatusLabel(
-                    uiState = uiState.statusLabel,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .offset(x = labelOffsetX, y = labelOffsetY)
-                )
-            }
+            statusLabel = uiState.statusLabel,
+            overlayContent = { isFocused -> }
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlanetIndicator(
@@ -191,23 +180,6 @@ private fun PlanetStatusIndicatorShape(color: Color, size: Dp, modifier: Modifie
             .clip(VerySunnyShape)
             .background(color),
     ) {}
-}
-
-@Composable
-private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifier) {
-    Text(
-        text = uiState.text,
-        style = MaterialTheme.typography.labelLarge.copy(
-            color = uiState.textColor,
-            fontWeight = FontWeight.ExtraBold
-        ),
-        modifier = modifier
-            .background(
-                color = uiState.statusColor,
-                shape = RoundedCornerShape(100.dp)
-            )
-            .padding(horizontal = 14.dp, vertical = 6.dp)
-    )
 }
 
 @Composable

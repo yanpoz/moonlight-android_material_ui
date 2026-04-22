@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import com.limelight.ui.components.cards.ComputerItemCard
 import com.limelight.viewmodel.MainScreenActions
 import com.limelight.viewmodel.components.AppMenuUiState
 import com.limelight.viewmodel.components.ComputerMenuUiState
+import com.limelight.viewmodel.components.StatusLabelUiState
 
 @Composable
 fun ComputerRow(
@@ -99,6 +101,15 @@ fun ComputerRow(
         // AppItems
         if (computer.details.pairState == PairingManager.PairState.PAIRED) {
             items(computer.apps, key = { it.appId }) { app ->
+                val isRunning = app.appId == computer.details.runningGameId
+                val statusLabel = if (isRunning) {
+                    StatusLabelUiState(
+                        text = "Live",
+                        textColor = MaterialTheme.colorScheme.onTertiary,
+                        statusColor = MaterialTheme.colorScheme.tertiary
+                    )
+                } else null
+
                 AppItemCard(
                     app = app,
                     assetLoader = assetLoader,
@@ -114,6 +125,7 @@ fun ComputerRow(
                     onLongClick = { actions.onAppMenuOpen(app.appId, computer.details.uuid) },
                     canMoveLeft = app != computer.apps.first(),
                     canMoveRight = app != computer.apps.last(),
+                    statusLabel = statusLabel,
                     modifier = Modifier
                         .fillMaxHeight()
                         .aspectRatio(2f / 3f)

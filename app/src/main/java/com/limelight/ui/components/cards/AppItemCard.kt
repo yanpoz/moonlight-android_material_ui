@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.MaterialTheme
 import com.limelight.grid.assets.CachedAppAssetLoader
 import com.limelight.nvstream.http.NvApp
 import com.limelight.ui.components.AppImage
 import com.limelight.ui.components.menus.AppItemMenu
+import com.limelight.ui.theme.MoonlightAndroidTheme
+import com.limelight.viewmodel.components.StatusLabelUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -28,11 +31,13 @@ fun AppItemCard(
     canMoveRight: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    statusLabel: StatusLabelUiState? = null
 ) {
     ItemCard(
         onClick = onClick,
         onLongClick = onLongClick,
+        statusLabel = statusLabel,
         modifier = modifier
             .aspectRatio(2f / 3f) // Vertical card (3:2 height:width)
     ) {
@@ -66,19 +71,49 @@ fun AppItemCard(
 @Composable
 fun AppItemCardPreview() {
     val app = NvApp()
-    AppItemCard(
-        app = app,
-        assetLoader = null,
-        isMenuExpanded = false,
-        runningGameId = 0,
-        onDismissMenu = {},
-        onQuitApp = {},
-        onAppDetailsClicked = {},
-        onMoveLeft = {},
-        onMoveRight = {},
-        canMoveLeft = true,
-        canMoveRight = true,
-        onClick = {},
-        onLongClick = {}
-    )
+    MoonlightAndroidTheme {
+        AppItemCard(
+            app = app,
+            assetLoader = null,
+            isMenuExpanded = false,
+            runningGameId = 0,
+            onDismissMenu = {},
+            onQuitApp = {},
+            onAppDetailsClicked = {},
+            onMoveLeft = {},
+            onMoveRight = {},
+            canMoveLeft = true,
+            canMoveRight = true,
+            onClick = {},
+            onLongClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AppItemCardLivePreview() {
+    val app = NvApp()
+    MoonlightAndroidTheme {
+        AppItemCard(
+            app = app,
+            assetLoader = null,
+            isMenuExpanded = false,
+            runningGameId = 0,
+            onDismissMenu = {},
+            onQuitApp = {},
+            onAppDetailsClicked = {},
+            onMoveLeft = {},
+            onMoveRight = {},
+            canMoveLeft = true,
+            canMoveRight = true,
+            onClick = {},
+            onLongClick = {},
+            statusLabel = StatusLabelUiState(
+                text = "Live",
+                textColor = MaterialTheme.colorScheme.onTertiary,
+                statusColor = MaterialTheme.colorScheme.tertiary
+            )
+        )
+    }
 }
