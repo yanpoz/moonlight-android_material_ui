@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +60,7 @@ fun ComputerItemCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester? = null,
     canMoveUp: Boolean = true,
     canMoveDown: Boolean = true
 ) {
@@ -68,7 +71,9 @@ fun ComputerItemCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
-            modifier = Modifier.aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
+            modifier = Modifier
+                .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
+                .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlanetIndicator(

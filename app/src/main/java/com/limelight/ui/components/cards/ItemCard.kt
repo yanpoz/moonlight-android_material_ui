@@ -1,16 +1,37 @@
 package com.limelight.ui.components.cards
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -23,13 +44,101 @@ fun ItemCard(
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.1f else 1.0f,
+        label = "scale"
+    )
+
+    val animatedElevation by animateDpAsState(
+        targetValue = if (isFocused) 16.dp else 2.dp,
+        label = "elevation"
+    )
+
     Card(
         modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .shadow(
+                elevation = if (isFocused) 16.dp else 0.dp,
+                shape = CardDefaults.shape,
+                spotColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black,
+                ambientColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black
+            )
+            .border(
+                border = if (isFocused) {
+                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                } else {
+                    BorderStroke(0.dp, Color.Transparent)
+                },
+                shape = CardDefaults.shape
+            )
             .clip(CardDefaults.shape)
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .focusable(),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+                interactionSource = interactionSource,
+                indication = null
+            )
+            .focusable(interactionSource = interactionSource),
         colors = colors,
-        elevation = elevation,
+        elevation = if (isFocused) CardDefaults.cardElevation(defaultElevation = animatedElevation) else elevation,
         content = content
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemCardFocusPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ItemCard(
+            onClick = {},
+            onLongClick = {},
+            modifier = Modifier.size(150.dp, 100.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Unfocused")
+            }
+        }
+
+        // Focused state simulation
+        Card(
+            modifier = Modifier
+                .size(150.dp, 100.dp)
+                .graphicsLayer {
+                    scaleX = 1.1f
+                    scaleY = 1.1f
+                }
+                .shadow(
+                    elevation = 16.dp,
+                    shape = CardDefaults.shape,
+                    spotColor = MaterialTheme.colorScheme.primary,
+                    ambientColor = MaterialTheme.colorScheme.primary
+                )
+                .border(
+                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+                    shape = CardDefaults.shape
+                )
+                .clip(CardDefaults.shape),
+            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Focused")
+            }
+        }
+    }
 }

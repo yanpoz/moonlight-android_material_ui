@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.limelight.R
@@ -93,11 +92,8 @@ fun ComputerRow(
                 onDeleteComputer = { actions.onComputerDelete(computer) },
                 modifier = Modifier
                     .fillMaxHeight()
-                    .aspectRatio(16f / 9f)
-                    .then(
-                        if (isFirstComputer)
-                            Modifier.focusRequester(focusRequester) else Modifier
-                    )
+                    .aspectRatio(16f / 9f),
+                focusRequester = if (isFirstComputer) focusRequester else null
             )
         }
         // AppItems
