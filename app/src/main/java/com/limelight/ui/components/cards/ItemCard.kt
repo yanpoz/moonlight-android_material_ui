@@ -11,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +43,7 @@ fun ItemCard(
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.cardColors(),
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    overlayContent: @Composable BoxScope.(isFocused: Boolean) -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -57,38 +59,44 @@ fun ItemCard(
         label = "elevation"
     )
 
-    Card(
+    Box(
         modifier = modifier
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
             }
-            .shadow(
-                elevation = if (isFocused) 16.dp else 0.dp,
-                shape = CardDefaults.shape,
-                spotColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black,
-                ambientColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black
-            )
-            .border(
-                border = if (isFocused) {
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                } else {
-                    BorderStroke(0.dp, Color.Transparent)
-                },
-                shape = CardDefaults.shape
-            )
-            .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
-                interactionSource = interactionSource,
-                indication = null
-            )
-            .focusable(interactionSource = interactionSource),
-        colors = colors,
-        elevation = if (isFocused) CardDefaults.cardElevation(defaultElevation = animatedElevation) else elevation,
-        content = content
-    )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .shadow(
+                    elevation = if (isFocused) 6.dp else 0.dp,
+                    shape = CardDefaults.shape,
+                    spotColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black,
+                    ambientColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black
+                )
+                .border(
+                    border = if (isFocused) {
+                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                    } else {
+                        BorderStroke(0.dp, Color.Transparent)
+                    },
+                    shape = CardDefaults.shape
+                )
+                .clip(CardDefaults.shape)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                    interactionSource = interactionSource,
+                    indication = null
+                )
+                .focusable(interactionSource = interactionSource),
+            colors = colors,
+            elevation = if (isFocused) CardDefaults.cardElevation(defaultElevation = animatedElevation) else elevation,
+            content = content
+        )
+        overlayContent(isFocused)
+    }
 }
 
 @Preview(showBackground = true)

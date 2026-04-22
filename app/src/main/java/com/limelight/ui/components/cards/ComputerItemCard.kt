@@ -1,5 +1,6 @@
 package com.limelight.ui.components.cards
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,7 +75,17 @@ fun ComputerItemCard(
             ),
             modifier = Modifier
                 .aspectRatio(16f / 9f) // Horizontal card (9:16 height:width)
-                .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+                .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier),
+            overlayContent = { isFocused ->
+                val labelOffsetX by animateDpAsState(targetValue = if (isFocused) (-8).dp else 8.dp, label = "labelOffsetX")
+                val labelOffsetY by animateDpAsState(targetValue = if (isFocused) 8.dp else (-8).dp, label = "labelOffsetY")
+                StatusLabel(
+                    uiState = uiState.statusLabel,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = labelOffsetX, y = labelOffsetY)
+                )
+            }
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlanetIndicator(
@@ -111,12 +123,6 @@ fun ComputerItemCard(
                 )
             }
         }
-        StatusLabel(
-            uiState = uiState.statusLabel,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = 8.dp, y = (-8).dp)
-        )
     }
 }
 
