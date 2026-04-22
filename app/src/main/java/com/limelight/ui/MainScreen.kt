@@ -171,7 +171,7 @@ fun MainScreenContent(
     )
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(uiState.computers) {
+    LaunchedEffect(Unit) {
         if (uiState.computers.isNotEmpty()) {
             focusRequester.requestFocus()
         }
