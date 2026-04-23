@@ -126,6 +126,12 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
             fontWeight = FontWeight.ExtraBold
         ),
         modifier = modifier
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(100.dp),
+                spotColor = uiState.statusColor,
+                ambientColor = uiState.statusColor
+            )
             .background(
                 color = uiState.statusColor,
                 shape = RoundedCornerShape(100.dp)
@@ -137,6 +143,11 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
 @Preview(showBackground = true)
 @Composable
 fun ItemCardFocusPreview() {
+    val statusLabel = StatusLabelUiState(
+        text = "Online",
+        textColor = Color.White,
+        statusColor = Color(0xFF4CAF50)
+    )
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -145,7 +156,8 @@ fun ItemCardFocusPreview() {
         ItemCard(
             onClick = {},
             onLongClick = {},
-            modifier = Modifier.size(150.dp, 100.dp)
+            modifier = Modifier.size(150.dp, 100.dp),
+            statusLabel = statusLabel
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -156,32 +168,43 @@ fun ItemCardFocusPreview() {
         }
 
         // Focused state simulation
-        Card(
+        Box(
             modifier = Modifier
-                .size(150.dp, 100.dp)
                 .graphicsLayer {
                     scaleX = 1.1f
                     scaleY = 1.1f
                 }
-                .shadow(
-                    elevation = 16.dp,
-                    shape = CardDefaults.shape,
-                    spotColor = MaterialTheme.colorScheme.primary,
-                    ambientColor = MaterialTheme.colorScheme.primary
-                )
-                .border(
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                    shape = CardDefaults.shape
-                )
-                .clip(CardDefaults.shape),
-            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+            Card(
+                modifier = Modifier
+                    .size(150.dp, 100.dp)
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = CardDefaults.shape,
+                        spotColor = MaterialTheme.colorScheme.primary,
+                        ambientColor = MaterialTheme.colorScheme.primary
+                    )
+                    .border(
+                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+                        shape = CardDefaults.shape
+                    )
+                    .clip(CardDefaults.shape),
+                elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
             ) {
-                Text(text = "Focused")
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Focused")
+                }
             }
+
+            StatusLabel(
+                uiState = statusLabel,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-8).dp, y = 8.dp)
+            )
         }
     }
 }
