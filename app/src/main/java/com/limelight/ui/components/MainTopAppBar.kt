@@ -118,8 +118,14 @@ private fun FocusedIconButton(
         modifier = modifier,
         interactionSource = interactionSource,
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = if (isFocused) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-            contentColor = if (isFocused) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+            containerColor =
+                if (isFocused)
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                else Color.Transparent,
+            contentColor =
+                if (isFocused)
+                    MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.onSurface
         )
     ) {
         content()
