@@ -316,9 +316,17 @@ class ComputerRepository {
                         pairComputer(computer.details.uuid)
                         break
                     } else {
-                        val desktopApp = computer.apps.find { it.appId == desktopAppId }
-                        if (desktopApp != null) {
-                            launchApp(context, desktopApp, computer.details.uuid)
+                        val runningApp = computer.getRunningApp()
+                        val appToLaunch = when {
+                            runningApp != null -> runningApp
+                            computer.details.runningGameId != 0 -> {
+                                NvApp(context.getString(R.string.applist_menu_resume), computer.details.runningGameId, false)
+                            }
+                            else -> computer.apps.find { it.appId == desktopAppId }
+                        }
+
+                        if (appToLaunch != null) {
+                            launchApp(context, appToLaunch, computer.details.uuid)
                             break
                         }
                     }
