@@ -1,6 +1,5 @@
 package com.limelight.ui
 
-import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.limelight.R
 import com.limelight.computers.Computer
@@ -56,12 +54,6 @@ fun MainScreen(viewModel: MainViewModel, onSettingsClick: () -> Unit) {
     val actions = remember(viewModel, context, onSettingsClick) {
         MainScreenActions(
             onSettingsClick = onSettingsClick,
-            onHelpClick = {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = MainViewModel.SETUP_GUIDE_URL.toUri()
-                }
-                context.startActivity(intent)
-            },
             onRefresh = { viewModel.updateComputerApps() },
             onShowManualAddDialog = { viewModel.manualComputerAddHandler.onShowDialog() },
             onManualComputerAddInputChanged = { viewModel.manualComputerAddHandler.onInputChanged(it) },
@@ -190,7 +182,6 @@ fun MainScreenContent(
                 scrollBehavior = scrollBehavior,
                 onShowManualAddDialog = actions.onShowManualAddDialog,
                 onShowQuickSettings = actions.onShowQuickSettings,
-                onHelpClick = actions.onHelpClick,
                 onSettingsClick = actions.onSettingsClick
             )
         },

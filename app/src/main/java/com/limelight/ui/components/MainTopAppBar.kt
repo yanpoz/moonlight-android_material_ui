@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +43,6 @@ fun MainTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     onShowManualAddDialog: () -> Unit,
     onShowQuickSettings: () -> Unit,
-    onHelpClick: () -> Unit,
     onSettingsClick: () -> Unit,
     navigationIconFocusRequester: FocusRequester = remember { FocusRequester() }
 ) {
@@ -87,12 +85,6 @@ fun MainTopAppBar(
                 Icon(
                     imageVector = Icons.Default.Tune,
                     contentDescription = "Quick Settings"
-                )
-            }
-            FocusedIconButton(onClick = onHelpClick) {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = stringResource(R.string.help)
                 )
             }
             FocusedIconButton(onClick = onSettingsClick) {
@@ -141,7 +133,6 @@ fun MainTopAppBarPreview() {
             scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
             onShowManualAddDialog = {},
             onShowQuickSettings = {},
-            onHelpClick = {},
             onSettingsClick = {}
         )
     }
@@ -159,7 +150,6 @@ fun MainTopAppBarCollapsedPreview() {
             scrollBehavior = scrollBehavior,
             onShowManualAddDialog = {},
             onShowQuickSettings = {},
-            onHelpClick = {},
             onSettingsClick = {}
         )
     }
@@ -175,7 +165,6 @@ fun MainTopAppBarFocusedPreview() {
             scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
             onShowManualAddDialog = {},
             onShowQuickSettings = {},
-            onHelpClick = {},
             onSettingsClick = {},
             navigationIconFocusRequester = focusRequester
         )

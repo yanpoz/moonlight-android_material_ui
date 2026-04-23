@@ -51,7 +51,6 @@ data class MainScreenUiState(
 
 data class MainScreenActions(
     val onSettingsClick: () -> Unit = {},
-    val onHelpClick: () -> Unit = {},
     val onRefresh: () -> Unit = {},
     // Manual Computer Add
     val onShowManualAddDialog: () -> Unit = {},

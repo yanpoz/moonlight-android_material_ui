@@ -14,11 +14,13 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.DesktopWindows
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Mouse
 import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.material.icons.outlined.Theaters
 import androidx.compose.material.icons.outlined.VideogameAsset
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.limelight.BuildConfig
 import com.limelight.R
 import com.limelight.preferences.PreferenceConfiguration
 import androidx.core.content.edit
@@ -29,6 +31,7 @@ sealed class SettingItem {
     abstract val category: String
     @get:StringRes abstract val title: Int
     @get:StringRes abstract val summary: Int
+    open val summaryText: String? = null
 
     data class Toggle(
         override val name: String,
@@ -67,6 +70,7 @@ sealed class SettingItem {
         override val category: String,
         override val title: Int,
         override val summary: Int,
+        override val summaryText: String? = null,
         val onClick: () -> Unit
     ) : SettingItem()
 }
@@ -402,19 +406,20 @@ class SettingsRepository(private val context: Context) {
                         category = "UI Settings",
                         title = R.string.title_language_list,
                         summary = R.string.summary_language_list,
-                    ) {
-                        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
+                        onClick = {
+                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                            } else {
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
                             }
-                        } else {
-                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
-                            }
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
                         }
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                    }
+                    )
                 ),
             ),
             SettingCategory(
@@ -483,6 +488,47 @@ class SettingsRepository(private val context: Context) {
                     ) { prefs.edit {putBoolean(PreferenceConfiguration.LATENCY_TOAST_PREF_STRING, it) } },
                 ),
             ),
+            SettingCategory(
+                name = "Info",
+                categoryTitle = R.string.category_info,
+                icon = Icons.Outlined.Info,
+                items = listOf(
+                    SettingItem.Action(
+                        name = "Version",
+                        category = "Info",
+                        title = R.string.title_build_version,
+                        summary = 0,
+                        summaryText = context.getString(R.string.summary_build_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE, BuildConfig.BUILD_TYPE),
+                        onClick = {}
+                    ),
+                    SettingItem.Action(
+                        name = "Setup Guide",
+                        category = "Info",
+                        title = R.string.title_setup_guide,
+                        summary = R.string.summary_setup_guide,
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse(com.limelight.viewmodel.MainViewModel.SETUP_GUIDE_URL)
+                            }
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
+                        }
+                    ),
+                    SettingItem.Action(
+                        name = "Troubleshooting",
+                        category = "Info",
+                        title = R.string.title_troubleshooting,
+                        summary = R.string.summary_troubleshooting,
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse(com.limelight.viewmodel.MainViewModel.TROUBLESHOOTING_URL)
+                            }
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
+                        }
+                    )
+                )
+            )
         )
     }
 }

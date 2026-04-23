@@ -115,7 +115,10 @@ fun ActionSettingListItem(item: SettingItem.Action) {
             Text(stringResource(item.title))
         },
         supportingContent = {
-            Text(stringResource(item.summary))
+            val summary = item.summaryText ?: if (item.summary != 0) stringResource(item.summary) else null
+            if (summary != null) {
+                Text(summary)
+            }
         }
     )
 }
