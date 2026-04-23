@@ -31,7 +31,7 @@ fun ManualComputerAddDialog(
         focusRequester.requestFocus()
     }
 
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.title_add_pc)) },
         content = {

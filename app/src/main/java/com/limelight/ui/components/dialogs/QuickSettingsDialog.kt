@@ -79,7 +79,7 @@ fun QuickSettingsDialog(
     var isSliderFocused by remember { mutableStateOf(false) }
     val inputModeManager = LocalInputModeManager.current
 
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         onDismissRequest = onDismiss,
         title = { Text("Quick Settings") },
         content = {

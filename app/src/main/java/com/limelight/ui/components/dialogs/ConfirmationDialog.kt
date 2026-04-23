@@ -14,7 +14,7 @@ fun ConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         title = { Text(text = title) },
         content = { Text(text = text) },
         confirmButton = {

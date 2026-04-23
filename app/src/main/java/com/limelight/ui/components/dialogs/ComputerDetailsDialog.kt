@@ -19,7 +19,7 @@ import java.util.UUID
 @Composable
 fun ComputerDetailsDialog(computer: Computer, onDismiss: () -> Unit) {
     val computerDetailsText = computer.detailsList
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = computer.details.name) },
         content = {

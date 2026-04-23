@@ -16,7 +16,7 @@ import com.limelight.nvstream.http.NvApp
 @Composable
 fun AppDetailsDialog(app: NvApp, onDismiss: () -> Unit) {
     val appDetails = app.detailsList
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = app.appName) },
         content = {

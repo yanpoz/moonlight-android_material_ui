@@ -40,7 +40,7 @@ import com.limelight.viewmodel.MainViewModel
 fun ConnectionDialog(computer: Computer, onConnect: () -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     //  TODO Add container transformation
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         title = {
             Text(
                 text = "${computer.details.name} pairing",

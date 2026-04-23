@@ -23,7 +23,7 @@ fun NetworkTestDialog(
 ) {
     if (networkTestStatus is ComputerRepository.NetworkTestStatus.Idle) return
 
-    ScrollableAlertDialog(
+    AdaptiveDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
