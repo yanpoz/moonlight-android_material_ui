@@ -1,6 +1,7 @@
 package com.limelight.ui.components
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -11,15 +12,21 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,7 +45,8 @@ fun MainTopAppBar(
     onShowManualAddDialog: () -> Unit,
     onShowQuickSettings: () -> Unit,
     onHelpClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    navigationIconFocusRequester: FocusRequester = remember { FocusRequester() }
 ) {
     val collapsedFraction = scrollBehavior.state.collapsedFraction
 
@@ -64,7 +72,10 @@ fun MainTopAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onShowManualAddDialog) {
+            FocusedIconButton(
+                onClick = onShowManualAddDialog,
+                modifier = Modifier.focusRequester(navigationIconFocusRequester)
+            ) {
                 Icon(
                     imageVector = Icons.Filled.AddCircle,
                     contentDescription = stringResource(R.string.title_add_pc)
@@ -72,19 +83,19 @@ fun MainTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onShowQuickSettings) {
+            FocusedIconButton(onClick = onShowQuickSettings) {
                 Icon(
                     imageVector = Icons.Default.Tune,
                     contentDescription = "Quick Settings"
                 )
             }
-            IconButton(onClick = onHelpClick) {
+            FocusedIconButton(onClick = onHelpClick) {
                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = stringResource(R.string.help)
                 )
             }
-            IconButton(onClick = onSettingsClick) {
+            FocusedIconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings"
@@ -92,6 +103,27 @@ fun MainTopAppBar(
             }
         },
     )
+}
+
+@Composable
+private fun FocusedIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable () -> Unit
+) {
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+        interactionSource = interactionSource,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = if (isFocused) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+            contentColor = if (isFocused) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        content()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,5 +156,25 @@ fun MainTopAppBarCollapsedPreview() {
             onHelpClick = {},
             onSettingsClick = {}
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun MainTopAppBarFocusedPreview() {
+    val focusRequester = remember { FocusRequester() }
+    MoonlightAndroidTheme {
+        MainTopAppBar(
+            scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+            onShowManualAddDialog = {},
+            onShowQuickSettings = {},
+            onHelpClick = {},
+            onSettingsClick = {},
+            navigationIconFocusRequester = focusRequester
+        )
+    }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
