@@ -54,6 +54,7 @@ fun ItemCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val cardShape = RoundedCornerShape(22.dp)
 
     val scale by animateFloatAsState(
         targetValue = if (isFocused) 1.1f else 1.0f,
@@ -77,7 +78,7 @@ fun ItemCard(
                 .fillMaxSize()
                 .shadow(
                     elevation = if (isFocused) 6.dp else 0.dp,
-                    shape = CardDefaults.shape,
+                    shape = cardShape,
                     spotColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black,
                     ambientColor = if (isFocused) MaterialTheme.colorScheme.primary else Color.Black
                 )
@@ -87,9 +88,9 @@ fun ItemCard(
                     } else {
                         BorderStroke(0.dp, Color.Transparent)
                     },
-                    shape = CardDefaults.shape
+                    shape = cardShape
                 )
-                .clip(CardDefaults.shape)
+                .clip(cardShape)
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
@@ -97,6 +98,7 @@ fun ItemCard(
                     indication = null
                 )
                 .focusable(interactionSource = interactionSource),
+            shape = cardShape,
             colors = colors,
             elevation = if (isFocused) CardDefaults.cardElevation(defaultElevation = animatedElevation) else elevation,
             content = content
@@ -119,6 +121,7 @@ fun ItemCard(
 
 @Composable
 private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(28.dp)
     Text(
         text = uiState.text,
         style = MaterialTheme.typography.labelLarge.copy(
@@ -128,13 +131,13 @@ private fun StatusLabel(uiState: StatusLabelUiState, modifier: Modifier = Modifi
         modifier = modifier
             .shadow(
                 elevation = 8.dp,
-                shape = RoundedCornerShape(100.dp),
+                shape = shape,
                 spotColor = uiState.statusColor,
                 ambientColor = uiState.statusColor
             )
             .background(
                 color = uiState.statusColor,
-                shape = RoundedCornerShape(100.dp)
+                shape = shape
             )
             .padding(horizontal = 14.dp, vertical = 6.dp)
     )
